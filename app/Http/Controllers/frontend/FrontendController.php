@@ -357,6 +357,9 @@ class FrontendController extends Controller
     public
     function proUserRegistration(Request $request)
     {
+        if ($request->proUserCheck == "no") {
+            return redirect()->route('frontend.home');
+        }
         $request->validate([
             'proUserCheck' => 'required',
             'category_name' => 'required',

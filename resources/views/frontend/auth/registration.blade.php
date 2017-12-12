@@ -200,8 +200,10 @@
         /*$('#form-login').blur(function() {
             $('#form-login').validate();
         });*/
+
         $('#form-login').validate({
             onkeyup: false,
+            // onfocusout: false,
             focusCleanup: true
         })
     })
