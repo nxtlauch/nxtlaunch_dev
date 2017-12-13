@@ -363,7 +363,7 @@ class FrontendController extends Controller
                 'business_description' => 'required',
             ]);
             if (Auth::user()->role_id == 4) {
-                return redirect()->route('frontend.home')->with('errMsg', 'You Are Already Pro User');
+                return redirect()->route('frontend.home')->with('errMessage', 'You Are Already Pro User');
             } else {
                 $user = User::findOrFail(Auth::id());
                 $user->role_id = 4;
@@ -380,7 +380,7 @@ class FrontendController extends Controller
             }
         }
         Auth::logout();
-        return redirect('/login')->with('succsMsg', 'Login using your new created account');
+        return redirect('/login')->with('succMessage', 'Login using your new created account');
 
     }
 

@@ -33,6 +33,7 @@
           rel="stylesheet" type="text/css"/>
     <link class="plx-stylesheet" href="{{asset('public/frontend-assets')}}/assets/css/plx__style.css" rel="stylesheet"
           type="text/css"/>
+    <link href="{{ asset('public/assets/css/toast/jquery.toast.css') }}" rel="stylesheet" type="text/css"/>
     <script type="text/javascript">
         window.onload = function () {
             // fix for windows 8
@@ -160,6 +161,9 @@
         type="text/javascript"></script>
 <!-- END VENDOR JS -->
 <script src="{{asset('public/frontend-assets')}}/pages/js/pages.min.js"></script>
+{{--toast--}}
+<script src="{{ asset('public/assets/js/toast/jquery.toast.js') }}" type="text/javascript"></script>
+{{--end toast--}}
 <script>
     $(function () {
         $('#form-login').validate({
@@ -168,5 +172,6 @@
         })
     })
 </script>
+@include('toast.toast')
 </body>
 </html>
