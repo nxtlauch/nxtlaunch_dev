@@ -35,9 +35,12 @@ Route::post('password/reset', 'Auth\ResetPasswordController@reset');*/
 Auth::routes();
 
 Route::get('/post/{id}/details', 'frontend\FrontendController@postDetailsById')->name('frontend.post.details.id');
+Route::get('registration-check-email', 'frontend\FrontendController@registrationCheckEmail')->name('registration.check.email');
 
 
 Route::group(['middleware' => ['auth', 'only_user']], function () {
+    Route::get('/new-pro-user-registration', 'frontend\FrontendController@newProUserRegistrationForm')->name('new.pro.user.registration');
+    Route::post('/new-pro-user-registration', 'frontend\FrontendController@newProUserRegistration');
     /*pro user registration*/
     Route::get('/pro-user-registration', 'frontend\FrontendController@proUserRegistrationForm')->name('pro.user.registration');
     Route::post('/pro-user-registration', 'frontend\FrontendController@proUserRegistration');

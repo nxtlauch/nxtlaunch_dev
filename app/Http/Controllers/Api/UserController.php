@@ -16,10 +16,10 @@ class UserController extends Controller
     /*Login function*/
     public function login(Request $request)
     {
-
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
             'password' => 'required',
+            'device_token' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -34,7 +34,8 @@ class UserController extends Controller
                 $response['message'] = "Your Id is Banned";
                 return response()->json(array('meta' => array('status' => $this->failureStatus), 'response' => $response));
             }
-            $response['token'] = $user->createToken('MyApp')->accessToken;
+            $response['token'] = $user->createToken($request->device_token)->accessToken;
+            $response['user'] = $user;
             $response['message'] = "Login Successfull";
             return response()->json(array('meta' => array('status' => $this->successStatus), 'response' => $response));
         } else {
@@ -50,9 +51,10 @@ class UserController extends Controller
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'email' => 'required|email|unique:users',
-            'location' => 'required',
+//            'location' => 'required',
             'phone' => 'required',
             'password' => 'required',
+            'device_token' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -63,8 +65,8 @@ class UserController extends Controller
         $input = $request->all();
         $input['password'] = bcrypt($input['password']);
         $user = User::create($input);
-        $response['token'] = $user->createToken('MyApp')->accessToken;
-        $response['user_id'] = $user->id;
+        $response['token'] = $user->createToken($request->device_token)->accessToken;
+        $response['user'] = $user;
         return response()->json(array('meta' => array('status' => $this->successStatus), 'response' => $response));
 
     }
@@ -89,7 +91,6 @@ class UserController extends Controller
         } else {
             $response['message'] = "No user found";
             return response()->json(array('meta' => array('status' => $this->failureStatus), 'response' => $response));
-
         }
 
     }

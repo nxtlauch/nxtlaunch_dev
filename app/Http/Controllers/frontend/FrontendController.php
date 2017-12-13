@@ -344,6 +344,46 @@ class FrontendController extends Controller
         return view('frontend.publicaccess.explore')->with($data);
     }
 
+    public function newProUserRegistrationForm()
+    {
+        $data = array();
+        if (Auth::user()->role_id == 4) {
+            return redirect()->route('frontend.home')->with('errMsg', 'You Are Already Pro User');
+        }
+        $data['categories'] = UserCategory::all();
+        return view('frontend.auth.new_pro_user_register')->with($data);
+    }
+
+    public function newProUserRegistration(Request $request)
+    {
+        if ($request->proUserCheck == "yes") {
+            $request->validate([
+                'proUserCheck' => 'required',
+                'category_name' => 'required',
+                'business_description' => 'required',
+            ]);
+            if (Auth::user()->role_id == 4) {
+                return redirect()->route('frontend.home')->with('errMsg', 'You Are Already Pro User');
+            } else {
+                $user = User::findOrFail(Auth::id());
+                $user->role_id = 4;
+                if ($user->save()) {
+                    $userDetalis = UserDetail::where('user_id', Auth::id())->first();
+                    if (!$userDetalis) {
+                        $userDetalis = new UserDetail();
+                        $userDetalis->user_id = Auth::id();
+                    }
+                    $userDetalis->category_name = $request->category_name;
+                    $userDetalis->business_description = $request->business_description;
+                    $userDetalis->save();
+                }
+            }
+        }
+        Auth::logout();
+        return redirect('/login')->with('succsMsg', 'Login using your new created account');
+
+    }
+
     public function proUserRegistrationForm()
     {
         $data = array();
@@ -453,9 +493,9 @@ class FrontendController extends Controller
                 $notification->noti_to = $follower->followed_by;
                 $notification->save();
             }
-            return redirect()->route('frontend.home')->with('succsMsg', 'Post Created Successfully');
+            return redirect()->route('frontend.home')->with('succMessage', 'Post Created Successfully');
         } else {
-            return back()->with('errMsg', "Post Can't Create");
+            return back()->with('errMessage', "Post Can't Create");
         }
     }
 
@@ -795,7 +835,9 @@ class FrontendController extends Controller
         $userReport->reported_by = Auth::id();
         $userReport->report_description = $request->report_description;
         if ($userReport->save()) {
-            return back()->with('SuccsMsg', 'User Successfully Reported');
+            return back()->with('succMessage', 'User Successfully Reported');
+        }else{
+            return back()->with('errMessage', 'Something Wrong');
         }
     }
 
@@ -824,7 +866,7 @@ class FrontendController extends Controller
                             $query->where('location', 'like', Auth::user()->location);
                         });
                     } else {
-                        return back()->with('errmsg', 'You Location is not Selected yet');
+                        return back()->with('errMessage', 'You Location is not Selected yet');
                     }
 
                 } elseif ($f2 == 'nationality') {
@@ -833,7 +875,7 @@ class FrontendController extends Controller
                             $query->where('location', 'like', Auth::user()->location);
                         });
                     } else {
-                        return back()->with('errmsg', 'You Location is not Selected yet');
+                        return back()->with('errMessage', 'You Location is not Selected yet');
                     }
                 } elseif ($f2 == 'worldwide') {
                     $data['posts'] = $posts->inRandomOrder();
@@ -987,5 +1029,16 @@ class FrontendController extends Controller
             }
         }
         return Response::json($data);
+    }
+
+    public function registrationCheckEmail(Request $request)
+    {
+        $user = User::where('email', $request->email)->first();
+        if ($user) {
+            return 'false';
+        } else {
+            return 'true';
+        }
+
     }
 }

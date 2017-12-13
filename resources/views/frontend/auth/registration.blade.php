@@ -132,7 +132,7 @@
                 <!-- START Form Control-->
                 <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
                     <div class="controls">
-                        <input type="text" name="email" placeholder="Email" class="form-control" required>
+                        <input type="text" id="email" name="email" placeholder="Email" class="form-control" autocomplete="off" required>
                         @if ($errors->has('email'))
                             <span class="help-block">
                                         <strong>{{ $errors->first('email') }}</strong>
@@ -144,7 +144,8 @@
                 <!-- START Form Control-->
                 <div class="form-group m-b-30{{ $errors->has('password') ? ' has-error' : '' }}">
                     <div class="controls">
-                        <input type="password" name="password" placeholder="Password" class="form-control" minlength="6" required>
+                        <input type="password" name="password" placeholder="Password" autocomplete="new-password" class="form-control" minlength="6"
+                               required>
                         @if ($errors->has('password'))
                             <span class="help-block">
                                         <strong>{{ $errors->first('password') }}</strong>
@@ -202,9 +203,33 @@
         });*/
 
         $('#form-login').validate({
+            rules: {
+                email: {
+                    required: true,
+                    email: true,
+                    remote: {
+                        url: "{{route('registration.check.email')}}",
+                        type: "get",
+                        data: {
+                            email: function() {
+                                return $( "#email" ).val();
+                            }
+                        }
+                    },
+
+                }
+            },
+            messages: {
+                email: {
+                    required: "Email is required",
+                    email: "Please enter a valid email address",
+                    remote: "This email is already registered"
+                },
+            },
+
             onkeyup: false,
             // onfocusout: false,
-            focusCleanup: true
+            focusCleanup: true,
         })
     })
 </script>

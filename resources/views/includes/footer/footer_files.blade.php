@@ -14,6 +14,7 @@
 <script type="text/javascript" src="{{asset('public/assets/plugins/classie/classie.js')}}"></script>
 <script src="{{asset('public/assets/plugins/switchery/js/switchery.min.js')}}" type="text/javascript"></script>
 <!-- END VENDOR JS -->
+<script src="{{ asset('public/assets/js/toast/jquery.toast.js') }}" type="text/javascript"></script>
 
 @yield('scripts')
 

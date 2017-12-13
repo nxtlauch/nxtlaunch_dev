@@ -93,13 +93,13 @@ class AdminController extends Controller
                 $userDetails->profile_picture = $filename;
             }
             if ($userDetails->save()) {
-                return redirect()->route('admin.users')->with('succsMsg', 'User Updated Successfully');
+                return redirect()->route('admin.users')->with('succMessage', 'User Updated Successfully');
             } else {
                 return 'Error in user update';
             }
 
         } else {
-            return back()->with('errMsg', 'Error');
+            return back()->with('errMessage', 'User can not Updated');
         }
     }
 
@@ -109,6 +109,8 @@ class AdminController extends Controller
         $user = User::findOrFail($id);
         if ($user->delete()) {
             return back()->with('succMessage', 'User Deleted Successfully');
+        }else{
+            return back()->with('errMessage', 'User Can not Deleted');
         }
     }
 
@@ -119,6 +121,8 @@ class AdminController extends Controller
         $user->status = 0;
         if ($user->save()) {
             return back()->with('succMessage', 'User Suspended Successfully');
+        }else{
+            return back()->with('errMessage', 'User Can not Suspended');
         }
     }
 
@@ -177,9 +181,9 @@ class AdminController extends Controller
 //        $post->post_title = $request->post_title;
         $post->post_details = $request->post_details;
         if ($post->save()) {
-            return redirect()->route('admin.posts')->with('succsMsg', 'Post Updated Successfully');
+            return redirect()->route('admin.posts')->with('succMessage', 'Post Updated Successfully');
         } else {
-            return redirect()->route('admin.posts')->with('errMsg', 'Post can not updated');
+            return redirect()->route('admin.posts')->with('errMessage', 'Post can not updated');
         }
     }
 
@@ -189,6 +193,8 @@ class AdminController extends Controller
         $user = Post::findOrFail($id);
         if ($user->delete()) {
             return back()->with('succMessage', 'Post Deleted Successfully');
+        }else{
+            return back()->with('errMessage', 'Post Can not Deleted');
         }
     }
 
@@ -199,6 +205,8 @@ class AdminController extends Controller
         $user->status = 0;
         if ($user->save()) {
             return back()->with('succMessage', 'Post Suspended Successfully');
+        }else{
+            return back()->with('errMessage', 'Post can not Suspended');
         }
     }
 
@@ -257,7 +265,7 @@ class AdminController extends Controller
         $data = array();
         $data['postReport'] = PostReport::find($id);
         if (empty($data['postReport'])) {
-            return redirect()->route('admin.post.reports')->with('ErrMsg', 'This data is not available in our database');
+            return redirect()->route('admin.post.reports')->with('errMessage', 'This data is not available in our database');
         }
         return view('reports.post_report_details')->with($data);
     }
@@ -268,6 +276,8 @@ class AdminController extends Controller
         $postReport = PostReport::find($id);
         if ($postReport->delete()) {
             return redirect()->route('admin.post.reports')->with('succMessage', 'Post Report Deleted Successfully');
+        }else{
+            return redirect()->route('admin.post.reports')->with('errMessage', 'Post Report Can not Deleted');
         }
     }
 
@@ -277,6 +287,8 @@ class AdminController extends Controller
         $user = User::findOrFail($id);
         if ($user->delete()) {
             return redirect()->route('admin.post.reports')->with('succMessage', 'User Deleted Successfully');
+        }else{
+            return redirect()->route('admin.post.reports')->with('errMessage', 'User Can not Delete Successfully');
         }
     }
 
@@ -286,6 +298,8 @@ class AdminController extends Controller
         $user->status = 0;
         if ($user->save()) {
             return redirect()->route('admin.post.reports')->with('succMessage', 'User Suspended Successfully');
+        }else{
+            return redirect()->route('admin.post.reports')->with('errMessage', 'Something Wrong');
         }
     }
 

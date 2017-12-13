@@ -42,7 +42,11 @@
 @include('frontend.includes.modal.proUserWarning')
 {{--Footer Files--}}
 
+
+
 @include('frontend.includes.footer.footer_files')
+
+@include('toast.toast')
 
 </body>
 </html>

@@ -4,6 +4,8 @@ namespace App\Exceptions;
 
 use Exception;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Session\TokenMismatchException;
+use Illuminate\Support\Facades\Auth;
 
 class Handler extends ExceptionHandler
 {
@@ -48,6 +50,17 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Exception $exception)
     {
+        if ($exception instanceof TokenMismatchException){
+            // Catch it here and do what you want. For example...
+            $lastsegment=request()->segment(count(request()->segments()));
+
+            if($lastsegment=="admin-logout" && Auth::check()==false){
+                return redirect()->back()->withInput()->with('error', 'Your session has expired');
+            }
+            if($lastsegment=="logout" && Auth::check()==false){
+                return redirect()->back()->withInput()->with('error', 'Your session has expired');
+            }
+        }
         return parent::render($request, $exception);
     }
 }

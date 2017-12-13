@@ -58,5 +58,6 @@
 # Footer FIles
 --}}
 @include('includes.footer.footer_files')
+@include('toast.toast')
 </body>
 </html>

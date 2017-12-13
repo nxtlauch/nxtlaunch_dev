@@ -4,6 +4,7 @@
 <link href="{{asset('public/assets/plugins/jquery-scrollbar/jquery.scrollbar.css')}}" rel="stylesheet" type="text/css" media="screen" />
 <link href="{{asset('public/assets/plugins/select2/css/select2.min.css')}}" rel="stylesheet" type="text/css" media="screen" />
 <link href="{{asset('public/assets/plugins/switchery/css/switchery.min.css')}}" rel="stylesheet" type="text/css" media="screen" />
+<link href="{{ asset('public/assets/css/toast/jquery.toast.css') }}" rel="stylesheet" type="text/css"/>
 
 {{--Page Styles--}}
 @yield('styles')

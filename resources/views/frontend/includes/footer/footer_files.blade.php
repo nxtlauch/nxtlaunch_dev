@@ -28,6 +28,9 @@
 <!-- BEGIN CORE TEMPLATE JS -->
 <script src="{{asset('public/frontend-assets/pages/js/pages.js')}}"></script>
 <!-- END CORE TEMPLATE JS -->
+{{--toast--}}
+<script src="{{ asset('public/assets/js/toast/jquery.toast.js') }}" type="text/javascript"></script>
+{{--end toast--}}
 
 @yield('scripts')
 <!-- BEGIN PAGE LEVEL JS -->
