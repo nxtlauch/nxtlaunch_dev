@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\dashboard;
 
 use App\Category;
+use App\CategoryImage;
 use App\Post;
 use App\PostReport;
 use App\Slim;
 use App\User;
+use App\UserCategory;
 use App\UserDetail;
 use App\UserReport;
 use Illuminate\Http\Request;
@@ -109,7 +111,7 @@ class AdminController extends Controller
         $user = User::findOrFail($id);
         if ($user->delete()) {
             return back()->with('succMessage', 'User Deleted Successfully');
-        }else{
+        } else {
             return back()->with('errMessage', 'User Can not Deleted');
         }
     }
@@ -121,7 +123,7 @@ class AdminController extends Controller
         $user->status = 0;
         if ($user->save()) {
             return back()->with('succMessage', 'User Suspended Successfully');
-        }else{
+        } else {
             return back()->with('errMessage', 'User Can not Suspended');
         }
     }
@@ -193,7 +195,7 @@ class AdminController extends Controller
         $user = Post::findOrFail($id);
         if ($user->delete()) {
             return back()->with('succMessage', 'Post Deleted Successfully');
-        }else{
+        } else {
             return back()->with('errMessage', 'Post Can not Deleted');
         }
     }
@@ -205,7 +207,7 @@ class AdminController extends Controller
         $user->status = 0;
         if ($user->save()) {
             return back()->with('succMessage', 'Post Suspended Successfully');
-        }else{
+        } else {
             return back()->with('errMessage', 'Post can not Suspended');
         }
     }
@@ -276,7 +278,7 @@ class AdminController extends Controller
         $postReport = PostReport::find($id);
         if ($postReport->delete()) {
             return redirect()->route('admin.post.reports')->with('succMessage', 'Post Report Deleted Successfully');
-        }else{
+        } else {
             return redirect()->route('admin.post.reports')->with('errMessage', 'Post Report Can not Deleted');
         }
     }
@@ -287,7 +289,7 @@ class AdminController extends Controller
         $user = User::findOrFail($id);
         if ($user->delete()) {
             return redirect()->route('admin.post.reports')->with('succMessage', 'User Deleted Successfully');
-        }else{
+        } else {
             return redirect()->route('admin.post.reports')->with('errMessage', 'User Can not Delete Successfully');
         }
     }
@@ -298,7 +300,7 @@ class AdminController extends Controller
         $user->status = 0;
         if ($user->save()) {
             return redirect()->route('admin.post.reports')->with('succMessage', 'User Suspended Successfully');
-        }else{
+        } else {
             return redirect()->route('admin.post.reports')->with('errMessage', 'Something Wrong');
         }
     }
@@ -371,5 +373,53 @@ class AdminController extends Controller
         $search_key = $request->q;
         $data['posts'] = Post::Where('post_details', 'like', "%$search_key%")->where('status', 1)->orderBy('id', 'desc')->with('user:id,name')->get();
         return view('posts.posts')->with($data);
+    }
+
+    /*user category*/
+    public function userCategories()
+    {
+        $data = array();
+        $data['categories'] = UserCategory::all();
+        return view('users.user-categories')->with($data);
+    }
+
+    /*user category status change status*/
+    public function changeUserCategoryStatus($id)
+    {
+        $category = UserCategory::findOrFail($id);
+        if ($category->status == 1) {
+            $category->status = 0;
+            $message = 'Category Deactivate Successfully';
+        } else {
+            $category->status = 1;
+            $message = 'Category Activate Successfully';
+        }
+        if ($category->save()) {
+            return back()->with('succMessage', $message);
+        } else {
+            return back()->with('errMessage', 'Category Status Unchanged');
+        }
+    }
+
+    /*User Category Edit*/
+    public function userCategoryEdit($id)
+    {
+        $data = array();
+        $data['category'] = UserCategory::findOrFail($id);
+        $data['icons'] = CategoryImage::all();
+        return view('users.user-category-edit')->with($data);
+    }
+
+    public function userCategoryUpdate(Request $request, $id)
+    {
+//        dd($request->all());
+        $userCategory = UserCategory::find($id);
+        $userCategory->name = $request->name;
+        $userCategory->category_image_id = $request->category_image_id;
+        if ($userCategory->save()) {
+            return redirect()->route('admin.user.categories')->with('succMessage', 'User Category Updated Successfully');
+        } else {
+            return back()->with('errMessage', 'User Category can not updated');
+        }
     }
 }

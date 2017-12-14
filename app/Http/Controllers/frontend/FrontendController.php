@@ -73,7 +73,23 @@ class FrontendController extends Controller
 //        dd(Auth::user()->followedBy);
         $dt = Carbon::now()->toDateTimeString();
         $data = array();
-        $data['posts'] = Post::where('status', 1)->orderBy('id', 'desc')->with('user', 'comments.user:id,name', 'likes.user:id,name')->get()->where('expire_date', '>', $dt);
+
+        /* where(function ($q) use ($search_key) {
+             $q->where('name', 'like', "%$search_key%")
+                 ->orWhere('email', 'like', "%$search_key%");
+         })*/
+//        $data['posts'] = Post::where('status', 1)->orderBy('id', 'desc')->with('user', 'comments.user:id,name', 'likes.user:id,name')->get()->where('expire_date', '>', $dt);
+        $data['posts'] = Post::where('status', 1)
+            ->where('expire_date', '>', $dt)
+            ->orderBy('id', 'desc')
+            ->where(function ($q) {
+                $q->whereHas('user.followers', function ($query) {
+                    $query->where('followed_by', Auth::id());
+                })
+                    ->orWhereHas('user.posts.follows', function ($z) {
+                        $z->where('user_id', Auth::id());
+                    });
+            })->with('user', 'comments.user:id,name', 'likes.user:id,name')->get();
         return view('frontend.home.index')->with($data);
     }
 
@@ -342,6 +358,14 @@ class FrontendController extends Controller
         $data = array();
         $data['posts'] = Post::orderBy('id', 'desc')->with('user:id,name', 'comments.user:id,name', 'likes.user:id,name')->get()->where('expire_date', '>', Carbon::now()->toDateTimeString());
         return view('frontend.publicaccess.explore')->with($data);
+    }
+
+    public function homeExplore()
+    {
+        $dt = Carbon::now()->toDateTimeString();
+        $data = array();
+        $data['posts'] = Post::where('status', 1)->orderBy('id', 'desc')->with('user', 'comments.user:id,name', 'likes.user:id,name')->get()->where('expire_date', '>', $dt);
+        return view('frontend.home.index')->with($data);
     }
 
     public function newProUserRegistrationForm()
@@ -836,7 +860,7 @@ class FrontendController extends Controller
         $userReport->report_description = $request->report_description;
         if ($userReport->save()) {
             return back()->with('succMessage', 'User Successfully Reported');
-        }else{
+        } else {
             return back()->with('errMessage', 'Something Wrong');
         }
     }

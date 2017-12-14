@@ -48,12 +48,27 @@
                 </a>
                 <span class="bg-success icon-thumbnail"><i class="pg-home"></i></span>
             </li>
-            <li class="">
+            <li>
+                <a href="javascript:;"><span class="title">User</span>
+                    <span class=" arrow"></span></a>
+                <span class="icon-thumbnail"><i class="fa fa-user-circle"></i></span>
+                <ul class="sub-menu">
+                    <li class="">
+                        <a href="{{route('admin.users')}}">User List</a>
+                        <span class="icon-thumbnail">UL</span>
+                    </li>
+                    <li class="">
+                        <a href="{{route('admin.user.categories')}}">User Categories</a>
+                        <span class="icon-thumbnail">UC</span>
+                    </li>
+                </ul>
+            </li>
+            {{--<li class="">
                 <a href="{{route('admin.users')}}" class="detailed">
                     <span class="title">Users</span>
                 </a>
                 <span class="icon-thumbnail"><i class="fa fa-user-circle"></i></span>
-            </li>
+            </li>--}}
             <li>
                 <a href="javascript:;"><span class="title">Posts</span>
                     <span class=" arrow"></span></a>

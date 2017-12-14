@@ -4,6 +4,7 @@
 @endsection
 
 @section('contents')
+    {{--{{dd($categories)}}--}}
     <!-- START PAGE CONTENT -->
     <div class="content ">
         <!-- START JUMBOTRON -->
@@ -46,7 +47,7 @@
                     </div>--}}
                     <div class="card-block">
                         <div class="row">
-                            <div class="col-md-3">
+                            {{--<div class="col-md-3">
                                 <br>
                                 <form method="post" action="{{route('admin.categories')}}">
                                     {{csrf_field()}}
@@ -63,12 +64,14 @@
                                     </div>
                                     <button type="submit" class="btn btn-primary btn-block">Add Category</button>
                                 </form>
-                            </div>
-                            <div class="col-md-7">
+                            </div>--}}
+                            <div class="col-md-1"></div>
+                            <div class="col-md-10">
                                 <table class="table table-hover table-condensed no-footer">
                                     <thead>
                                     <tr>
                                         <th>Category Name</th>
+                                        <th>Icon</th>
                                         <th class="text-right">Actions</th>
                                     </tr>
                                     </thead>
@@ -76,11 +79,16 @@
                                     @forelse($categories as $category)
                                         <tr>
                                             <td>{{$category->name}}</td>
+                                            <td><img src="{{$category->categoryImage->image}}" alt=""/></td>
                                             <td class="text-right">
-                                                <a href="javascript://" class="btn btn-info btn-xs"
+                                                <a href="{{route('admin.user.category.edit',$category->id)}}" class="btn btn-info btn-xs"
                                                    data-toggle="tooltip" title="Edit"><i class="fa fa-edit"></i></a>
-                                                <a href="javascript://" data-status="{{$category->status}}" data-href="{{route('admin.change.category.status',$category->id)}}" class="btn  {{$category->status==1?' btn-danger':' btn-success'}} btn-xs shahinDelete" data-toggle="tooltip"
-                                                   title="{{$category->status==1?'Deactivate':'Activate'}}"><i class="fa {{$category->status==1?' fa-trash':' fa-check'}}"></i></a>
+                                                <a href="javascript://" data-status="{{$category->status}}"
+                                                   data-href="{{route('admin.change.user.category.status',$category->id)}}"
+                                                   class="btn  {{$category->status==1?' btn-danger':' btn-success'}} btn-xs shahinDelete"
+                                                   data-toggle="tooltip"
+                                                   title="{{$category->status==1?'Deactivate':'Activate'}}"><i
+                                                            class="fa {{$category->status==1?' fa-trash':' fa-check'}}"></i></a>
                                             </td>
                                         </tr>
                                     @empty
@@ -109,9 +117,9 @@
             var status = $(this).data('status');
             $('#shahinWarning').modal('show');
             $('#link').attr('href', link);
-            if(status==1){
+            if (status == 1) {
                 $('.modal-title').text('Deactivate Category ?');
-            }else {
+            } else {
                 $('.modal-title').text('Activate Category ?');
             }
         });

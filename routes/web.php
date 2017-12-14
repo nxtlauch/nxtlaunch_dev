@@ -47,6 +47,7 @@ Route::group(['middleware' => ['auth', 'only_user']], function () {
     /*end pro user registration*/
     /*home page*/
     Route::get('/', 'frontend\FrontendController@home')->name('frontend.home');
+    Route::get('/explore', 'frontend\FrontendController@homeExplore')->name('frontend.home.explore');
     /*End Home page*/
     /*Notification*/
     Route::get('/notifications', 'frontend\FrontendController@notifications')->name('frontend.notifications');
@@ -112,7 +113,7 @@ Route::group(['middleware' => ['auth', 'only_user']], function () {
 
 
 Route::group(['middleware' => 'guest'], function () {
-    Route::get('/explore', 'frontend\FrontendController@explore')->name('frontend.home');
+    Route::get('/unauth-explore', 'frontend\FrontendController@explore')->name('frontend.home');
 
     Route::get('login/facebook', 'frontend\FacebookController@redirectToProvider');
     Route::get('login/facebook/callback', 'frontend\FacebookController@handleProviderCallback');
@@ -144,7 +145,12 @@ Route::group(['middleware' => 'admin_auth'], function () {
 
     /*Admin User Search*/
     Route::get('admin/users/search', 'dashboard\AdminController@userSearch')->name('admin.users.search');
-
+    /*user category*/
+    Route::get('admin/users/categories', 'dashboard\AdminController@userCategories')->name('admin.user.categories');
+    Route::get('admin/users/categories/{id}/change-status', 'dashboard\AdminController@changeUserCategoryStatus')->name('admin.change.user.category.status');
+    Route::get('admin/users/categories/{id}/edit', 'dashboard\AdminController@userCategoryEdit')->name('admin.user.category.edit');
+    Route::post('admin/users/categories/{id}/edit', 'dashboard\AdminController@userCategoryUpdate');
+    /*end user category*/
     /*Show All Posts*/
     Route::get('admin/posts', 'dashboard\AdminController@posts')->name('admin.posts');
     Route::get('admin/{id}/delete-post', 'dashboard\AdminController@deletePost')->name('admin.delete.post');
