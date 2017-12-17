@@ -14,6 +14,7 @@ use App\Notification;
 use App\Post;
 use App\PostReport;
 use App\RecentSearch;
+use App\Tag;
 use App\User;
 use App\UserCategory;
 use App\UserDetail;
@@ -517,6 +518,24 @@ class FrontendController extends Controller
                 $notification->noti_to = $follower->followed_by;
                 $notification->save();
             }
+            $tags = array();
+            $matches = null;
+            if (preg_match_all('/(?!\b)(#\w+\b)/', $request->post_details, $matches)) {
+                $tags = collect(array_first($matches))->unique();
+
+            }
+            /*$tags = array();
+            $matches = null;
+            if (preg_match_all('/(?!\b)(#\w+\b)/', $request->post_details, $matches)) {
+                $tags = array_first($matches)->collect()->unique;
+
+            }*/
+            foreach ($tags as $tag) {
+                $htag = new Tag();
+                $htag->post_id = $post->id;
+                $htag->tag = $tag;
+                $htag->save();
+            }
             return redirect()->route('frontend.home')->with('succMessage', 'Post Created Successfully');
         } else {
             return back()->with('errMessage', "Post Can't Create");
@@ -688,24 +707,33 @@ class FrontendController extends Controller
     {
         $data = array();
         $search_key = $request->q;
-        $searchExist = RecentSearch::where('user_id', Auth::id())->where('search_text', $search_key)->first();
-        if ($searchExist) {
-            $searchExist->created_at = Carbon::now();
-            $searchExist->save();
+//        dd($search_key);
+        $htag = starts_with($search_key, '#');
+        if ($htag) {
+            $data['posts'] = Post::whereHas('tags', function ($q) use ($search_key) {
+                $q->where('tag', $search_key);
+            })->where('status', 1)->with('tags')->where('expire_date', '>', Carbon::now()->toDateTimeString())->orderBy('id', 'desc')->get();
+            $data['search_key'] = $search_key;
+            return view('frontend.search.tag')->with($data);
         } else {
-            $recentSearch = new RecentSearch();
-            $recentSearch->user_id = Auth::id();
-            $recentSearch->search_text = $search_key;
-            $recentSearch->save();
-        }
+            $searchExist = RecentSearch::where('user_id', Auth::id())->where('search_text', $search_key)->first();
+            if ($searchExist) {
+                $searchExist->created_at = Carbon::now();
+                $searchExist->save();
+            } else {
+                $recentSearch = new RecentSearch();
+                $recentSearch->user_id = Auth::id();
+                $recentSearch->search_text = $search_key;
+                $recentSearch->save();
+            }
 
-        $matchbrand = "MATCH (post_details) AGAINST ('" . $search_key . "' IN BOOLEAN MODE)";
-        $data['posts'] = Post::whereRaw($matchbrand)->where('status', 1)->orderBy('id', 'desc')->get()->where('expire_date', '>', Carbon::now()->toDateTimeString());
+            $matchbrand = "MATCH (post_details) AGAINST ('" . $search_key . "' IN BOOLEAN MODE)";
+            $data['posts'] = Post::whereRaw($matchbrand)->where('status', 1)->orderBy('id', 'desc')->get()->where('expire_date', '>', Carbon::now()->toDateTimeString());
 //            return view('frontend.search.search')->with($data);
-        $data['brands'] = User::Where('name', 'like', '%' . $search_key . '%')->where('status', 1)->orderBy('id', 'desc')->get();
-        $data['search_key'] = $search_key;
-        return view('frontend.search.search')->with($data);
-
+            $data['brands'] = User::Where('name', 'like', '%' . $search_key . '%')->where('status', 1)->orderBy('id', 'desc')->get();
+            $data['search_key'] = $search_key;
+            return view('frontend.search.search')->with($data);
+        }
     }
 
     /*public function search(Request $request)

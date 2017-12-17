@@ -412,7 +412,6 @@ class AdminController extends Controller
 
     public function userCategoryUpdate(Request $request, $id)
     {
-//        dd($request->all());
         $userCategory = UserCategory::find($id);
         $userCategory->name = $request->name;
         $userCategory->category_image_id = $request->category_image_id;

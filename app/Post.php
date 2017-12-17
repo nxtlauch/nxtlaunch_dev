@@ -44,4 +44,7 @@ class Post extends Model
     public function postReports(){
         return $this->hasMany('App\PostReport');
     }
+    public function tags(){
+        return $this->hasMany('App\Tag');
+    }
 }

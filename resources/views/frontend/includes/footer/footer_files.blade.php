@@ -395,6 +395,7 @@
 
                 if (data.count < 10) {
                     // $("#post_id_" + post_id).find('.no-more-comment').removeClass('hidden');
+                    $("#post_id_" + post_id).find('.Plx__comment__count').addClass('hidden');
                     $("#post_id_" + post_id).find('.load-more-comment').addClass('hidden');
 
                 }
