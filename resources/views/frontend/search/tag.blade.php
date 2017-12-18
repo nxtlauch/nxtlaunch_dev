@@ -1,7 +1,11 @@
 @extends('frontend.layouts.master')
 
 @section('styles')
-
+<style>
+    span.highlight{
+        background: #f1c40f;
+    }
+</style>
 @endsection
 
 @section('contents')
@@ -65,7 +69,7 @@
                                                                class="plx__follow-btn user-follow_{{@$post->user->id}} {{@$post->user->followers->contains('followed_by',Auth::id())?' added':''}}">{{@$post->user->followers->contains('followed_by',Auth::id())?'Following':'Follow'}}</a>
                                                         @endif
                                                     </div>
-                                                    <div class="post-texts">
+                                                    <div class="post-texts context">
                                                         <p class="post-title">{{$post->post_details}}</p>
                                                     </div>
                                                     <div class="plx___meta-actions">
@@ -139,6 +143,7 @@
 @endsection
 
 @section('scripts')
+    <script src="{{asset('public/frontend-assets/assets/js/jquery.highlight-5.js')}}"></script>
 
     <script>
         (function ($) {
@@ -156,5 +161,18 @@
                 $(targetContainer).addClass('active');
             })
         }
+        $(function() {
+            'use strict';
+            var $context = $(".context");
+
+                // Determine search term
+                var searchTerm = '{{$search_key}}';
+
+                // Remove old highlights and highlight
+                // new search term afterwards
+                $context.removeHighlight();
+                $context.highlight(searchTerm);
+        });
+
     </script>
 @endsection
