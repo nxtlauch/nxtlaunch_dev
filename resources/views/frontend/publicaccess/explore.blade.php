@@ -36,11 +36,16 @@
                                                      style="background-image: url('{{asset('content-dir/posts/images/'.$post->image)}}')"></div>
                                                 <div class="plx__post-info">
                                                     <div class="plx__time-countdown m-b-5">
-                                                        <span class="plx__countdown"><span
-                                                                    class="number">08</span>d : <span
-                                                                    class="number">14</span>h : <span
-                                                                    class="number">03</span>m : <span
-                                                                    class="number">21</span>s</span>
+                                                        @php($days=\Carbon\Carbon::parse($post->expire_date)->diffInDays())
+                                                        <span title="{{\Carbon\Carbon::parse($post->expire_date)->format('M d, Y H:i')}}"
+                                                              data-toggle="tooltip"
+                                                              class="plx__countdown {{$days<7?'text-danger':($days<30?'text-warning':'text-success')}}"
+                                                              data-date-time="{{$post->expire_date}}">
+                    <span class="number day">08</span>d :
+                    <span class="number hour">14</span>h :
+                    <span class="number minutes">03</span>m :
+                    <span class="number seconds">21</span>s
+                </span>
                                                     </div>
                                                     <div class="plx___meta-actions">
                                                         <a href="#" title="Like"

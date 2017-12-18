@@ -98,6 +98,7 @@
 <script type="text/javascript" src="{{asset('public/frontend-assets')}}/assets/plugins/classie/classie.js"></script>
 <script src="{{asset('public/frontend-assets')}}/assets/plugins/switchery/js/switchery.min.js"
         type="text/javascript"></script>
+<script src="{{asset('public/frontend-assets')}}/assets/js/jquery.countdown.min.js"></script>
 <!-- END VENDOR JS -->
 
 
@@ -108,6 +109,19 @@
 <script>
     (function ($) {
         "use strict";
+
+        $('.plx__countdown').each(function () {
+            var dateTime = $(this).data('date-time');
+            $(this).countdown(dateTime, function (e) {
+                $(this).html(e.strftime(`
+                <span class="number day">%D</span>d :
+                <span class="number hour">%H</span>h :
+                <span class="number minutes">%M</span>m :
+                <span class="number seconds">%S</span>s
+            `));
+            })
+        });
+
         toggleFilterBar();
 //            $( window ).resize(function() {
 //                toggleFilterBar();
