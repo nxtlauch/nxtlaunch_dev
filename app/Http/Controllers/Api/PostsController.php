@@ -2,8 +2,12 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Http\Resources\PostCollection;
+use App\Http\Resources\PostResource;
+use App\Notification;
 use App\Post;
 use App\RecentSearch;
+use App\Tag;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -16,6 +20,8 @@ class PostsController extends Controller
     public $successStatus = 200;
     public $failureStatus = 100;
 
+
+
     /**
      * Display a listing of the resource.
      *
@@ -24,7 +30,88 @@ class PostsController extends Controller
     public function index()
     {
         $dt = Carbon::now()->toDateTimeString();
-        $posts = Post::where('status', 1)->orderBy('id', 'desc')->with('user', 'comments.user:id,name', 'likes.user:id,name')->get()->where('expire_date', '>', $dt);
+        $posts = Post::where('status', 1)->orderBy('id', 'desc')->with('user', 'comments.user:id,name', 'likes.user:id,name')->where('expire_date', '>', $dt)->get();
+        foreach ($posts as $post) {
+            $user = clone $post->user;
+            if ($user->userDetails->profile_picture) {
+                $post->user->profile_picture = $user->userDetails->profile_picture;
+            } else {
+                $post->user->profile_picture = "avatar.png";
+            }
+            if ($post->likes->contains('user_id',Auth::id())){
+                $post->liked_by_me=1;
+            }else{
+                $post->liked_by_me=0;
+            }
+            if ($post->comments->contains('user_id',Auth::id())){
+                $post->commented_by_me=1;
+            }else{
+                $post->commented_by_me=0;
+            }
+        }
+        if (!empty($posts)) {
+            $response['posts'] = $posts;
+            $response['message'] = "All Posts Render";
+            return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
+        } else {
+            $response['message'] = "No Post Found";
+            return response()->json(['meta' => array('status' => $this->failureStatus), 'response' => $response]);
+        }
+    }
+
+    public function unauthHome(){
+        $dt = Carbon::now()->toDateTimeString();
+        $posts = Post::where('status', 1)->orderBy('id', 'desc')->with('user', 'comments.user:id,name', 'likes.user:id,name')->where('expire_date', '>', $dt)->get();
+        foreach ($posts as $post) {
+            $user = clone $post->user;
+            if ($user->userDetails->profile_picture) {
+                $post->user->profile_picture = $user->userDetails->profile_picture;
+            } else {
+                $post->user->profile_picture = "avatar.png";
+            }
+            if ($post->likes->contains('user_id',Auth::id())){
+                $post->liked_by_me=1;
+            }else{
+                $post->liked_by_me=0;
+            }
+            if ($post->comments->contains('user_id',Auth::id())){
+                $post->commented_by_me=1;
+            }else{
+                $post->commented_by_me=0;
+            }
+        }
+        if (!empty($posts)) {
+            $response['posts'] = $posts;
+            $response['message'] = "All Posts Render";
+            return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
+        } else {
+            $response['message'] = "No Post Found";
+            return response()->json(['meta' => array('status' => $this->failureStatus), 'response' => $response]);
+        }
+    }
+
+    public function explore(){
+
+        $dt = Carbon::now()->toDateTimeString();
+        $posts = Post::where('status', 1)->orderBy('id', 'desc')->with('user', 'comments.user:id,name', 'likes.user:id,name')->where('expire_date', '>', $dt)->get();
+        foreach ($posts as $post) {
+            $user = clone $post->user;
+            if ($user->userDetails->profile_picture) {
+                $post->user->profile_picture = $user->userDetails->profile_picture;
+            } else {
+                $post->user->profile_picture = "avatar.png";
+            }
+            if ($post->likes->contains('user_id',Auth::id())){
+                $post->liked_by_me=1;
+            }else{
+                $post->liked_by_me=0;
+            }
+            if ($post->comments->contains('user_id',Auth::id())){
+                $post->commented_by_me=1;
+            }else{
+                $post->commented_by_me=0;
+            }
+        }
         if (!empty($posts)) {
             $response['posts'] = $posts;
             $response['message'] = "All Posts Render";
@@ -81,6 +168,29 @@ class PostsController extends Controller
         $post->expire_date = Carbon::create($request->expire_date);
         $post->user_id = Auth::id();
         if ($post->save()) {
+            /*notification and tag save*/
+            foreach (Auth::user()->followers as $follower) {
+                $notification = new Notification();
+                $notification->user_id = Auth::id();
+                $notification->noti_for = 2;
+                $notification->noti_activity = 5;
+                $notification->purpose_id = $post->id;
+                $notification->noti_to = $follower->followed_by;
+                $notification->save();
+            }
+            $tags = array();
+            $matches = null;
+            if (preg_match_all('/(?!\b)(#\w+\b)/', $request->post_details, $matches)) {
+                $tags = collect(array_first($matches))->unique();
+
+            }
+            foreach ($tags as $tag) {
+                $htag = new Tag();
+                $htag->post_id = $post->id;
+                $htag->tag = $tag;
+                $htag->save();
+            }
+            /*end notification and tag save*/
             $response['post_id'] = $post->id;
             $response['message'] = "Post Created Successfully";
             return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
@@ -100,6 +210,12 @@ class PostsController extends Controller
     {
         $post = Post::where('id', $id)->with(['user', 'comments.user', 'likes.user'])->first();
         if ($post) {
+            $user = clone $post->user;
+            if ($user->userDetails->profile_picture) {
+                $post->user->profile_picture = $user->userDetails->profile_picture;
+            } else {
+                $post->user->profile_picture = "avatar.png";
+            }
             $response['post'] = $post;
             $response['message'] = "Post info Render";
             return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
@@ -202,7 +318,8 @@ class PostsController extends Controller
         }
     }
 
-    public function searchPost(Request $request){
+    public function searchPost(Request $request)
+    {
         $search_key = $request->search_key;
         $searchExist = RecentSearch::where('user_id', Auth::id())->where('search_text', $search_key)->first();
         if ($searchExist) {
@@ -216,8 +333,8 @@ class PostsController extends Controller
         }
 
         $matchbrand = "MATCH (post_details) AGAINST ('" . $search_key . "' IN BOOLEAN MODE)";
-        $posts = Post::whereRaw($matchbrand)->where('status', 1)->orderBy('id', 'desc')->get()->where('expire_date', '>', Carbon::now()->toDateTimeString());
-        if ($posts->count()>0) {
+        $posts = Post::whereRaw($matchbrand)->where('status', 1)->orderBy('id', 'desc')->where('expire_date', '>', Carbon::now()->toDateTimeString())->get();
+        if ($posts->count() > 0) {
             $response['posts'] = $posts;
             $response['message'] = "Search Result";
             return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
@@ -232,4 +349,18 @@ class PostsController extends Controller
     {
         echo json_encode(array('meta' => array('status' => $status), 'response' => $response));
     }*/
+
+    public function test(){
+        return 'dd';
+        //return Auth::guard('api')->check();
+
+    }
+    public function test1(){
+        dd(Auth::id());
+        if (Auth::check()){
+            return 'dddd';
+        }
+        return 'test1';
+
+    }
 }

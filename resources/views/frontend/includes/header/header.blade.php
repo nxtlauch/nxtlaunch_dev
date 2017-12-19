@@ -168,8 +168,12 @@
                title="Launch An Event"  class="header-icon btn-link m-l-10 p-r-15 sm-no-margin d-inline-block"><img
                         src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUBAMAAAB/pwA+AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAtUExURf///////0dwTP////////////////////////////////////////////////zKVJ0AAAAPdFJOU/nfAAoqoYI5GGqwWc1AxF/GqhEAAACnSURBVAgdY1CCAOWbuQwQlnoAAzeEqbGAgYEXwnRkYGBgBjNVBHgYGB6BmY0MRRcYJoGYyg8YlBQYjBiUlI21GBgyEjiVGJQcOBOAmhgWKTFoCESDWFxGSgyqPAUgZpASUHSLAJDFBtTNoKQLEtwEZpo/YGAQB7KAoo0+DDyuYKZ65JEF4YJg5i6niR4buMDMx9pJSgnBYOaJO01KniCWEsOrEDANJADToyZjd5vZCQAAAABJRU5ErkJggg=="></a>
             <a href="{{route('frontend.home.explore')}}"
+               class="header-icon btn-link m-l-10 p-r-15 sm-no-margin d-inline-block"
+               title="Explore"><img
+                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAFqSURBVDhPvZQ9S8NgFIVDhVIt+DGIq6ODXbu0OLgLDorYsT+gIC7+AXHxrwgO6iYubm4OSgfxo4JLQUFQp8TnxNOaVgtNgx54+t733JuTFJI3+DdFUZSDahiGRVtd4Y1DRTBTsP27GMgzWIcmdcT6BoewoT5rGe7Uk1TLiy9OCrMIW9DyrIbP4Ag+4ACrwHrvXku41g2+nxRDj99WMym8Pfcn2c5rzv4Dy4Sg7oRW4jCJTU1mv/DjwI6wqvYVojD9q0yBObxb9x6F6xv1PDZ8oIS35nZSq25/KU2ghH/iEc2oHoMFt1M/od7BOXgyqreh5pHUgQ1YhGVTgncYLRB7B/+KdUpQX3t29ED3ToVqKXNgv4YKRC/09mHWo9kD9UP/FXYpZ+BHIL02DP5S2J/DCqXer3XqS/vPcKFaotYBoQOl94jD2ATpGJZsd8W1OhuTwU2oU+Y90isa0wyUvB0o5vQtl7Xa+msFwSeK6Yg8Ru6J7AAAAABJRU5ErkJggg=="></a>
+            {{--<a href="{{route('frontend.home.explore')}}"
                class="header-icon pg pg-alt_menu btn-link m-l-10 p-r-15 sm-no-margin d-inline-block"
-               title="Explore"></a>
+               title="Explore"></a>--}}
             {{--<a  href="{{route('frontend.home')}}" class="header-icon btn-link m-l-10 p-r-15 sm-no-margin d-inline-block"><img
                         src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUBAMAAAB/pwA+AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAtUExURf///////0dwTP////////////////////////////////////////////////zKVJ0AAAAPdFJOU/nfAAoqoYI5GGqwWc1AxF/GqhEAAACnSURBVAgdY1CCAOWbuQwQlnoAAzeEqbGAgYEXwnRkYGBgBjNVBHgYGB6BmY0MRRcYJoGYyg8YlBQYjBiUlI21GBgyEjiVGJQcOBOAmhgWKTFoCESDWFxGSgyqPAUgZpASUHSLAJDFBtTNoKQLEtwEZpo/YGAQB7KAoo0+DDyuYKZ65JEF4YJg5i6niR4buMDMx9pJSgnBYOaJO01KniCWEsOrEDANJADToyZjd5vZCQAAAABJRU5ErkJggg=="></a>
             <a href="{{Auth::user()->role_id==4?route('frontend.newlaunch'):'javascript://'}}"

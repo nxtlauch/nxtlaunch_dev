@@ -57,7 +57,7 @@ class CommentController extends Controller
         $post->comment = $request->comment;
 
         if ($post->save()) {
-            $response['comment_id'] = $post->id;
+            $response['comment'] = $post;
             $response['message'] = "Commented Successfully";
             return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
         } else {

@@ -12,7 +12,6 @@
             })
         });
     </script>
-
 @endif
 
 @if(Session::has('errMessage'))

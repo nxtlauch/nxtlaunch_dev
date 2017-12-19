@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\DeviceToken;
 use App\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -30,11 +31,21 @@ class UserController extends Controller
         if (Auth::attempt(['email' => request('email'), 'password' => request('password')])) {
 
             $user = Auth::user();
-            if (Auth::user()->status != 1){
+            if (Auth::user()->status != 1) {
                 $response['message'] = "Your Id is Banned";
                 return response()->json(array('meta' => array('status' => $this->failureStatus), 'response' => $response));
             }
-            $response['token'] = $user->createToken($request->device_token)->accessToken;
+            $deviceToken = DeviceToken::where('user_id', Auth::id())->where('device_token', $request->device_token)->first();
+            if ($deviceToken) {
+                $deviceToken->status = 1;
+                $deviceToken->save();
+            } else {
+                $deviceToken = new DeviceToken();
+                $deviceToken->device_token = $request->device_token;
+                $deviceToken->user_id = Auth::id();
+                $deviceToken->save();
+            }
+            $response['token'] = 'Bearer ' . $user->createToken($request->device_token)->accessToken;
             $response['user'] = $user;
             $response['message'] = "Login Successfull";
             return response()->json(array('meta' => array('status' => $this->successStatus), 'response' => $response));
@@ -65,7 +76,18 @@ class UserController extends Controller
         $input = $request->all();
         $input['password'] = bcrypt($input['password']);
         $user = User::create($input);
-        $response['token'] = $user->createToken($request->device_token)->accessToken;
+
+        $deviceToken = DeviceToken::where('user_id', $user->id)->where('device_token', $request->device_token)->first();
+        if ($deviceToken) {
+            $deviceToken->status = 1;
+            $deviceToken->save();
+        } else {
+            $deviceToken = new DeviceToken();
+            $deviceToken->device_token = $request->device_token;
+            $deviceToken->user_id = $user->id;
+            $deviceToken->save();
+        }
+        $response['token'] = 'Bearer ' . $user->createToken($request->device_token)->accessToken;
         $response['user'] = $user;
         return response()->json(array('meta' => array('status' => $this->successStatus), 'response' => $response));
 
@@ -74,7 +96,20 @@ class UserController extends Controller
 
     public function logout(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'device_token' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            $response['message'] = $validator->errors()->first();
+            return response()->json(array('meta' => array('status' => $this->failureStatus), 'response' => $response));
+        }
         if (Auth::check()) {
+            $deviceToken = DeviceToken::where('user_id', Auth::id())->where('device_token', $request->device_token)->first();
+            if ($deviceToken) {
+                $deviceToken->status = 0;
+                $deviceToken->save();
+            }
             Auth::user()->token()->revoke();
             $success['message'] = "Logout succesfull";
             return response()->json(['response' => $success], $this->successStatus);
@@ -95,8 +130,9 @@ class UserController extends Controller
 
     }
 
-    public function userDetailsById($id){
-        $user = User::where('id',$id)->with('userDetails')->first();
+    public function userDetailsById($id)
+    {
+        $user = User::where('id', $id)->with('userDetails')->first();
 
         if ($user) {
             $response['user'] = $user;

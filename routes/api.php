@@ -16,26 +16,34 @@ use Illuminate\Http\Request;
 Route::prefix('v1')->group(function () {
     Route::post('sign-in', 'Api\UserController@login');
     Route::post('sign-up', 'Api\UserController@register');
-
+    Route::post('unauth-posts', 'Api\PostsController@unauthHome');
+    Route::post('explore', 'Api\PostsController@explore');
+//    Route::post('test', 'Api\PostsController@test');
 
     /*Authenticated routes */
     Route::group(['middleware' => 'auth:api'], function () {
+        Route::post('test', 'Api\PostsController@test1');
 
-        Route::get('user-info', 'Api\UserController@userDetails');
-        Route::get('user-info/{id}', 'Api\UserController@userDetailsById');
+        Route::post('user-info', 'Api\UserController@userDetails');
+        Route::post('user-info/{id}', 'Api\UserController@userDetailsById');
         Route::post('logout', 'Api\UserController@logout');
         /*Post routes*/
-        Route::resource('post', 'Api\PostsController')->only('index', 'store', 'show', 'update', 'destroy');
-        Route::get('my-list', 'Api\PostsController@my_list');
+        Route::post('posts', 'Api\PostsController@index');
+        Route::post('post', 'Api\PostsController@store');
+        Route::post('post/{id}', 'Api\PostsController@show');
+//        Route::resource('post', 'Api\PostsController')->only('index', 'store', 'show', 'update', 'destroy');
+        Route::post('my-list', 'Api\PostsController@my_list');
         Route::post('search-post', 'Api\PostsController@searchPost');
         /*End Post routes*/
 
         /*Like routes*/
-        Route::resource('like', 'Api\LikeController')->only('store', 'destroy');
+        Route::post('like', 'Api\LikeController@store');
+//        Route::resource('like', 'Api\LikeController')->only('store', 'destroy');
         /*End Like Route*/
 
         /*Comment Route*/
-        Route::resource('comment', 'Api\CommentController')->only('store', 'show', 'update', 'destroy');
+        Route::post('comment', 'Api\CommentController@store');
+//        Route::resource('comment', 'Api\CommentController')->only('store', 'show', 'update', 'destroy');
         /*End Comment routes*/
 
         /*Comment Reply routes*/
@@ -43,25 +51,29 @@ Route::prefix('v1')->group(function () {
         /*End Comment Reply routes*/
 
         /*Follow routes*/
-        Route::resource('follow', 'Api\FollowController')->only('store', 'destroy');
-        Route::get('my-following-user', 'Api\FollowController@my_following');
+        Route::post('follow', 'Api\FollowController@store');
+//        Route::resource('follow', 'Api\FollowController')->only('store', 'destroy');
+        Route::post('my-following-user', 'Api\FollowController@my_following');
         /*End Follow routes*/
 
         /*follow a post*/
-        Route::resource('post-follow', 'Api\FollowPostController')->only('index', 'store');
+        Route::post('post-follows', 'Api\FollowPostController@index');
+        Route::post('post-follow', 'Api\FollowPostController@store');
+//        Route::resource('post-follow', 'Api\FollowPostController')->only('index', 'store');
         /*end follow a post*/
 
         /*User Details routes*/
-        Route::resource('user-details', 'Api\UserDetailController')->only('store', 'show');
+        Route::post('user-details', 'Api\UserDetailController@store');
+//        Route::resource('user-details', 'Api\UserDetailController')->only('store', 'show');
         Route::post('pro-user-registration', 'Api\UserDetailController@proUserRegistration');
-        Route::get('pro-user-categories', 'Api\UserCategoryController@index');
+        Route::post('pro-user-categories', 'Api\UserCategoryController@index');
         /*End User Details Routes*/
 
         /*Share Routes*/
         Route::resource('share', 'Api\ShareController')->only('store', 'show', 'update', 'destroy');
         /*End Share Routes*/
         /*Category route*/
-        Route::resource('post-category', 'Api\CategoryController')->only('index');
+        Route::post('post-category', 'Api\CategoryController@index');
         /*End Category route*/
     });
 
