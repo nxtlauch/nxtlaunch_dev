@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\FollowPost;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -15,13 +16,43 @@ class FollowPostController extends Controller
 
     public function index()
     {
-        $likes = FollowPost::where('user_id',Auth::id())->with('post')->get();
-        if ($likes->count()>0) {
-            $response['follow_list'] = $likes;
-            $response['message'] = "All follows Render";
+        $dt = Carbon::now()->toDateTimeString();
+        $follows = FollowPost::where('user_id',Auth::id())
+            ->whereHas('post',function ($q) use($dt) {
+            $q->where('expire_date', '>', $dt);
+        })
+            ->with('post.user','post.likes.user:id,name','post.comments.user:id,name','post.follows')
+            ->orderBy('id', 'desc')
+            ->get();
+        foreach ($follows as $follow) {
+            $user = clone $follow->post->user;
+            if (@$user->userDetails->profile_picture) {
+                $follow->post->user->profile_picture = $user->userDetails->profile_picture;
+            } else {
+                $follow->post->user->profile_picture = "avatar.png";
+            }
+            if ($follow->post->likes->contains('user_id',Auth::id())){
+                $follow->post->liked_by_me=1;
+            }else{
+                $follow->post->liked_by_me=0;
+            }
+            if ($follow->post->comments->contains('user_id',Auth::id())){
+                $follow->post->commented_by_me=1;
+            }else{
+                $follow->post->commented_by_me=0;
+            }
+            if ($follow->post->follows->contains('user_id',Auth::id())){
+                $follow->post->followed_by_me=1;
+            }else{
+                $follow->post->followed_by_me=0;
+            }
+        }
+        if ($follows->count()>0) {
+            $response['posts'] = $follows->pluck('post');
+            $response['message'] = "My Followed post Render";
             return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
         } else {
-            $response['message'] = "No Follow Found";
+            $response['message'] = "No Post Found";
             return response()->json(['meta' => array('status' => $this->failureStatus), 'response' => $response]);
         }
     }

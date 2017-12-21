@@ -272,7 +272,7 @@
                                                 @endforelse
                                             </div>
                                             <div id="followingPosts" class="plx__tabs-item">
-                                                @forelse($user->followPosts as $post)
+                                                @forelse($user->followPosts->sortByDesc('id') as $post)
                                                     <div class="plx__post alt" id="post_id_{{$post->post->id}}">
                                                         <div class="ratio-4-3 plx__post-thumb"
                                                              style="background-image: url('{{asset('content-dir/posts/images/'.$post->post->image) }}')"></div>

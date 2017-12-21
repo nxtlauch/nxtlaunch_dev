@@ -40,16 +40,16 @@ class PostsController extends Controller
                         $z->where('user_id', Auth::id());
                     });
             })
-            ->orderBy('id', 'desc')
-            ->with('user', 'comments.user:id,name', 'likes.user:id,name')
+            ->orderBy('expire_date', 'asc')
+            ->with('user', 'comments.user:id,name', 'likes.user:id,name','follows')
             ->where('expire_date', '>', $dt)
             ->get();
-        $postIds = $post1->pluck('id');
         if ($post1->count() < 10) {
+            $postIds = $post1->pluck('id');
             $take = 10 - $post1->count();
             $post2 = Post::where('status', 1)
-                ->orderBy('id', 'desc')
-                ->with('user', 'comments.user:id,name', 'likes.user:id,name')
+                ->orderBy('expire_date', 'asc')
+                ->with('user', 'comments.user:id,name', 'likes.user:id,name','follows')
                 ->where('expire_date', '>', $dt)
                 ->whereNotIn('id', $postIds)
                 ->take($take)
@@ -60,7 +60,7 @@ class PostsController extends Controller
         }
         foreach ($posts as $post) {
             $user = clone $post->user;
-            if ($user->userDetails->profile_picture) {
+            if (@$user->userDetails->profile_picture) {
                 $post->user->profile_picture = $user->userDetails->profile_picture;
             } else {
                 $post->user->profile_picture = "avatar.png";
@@ -89,12 +89,12 @@ class PostsController extends Controller
             $response['message'] = "No Post Found";
             return response()->json(['meta' => array('status' => $this->failureStatus), 'response' => $response]);
         }
-        
+
         /*$dt = Carbon::now()->toDateTimeString();
         $posts = Post::where('status', 1)->orderBy('id', 'desc')->with('user', 'comments.user:id,name', 'likes.user:id,name')->where('expire_date', '>', $dt)->get();
         foreach ($posts as $post) {
             $user = clone $post->user;
-            if ($user->userDetails->profile_picture) {
+            if (@$user->userDetails->profile_picture) {
                 $post->user->profile_picture = $user->userDetails->profile_picture;
             } else {
                 $post->user->profile_picture = "avatar.png";
@@ -128,10 +128,10 @@ class PostsController extends Controller
     public function unauthHome()
     {
         $dt = Carbon::now()->toDateTimeString();
-        $posts = Post::where('status', 1)->orderBy('id', 'desc')->with('user', 'comments.user:id,name', 'likes.user:id,name')->where('expire_date', '>', $dt)->take(10)->get();
+        $posts = Post::where('status', 1)->orderBy('expire_date', 'asc')->with('user', 'comments.user:id,name', 'likes.user:id,name')->where('expire_date', '>', $dt)->take(10)->get();
         foreach ($posts as $post) {
             $user = clone $post->user;
-            if ($user->userDetails->profile_picture) {
+            if (@$user->userDetails->profile_picture) {
                 $post->user->profile_picture = $user->userDetails->profile_picture;
             } else {
                 $post->user->profile_picture = "avatar.png";
@@ -146,8 +146,13 @@ class PostsController extends Controller
             } else {
                 $post->commented_by_me = 0;
             }
+            if ($post->follows->contains('user_id', Auth::id())) {
+                $post->followed_by_me = 1;
+            } else {
+                $post->followed_by_me = 0;
+            }
         }
-        if (!empty($posts)) {
+        if ($posts->count()>0) {
             $response['posts'] = $posts;
             $response['message'] = "All Posts Render";
             return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
@@ -164,7 +169,7 @@ class PostsController extends Controller
         $posts = Post::where('status', 1)->orderBy('id', 'desc')->with('user', 'comments.user:id,name', 'likes.user:id,name')->where('expire_date', '>', $dt)->get();
         foreach ($posts as $post) {
             $user = clone $post->user;
-            if ($user->userDetails->profile_picture) {
+            if (@$user->userDetails->profile_picture) {
                 $post->user->profile_picture = $user->userDetails->profile_picture;
             } else {
                 $post->user->profile_picture = "avatar.png";
@@ -179,8 +184,13 @@ class PostsController extends Controller
             } else {
                 $post->commented_by_me = 0;
             }
+            if ($post->follows->contains('user_id', Auth::id())) {
+                $post->followed_by_me = 1;
+            } else {
+                $post->followed_by_me = 0;
+            }
         }
-        if (!empty($posts)) {
+        if ($posts->count()>0) {
             $response['posts'] = $posts;
             $response['message'] = "All Posts Render";
             return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
@@ -279,10 +289,25 @@ class PostsController extends Controller
         $post = Post::where('id', $id)->with(['user', 'comments.user', 'likes.user'])->first();
         if ($post) {
             $user = clone $post->user;
-            if ($user->userDetails->profile_picture) {
+            if (@$user->userDetails->profile_picture) {
                 $post->user->profile_picture = $user->userDetails->profile_picture;
             } else {
                 $post->user->profile_picture = "avatar.png";
+            }
+            if ($post->likes->contains('user_id', Auth::id())) {
+                $post->liked_by_me = 1;
+            } else {
+                $post->liked_by_me = 0;
+            }
+            if ($post->comments->contains('user_id', Auth::id())) {
+                $post->commented_by_me = 1;
+            } else {
+                $post->commented_by_me = 0;
+            }
+            if ($post->follows->contains('user_id', Auth::id())) {
+                $post->followed_by_me = 1;
+            } else {
+                $post->followed_by_me = 0;
             }
             $response['post'] = $post;
             $response['message'] = "Post info Render";
@@ -379,7 +404,7 @@ class PostsController extends Controller
         $posts = Post::where('user_id', Auth::id())->where('status', 1)->orderBy('id', 'desc')->with('user', 'comments.user:id,name', 'likes.user:id,name')->where('expire_date', '>', $dt)->get();
         foreach ($posts as $post) {
             $user = clone $post->user;
-            if ($user->userDetails->profile_picture) {
+            if (@$user->userDetails->profile_picture) {
                 $post->user->profile_picture = $user->userDetails->profile_picture;
             } else {
                 $post->user->profile_picture = "avatar.png";
@@ -481,7 +506,7 @@ class PostsController extends Controller
         }
         foreach ($posts as $post) {
             $user = clone $post->user;
-            if ($user->userDetails->profile_picture) {
+            if (@$user->userDetails->profile_picture) {
                 $post->user->profile_picture = $user->userDetails->profile_picture;
             } else {
                 $post->user->profile_picture = "avatar.png";
@@ -525,7 +550,7 @@ class PostsController extends Controller
             ->get()->sortByDesc('likes.id');
         foreach ($posts as $post) {
             $user = clone $post->user;
-            if ($user->userDetails->profile_picture) {
+            if (@$user->userDetails->profile_picture) {
                 $post->user->profile_picture = $user->userDetails->profile_picture;
             } else {
                 $post->user->profile_picture = "avatar.png";
@@ -568,7 +593,7 @@ class PostsController extends Controller
             ->get()->sortByDesc('likes.id');
         foreach ($posts as $post) {
             $user = clone $post->user;
-            if ($user->userDetails->profile_picture) {
+            if (@$user->userDetails->profile_picture) {
                 $post->user->profile_picture = $user->userDetails->profile_picture;
             } else {
                 $post->user->profile_picture = "avatar.png";

@@ -71,18 +71,10 @@ class FrontendController extends Controller
 
     public function home()
     {
-//        dd(Auth::user()->followedBy);
         $dt = Carbon::now()->toDateTimeString();
         $data = array();
-
-        /* where(function ($q) use ($search_key) {
-             $q->where('name', 'like', "%$search_key%")
-                 ->orWhere('email', 'like', "%$search_key%");
-         })*/
-//        $data['posts'] = Post::where('status', 1)->orderBy('id', 'desc')->with('user', 'comments.user:id,name', 'likes.user:id,name')->get()->where('expire_date', '>', $dt);
-        $data['posts'] = Post::where('status', 1)
+        $post1 = Post::where('status', 1)
             ->where('expire_date', '>', $dt)
-            ->orderBy('id', 'desc')
             ->where(function ($q) {
                 $q->whereHas('user.followers', function ($query) {
                     $query->where('followed_by', Auth::id());
@@ -90,7 +82,24 @@ class FrontendController extends Controller
                     ->orWhereHas('user.posts.follows', function ($z) {
                         $z->where('user_id', Auth::id());
                     });
-            })->with('user', 'comments.user:id,name', 'likes.user:id,name')->get();
+            })->with('user', 'comments.user:id,name', 'likes.user:id,name')
+            ->orderBy('expire_date', 'asc')
+            ->get();
+        if ($post1->count() < 10) {
+            $postIds = $post1->pluck('id');
+            $take = 10 - $post1->count();
+            $post2 = Post::where('status', 1)
+                ->where('expire_date', '>', $dt)
+                ->whereNotIn('id', $postIds)
+                ->with('user', 'comments.user:id,name', 'likes.user:id,name')
+                ->orderBy('expire_date', 'asc')
+                ->take($take)
+                ->get();
+            $posts = $post1->merge($post2);
+        } else {
+            $posts = $post1;
+        }
+        $data['posts'] = $posts;
         return view('frontend.home.index')->with($data);
     }
 

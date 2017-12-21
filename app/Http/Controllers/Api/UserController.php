@@ -118,8 +118,13 @@ class UserController extends Controller
 
     public function userDetails()
     {
-        $user = Auth::user()->with('userDetails')->first();
+        $user = Auth::user();
         if ($user) {
+            if (@$user->userDetails->profile_picture) {
+                $user->profile_picture = $user->userDetails->profile_picture;
+            } else {
+                $user->profile_picture = "avatar.png";
+            }
             $response['user'] = $user;
             $response['message'] = "User Information";
             return response()->json(array('meta' => array('status' => $this->successStatus), 'response' => $response));
@@ -135,6 +140,11 @@ class UserController extends Controller
         $user = User::where('id', $id)->with('userDetails')->first();
 
         if ($user) {
+            if (@$user->userDetails->profile_picture) {
+                $user->profile_picture = $user->userDetails->profile_picture;
+            } else {
+                $user->profile_picture = "avatar.png";
+            }
             $response['user'] = $user;
             $response['message'] = "User Information";
             return response()->json(array('meta' => array('status' => $this->successStatus), 'response' => $response));
@@ -146,13 +156,14 @@ class UserController extends Controller
     }
 
     public function my_following(){
-        $users = User::whereHas('followedBy', function ($q){
-                $q->where('followed_by',Auth::id() );
+        $users = User::whereHas('followers', function ($q){
+                $q->where('followed_by',Auth::id());
             })
-            ->get()->sortByDesc('followedBy.id');
+            ->get();
+
         foreach ($users as $user) {
             $user->followed_by_me=1;
-            if ($user->userDetails->profile_picture) {
+            if (@$user->userDetails->profile_picture) {
                 $user->profile_picture = $user->userDetails->profile_picture;
             } else {
                 $user->profile_picture = "avatar.png";

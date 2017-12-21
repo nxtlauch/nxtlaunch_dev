@@ -133,9 +133,17 @@ class FollowController extends Controller
     /*Authenticated User following Post*/
     public function my_following()
     {
-        $follows = Follow::where('followed_by', Auth::id())->with(['user'])->get();
+        $follows = Follow::where('followed_by', Auth::id())->with(['user.userDetails'])->orderBy('id', 'desc')->get()->pluck('user');
         if ($follows) {
-            $response['follows'] = $follows;
+            foreach ($follows as $brand) {
+                $brand->followed_by_me = 1;
+                if (@$brand->userDetails->profile_picture) {
+                    $brand->profile_picture = $brand->userDetails->profile_picture;
+                } else {
+                    $brand->profile_picture = "avatar.png";
+                }
+            }
+            $response['brands'] = $follows;
             $response['message'] = "My following users";
             return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
         } else {

@@ -22,7 +22,8 @@ Route::prefix('v1')->group(function () {
 
     /*Authenticated routes */
     Route::group(['middleware' => 'auth:api'], function () {
-        Route::post('test', 'Api\PostsController@test1');
+//        Route::post('test', 'Api\PostsController@test1');
+//        Route::post('test', 'Api\LikeController@myLiked');
 
         Route::post('user-info', 'Api\UserController@userDetails');
         Route::post('user-info/{id}', 'Api\UserController@userDetailsById');
@@ -38,8 +39,8 @@ Route::prefix('v1')->group(function () {
 
         /*Like routes*/
         Route::post('like', 'Api\LikeController@store');
-        Route::post('my-like', 'Api\PostsController@myLiked');
-//        Route::post('my-like', 'Api\LikeController@myLiked');
+//        Route::post('my-like', 'Api\PostsController@myLiked');
+        Route::post('my-like', 'Api\LikeController@myLiked');
 //        Route::resource('like', 'Api\LikeController')->only('store', 'destroy');
         /*End Like Route*/
 
@@ -55,13 +56,13 @@ Route::prefix('v1')->group(function () {
         /*Follow routes*/
         Route::post('follow', 'Api\FollowController@store');
 //        Route::resource('follow', 'Api\FollowController')->only('store', 'destroy');
-//        Route::post('my-following-user', 'Api\FollowController@my_following');
-        Route::post('my-following-user', 'Api\UserController@my_following');
+//        Route::post('my-following-user', 'Api\UserController@my_following');
+        Route::post('my-following-user', 'Api\FollowController@my_following');
         /*End Follow routes*/
 
         /*follow a post*/
-//        Route::post('post-follows', 'Api\FollowPostController@index');
-        Route::post('post-follows', 'Api\PostsController@postFollowedByMe');
+        Route::post('post-follows', 'Api\FollowPostController@index');
+//        Route::post('post-follows', 'Api\PostsController@postFollowedByMe');
         Route::post('post-follow', 'Api\FollowPostController@store');
 //        Route::resource('post-follow', 'Api\FollowPostController')->only('index', 'store');
         /*end follow a post*/
