@@ -7,6 +7,7 @@ use App\Post;
 use Carbon\Carbon;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
+use Illuminate\Support\Facades\Log;
 
 class Kernel extends ConsoleKernel
 {
@@ -31,6 +32,7 @@ class Kernel extends ConsoleKernel
 //         $schedule->command('reminder:create')
 //                  ->everyMinute();
         $schedule->call(function () {
+            Log::info('Showing Test : '.time());
             $now = Carbon::now();
             $posts = Post::where('status', 1)->where('expire_date', '>', $now->toDateTimeString())->get();
             foreach ($posts as $post) {
@@ -47,6 +49,7 @@ class Kernel extends ConsoleKernel
                             $followNotification->purpose_id = $post->id;
                             $followNotification->noti_to = $follow->user_id;
                             $followNotification->save();
+
                         }
                     }
                 }

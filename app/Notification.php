@@ -15,6 +15,12 @@ class Notification extends Model
         'noti_to',
         'status'
     ];
+    protected $hidden=[
+        'noti_text',
+        'noti_for',
+        'noti_activity',
+        'noti_to'
+    ];
 
     public function user()
     {

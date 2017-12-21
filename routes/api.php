@@ -38,6 +38,8 @@ Route::prefix('v1')->group(function () {
 
         /*Like routes*/
         Route::post('like', 'Api\LikeController@store');
+        Route::post('my-like', 'Api\PostsController@myLiked');
+//        Route::post('my-like', 'Api\LikeController@myLiked');
 //        Route::resource('like', 'Api\LikeController')->only('store', 'destroy');
         /*End Like Route*/
 
@@ -53,11 +55,13 @@ Route::prefix('v1')->group(function () {
         /*Follow routes*/
         Route::post('follow', 'Api\FollowController@store');
 //        Route::resource('follow', 'Api\FollowController')->only('store', 'destroy');
-        Route::post('my-following-user', 'Api\FollowController@my_following');
+//        Route::post('my-following-user', 'Api\FollowController@my_following');
+        Route::post('my-following-user', 'Api\UserController@my_following');
         /*End Follow routes*/
 
         /*follow a post*/
-        Route::post('post-follows', 'Api\FollowPostController@index');
+//        Route::post('post-follows', 'Api\FollowPostController@index');
+        Route::post('post-follows', 'Api\PostsController@postFollowedByMe');
         Route::post('post-follow', 'Api\FollowPostController@store');
 //        Route::resource('post-follow', 'Api\FollowPostController')->only('index', 'store');
         /*end follow a post*/
@@ -75,6 +79,16 @@ Route::prefix('v1')->group(function () {
         /*Category route*/
         Route::post('post-category', 'Api\CategoryController@index');
         /*End Category route*/
+
+        /*notification api */
+        Route::post('notifications', 'Api\NotificationController@notifications');
+        /*End notification api */
+
+        /*messages*/
+        Route::post('save-conversation', 'Api\ConversationController@saveChatRoom');
+        Route::post('chat-history', 'Api\MessageController@chatHistory');
+        Route::post('new-message', 'Api\MessageController@saveMessage');
+        /*end messages*/
     });
 
 });

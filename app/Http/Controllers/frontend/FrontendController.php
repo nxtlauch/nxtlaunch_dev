@@ -496,7 +496,8 @@ class FrontendController extends Controller
         }*/
         if ($request->hasFile('image')) {
             $file = $request->file('image');
-            $filename = time() . $file->getClientOriginalName();
+            $filenam = time() . $file->getClientOriginalName();
+            $filename = str_replace(' ', '', $filenam);
             $destinationPath = base_path('content-dir/posts/images');
             $img = Image::make($file);
             $img->save($destinationPath . '/' . $filename);

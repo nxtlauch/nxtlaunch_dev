@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Like;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -130,4 +131,46 @@ class LikeController extends Controller
             return response()->json(['meta' => array('status' => $this->failureStatus), 'response' => $response]);
         }
     }
+    /*public function myLiked(){
+        $dt = Carbon::now()->toDateTimeString();
+        $data['posts'] = Like::where('user_id', Auth::id())->with('')->orderBy('id', 'desc')->get()->where('post.expire_date', '>', $dt);
+        $posts = Post::where('status', 1)
+            ->with('user', 'comments.user:id,name', 'likes.user:id,name')
+            ->where('expire_date', '>', $dt)
+            ->whereHas('likes', function ($q){
+                $q->where('user_id',Auth::id() );
+            })
+            ->get()->sortByDesc('likes.id');
+        foreach ($posts as $post) {
+            $user = clone $post->user;
+            if ($user->userDetails->profile_picture) {
+                $post->user->profile_picture = $user->userDetails->profile_picture;
+            } else {
+                $post->user->profile_picture = "avatar.png";
+            }
+            if ($post->likes->contains('user_id',Auth::id())){
+                $post->liked_by_me=1;
+            }else{
+                $post->liked_by_me=0;
+            }
+            if ($post->comments->contains('user_id',Auth::id())){
+                $post->commented_by_me=1;
+            }else{
+                $post->commented_by_me=0;
+            }
+            if ($post->follows->contains('user_id',Auth::id())){
+                $post->followed_by_me=1;
+            }else{
+                $post->followed_by_me=0;
+            }
+        }
+        if (!empty($posts)) {
+            $response['posts'] = $posts;
+            $response['message'] = "My Likes Render";
+            return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
+        } else {
+            $response['message'] = "No Post Found";
+            return response()->json(['meta' => array('status' => $this->failureStatus), 'response' => $response]);
+        }
+    }*/
 }

@@ -145,5 +145,28 @@ class UserController extends Controller
         }
     }
 
+    public function my_following(){
+        $users = User::whereHas('followedBy', function ($q){
+                $q->where('followed_by',Auth::id() );
+            })
+            ->get()->sortByDesc('followedBy.id');
+        foreach ($users as $user) {
+            $user->followed_by_me=1;
+            if ($user->userDetails->profile_picture) {
+                $user->profile_picture = $user->userDetails->profile_picture;
+            } else {
+                $user->profile_picture = "avatar.png";
+            }
+        }
+        if ($users->count()>0) {
+            $response['brands'] = $users;
+            $response['message'] = "Brand  Information";
+            return response()->json(array('meta' => array('status' => $this->successStatus), 'response' => $response));
+        } else {
+            $response['message'] = "No brands found";
+            return response()->json(array('meta' => array('status' => $this->failureStatus), 'response' => $response));
+        }
+    }
+
 
 }
