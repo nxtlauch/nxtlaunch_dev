@@ -112,7 +112,7 @@ class UserController extends Controller
             }
             Auth::user()->token()->revoke();
             $success['message'] = "Logout succesfull";
-            return response()->json(['response' => $success], $this->successStatus);
+            return response()->json(array('meta' => array('status' => $this->successStatus), 'response' => $success));
         }
     }
 

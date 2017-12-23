@@ -164,7 +164,6 @@ class PostsController extends Controller
 
     public function explore()
     {
-
         $dt = Carbon::now()->toDateTimeString();
         $posts = Post::where('status', 1)->orderBy('id', 'desc')->with('user', 'comments.user:id,name', 'likes.user:id,name')->where('expire_date', '>', $dt)->get();
         foreach ($posts as $post) {
