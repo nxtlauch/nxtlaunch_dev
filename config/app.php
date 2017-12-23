@@ -170,6 +170,7 @@ return [
          * Package Service Providers...
          */
         Chencha\Share\ShareServiceProvider::class,
+        Edujugon\PushNotification\Providers\PushNotificationServiceProvider::class,
 
         /*
          * Application Service Providers...
@@ -231,6 +232,7 @@ return [
         'Image' => Intervention\Image\Facades\Image::class,
         'Socialite' => Laravel\Socialite\Facades\Socialite::class,
         'Share' => Chencha\Share\ShareFacade::class,
+        'PushNotification' => Edujugon\PushNotification\Facades\PushNotification::class,
 
     ],
 
