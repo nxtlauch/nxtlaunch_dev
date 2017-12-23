@@ -305,7 +305,8 @@ class FrontendController extends Controller
             }*/
             if ($request->hasFile('profile_picture')) {
                 $file = $request->file('profile_picture');
-                $filename = time() . $file->getClientOriginalName();
+                $filenam = time() . $file->getClientOriginalName();
+                $filename = str_replace(' ', '', $filenam);
                 $destinationPath = base_path('content-dir/profile_picture');
                 $img = Image::make($file);
                 $img->save($destinationPath . '/' . $filename);

@@ -3,7 +3,7 @@
 <head>
     <meta http-equiv="content-type" content="text/html;charset=UTF-8"/>
     <meta charset="utf-8"/>
-    <title>Nxtlaunch</title>
+    <title>NxtLaunch</title>
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no"/>
     <meta content="" name="description"/>
@@ -61,7 +61,7 @@
                 Lorem ipsum dolor sit amet, consectetur adipisicing elit. Atque libero maxime non porro, quia
                 voluptates!</h2>
             <p class="small">
-                © <?= date('Y') ?> Nxtlaunch.
+                © <?= date('Y') ?> NxtLaunch.
             </p>
         </div>
         <!-- END Background Caption-->
@@ -74,7 +74,7 @@
             <img src="{{asset('public/frontend-assets')}}/assets/img/nxt_logo.png" alt="logo"
                  data-src="{{asset('public/frontend-assets')}}/assets/img/nxt_logo.png"
                  data-src-retina="{{asset('public/frontend-assets')}}/assets/img/nxt_logo_2x.png" height="60">
-            <p class="p-t-35">Sign in to manage Nxtlaunch</p>
+            <p class="p-t-35">Sign in to manage NxtLaunch</p>
 
 
             <!-- START Login Form -->
