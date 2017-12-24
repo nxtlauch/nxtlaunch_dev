@@ -35,6 +35,7 @@ Route::prefix('v1')->group(function () {
 //        Route::resource('post', 'Api\PostsController')->only('index', 'store', 'show', 'update', 'destroy');
         Route::post('my-list', 'Api\PostsController@my_list');
         Route::post('search-post', 'Api\PostsController@searchPost');
+        Route::post('filter-post', 'Api\PostsController@filterPost');
         /*End Post routes*/
 
         /*Like routes*/

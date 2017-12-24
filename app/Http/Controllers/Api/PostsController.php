@@ -41,7 +41,7 @@ class PostsController extends Controller
                     });
             })
             ->orderBy('expire_date', 'asc')
-            ->with('user', 'comments.user:id,name', 'likes.user:id,name','follows')
+            ->with('user', 'comments.user:id,name', 'likes.user:id,name', 'follows')
             ->where('expire_date', '>', $dt)
             ->get();
         if ($post1->count() < 10) {
@@ -49,13 +49,13 @@ class PostsController extends Controller
             $take = 10 - $post1->count();
             $post2 = Post::where('status', 1)
                 ->orderBy('expire_date', 'asc')
-                ->with('user', 'comments.user:id,name', 'likes.user:id,name','follows')
+                ->with('user', 'comments.user:id,name', 'likes.user:id,name', 'follows')
                 ->where('expire_date', '>', $dt)
                 ->whereNotIn('id', $postIds)
                 ->take($take)
                 ->get();
-            $posts=$post1->merge($post2);
-        }else{
+            $posts = $post1->merge($post2);
+        } else {
             $posts = $post1;
         }
         foreach ($posts as $post) {
@@ -152,7 +152,7 @@ class PostsController extends Controller
                 $post->followed_by_me = 0;
             }
         }
-        if ($posts->count()>0) {
+        if ($posts->count() > 0) {
             $response['posts'] = $posts;
             $response['message'] = "All Posts Render";
             return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
@@ -189,7 +189,7 @@ class PostsController extends Controller
                 $post->followed_by_me = 0;
             }
         }
-        if ($posts->count()>0) {
+        if ($posts->count() > 0) {
             $response['posts'] = $posts;
             $response['message'] = "All Posts Render";
             return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
@@ -436,6 +436,13 @@ class PostsController extends Controller
 
     public function searchPost(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'search_key' => 'required'
+        ]);
+        if ($validator->fails()) {
+            $response['message'] = $validator->errors()->first();
+            return response()->json(array('meta' => array('status' => $this->failureStatus), 'response' => $response));
+        }
         $search_key = $request->search_key;
         $searchExist = RecentSearch::where('user_id', Auth::id())->where('search_text', $search_key)->first();
         if ($searchExist) {
@@ -449,10 +456,130 @@ class PostsController extends Controller
         }
 
         $matchbrand = "MATCH (post_details) AGAINST ('" . $search_key . "' IN BOOLEAN MODE)";
-        $posts = Post::whereRaw($matchbrand)->where('status', 1)->orderBy('id', 'desc')->where('expire_date', '>', Carbon::now()->toDateTimeString())->get();
+        $posts = Post::whereRaw($matchbrand)->where('status', 1)->orderBy('id', 'desc')->where('expire_date', '>', Carbon::now()->toDateTimeString())->with('user', 'comments.user:id,name', 'likes.user:id,name', 'follows')->get();
         if ($posts->count() > 0) {
+            foreach ($posts as $post) {
+                $user = clone $post->user;
+                if (@$user->userDetails->profile_picture) {
+                    $post->user->profile_picture = $user->userDetails->profile_picture;
+                } else {
+                    $post->user->profile_picture = "avatar.png";
+                }
+                if ($post->likes->contains('user_id', Auth::id())) {
+                    $post->liked_by_me = 1;
+                } else {
+                    $post->liked_by_me = 0;
+                }
+                if ($post->comments->contains('user_id', Auth::id())) {
+                    $post->commented_by_me = 1;
+                } else {
+                    $post->commented_by_me = 0;
+                }
+                if ($post->follows->contains('user_id', Auth::id())) {
+                    $post->followed_by_me = 1;
+                } else {
+                    $post->followed_by_me = 0;
+                }
+            }
             $response['posts'] = $posts;
             $response['message'] = "Search Result";
+            return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
+        } else {
+            $response['message'] = "No Post Found";
+            return response()->json(['meta' => array('status' => $this->failureStatus), 'response' => $response]);
+        }
+
+    }
+
+    public function filterPost(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'filter_key' => 'required'
+        ]);
+        if ($validator->fails()) {
+            $response['message'] = $validator->errors()->first();
+            return response()->json(array('meta' => array('status' => $this->failureStatus), 'response' => $response));
+        }
+        $filter_key = $request->filter_key;
+
+        $posts = Post::where('status', 1)
+            ->where('expire_date', '>', Carbon::now()->toDateTimeString());
+        if ($filter_key == 'all') {
+            $p = $posts->orderBy('expire_date', 'asc');
+        } elseif ($filter_key == 'random') {
+            $p = $posts->inRandomOrder();
+        } elseif ($filter_key == 'around_me') {
+            if (Auth::user()->location) {
+                $p = $posts->whereHas('user', function ($query) {
+                    $query->where('location', 'like', '%' . Auth::user()->location . '%');
+                })->orderBy('id', 'desc');
+            } else {
+                $response['message'] = 'You Location is not Selected yet';
+                return response()->json(array('meta' => array('status' => $this->failureStatus), 'response' => $response));
+            }
+        } elseif ($filter_key == 'nationality') {
+            if (Auth::user()->location) {
+                $p = $posts->whereHas('user', function ($query) {
+                    $query->where('location', 'like', '%' . Auth::user()->location . '%');
+                })->orderBy('id', 'desc');
+            } else {
+                $response['message'] = 'You Location is not Selected yet';
+                return response()->json(array('meta' => array('status' => $this->failureStatus), 'response' => $response));
+            }
+        } elseif ($filter_key == 'worldwide') {
+            $p = $posts->inRandomOrder();
+        } elseif ($filter_key == 'today') {
+            $today = Carbon::today();
+            $startDate = $today->startOfDay()->toDateTimeString();
+            $endDate = $today->endOfDay()->toDateTimeString();
+            $p = $posts->whereBetween('created_at', [$startDate, $endDate])->orderBy('id', 'desc');
+        } elseif ($filter_key == 'week') {
+            $today = Carbon::today();
+            $startDate = $today->startOfWeek()->toDateTimeString();
+            $endDate = $today->endOfWeek()->toDateTimeString();
+            $p = $posts->whereBetween('created_at', [$startDate, $endDate])->orderBy('id', 'desc');
+        } elseif ($filter_key == 'month') {
+            $today = Carbon::today();
+            $startDate = $today->startOfMonth()->toDateTimeString();
+            $endDate = $today->endOfMonth()->toDateTimeString();
+            $p = $posts->whereBetween('created_at', [$startDate, $endDate])->orderBy('id', 'desc');
+        } elseif ($filter_key == 'year') {
+            $today = Carbon::today();
+            $startDate = $today->startOfYear()->toDateTimeString();
+            $endDate = $today->endOfYear()->toDateTimeString();
+            $p = $posts->whereBetween('created_at', [$startDate, $endDate])->orderBy('id', 'desc');
+        } else {
+            $response['message'] = 'Invalid Filter key';
+            return response()->json(array('meta' => array('status' => $this->failureStatus), 'response' => $response));
+        }
+        $filterd_posts = $p->with('user', 'comments.user:id,name', 'likes.user:id,name', 'follows')->get();
+
+        if ($filterd_posts->count() > 0) {
+            foreach ($filterd_posts as $post) {
+                $user = clone $post->user;
+                if (@$user->userDetails->profile_picture) {
+                    $post->user->profile_picture = $user->userDetails->profile_picture;
+                } else {
+                    $post->user->profile_picture = "avatar.png";
+                }
+                if ($post->likes->contains('user_id', Auth::id())) {
+                    $post->liked_by_me = 1;
+                } else {
+                    $post->liked_by_me = 0;
+                }
+                if ($post->comments->contains('user_id', Auth::id())) {
+                    $post->commented_by_me = 1;
+                } else {
+                    $post->commented_by_me = 0;
+                }
+                if ($post->follows->contains('user_id', Auth::id())) {
+                    $post->followed_by_me = 1;
+                } else {
+                    $post->followed_by_me = 0;
+                }
+            }
+            $response['posts'] = $filterd_posts;
+            $response['message'] = "Filter Posts Render";
             return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
         } else {
             $response['message'] = "No Post Found";
@@ -466,14 +593,16 @@ class PostsController extends Controller
         echo json_encode(array('meta' => array('status' => $status), 'response' => $response));
     }*/
 
-    public function test()
+    public
+    function test()
     {
         return 'dd';
         //return Auth::guard('api')->check();
 
     }
 
-    public function test1()
+    public
+    function test1()
     {
         $dt = Carbon::now()->toDateTimeString();
         $post1 = Post::where('status', 1)
@@ -499,8 +628,8 @@ class PostsController extends Controller
                 ->whereNotIn('id', $postIds)
                 ->take($take)
                 ->get();
-            $posts=$post1->merge($post2);
-        }else{
+            $posts = $post1->merge($post2);
+        } else {
             $posts = $post1;
         }
         foreach ($posts as $post) {
@@ -537,7 +666,8 @@ class PostsController extends Controller
 
     }
 
-    public function myLiked()
+    public
+    function myLiked()
     {
         $dt = Carbon::now()->toDateTimeString();
         $posts = Post::where('status', 1)
@@ -580,7 +710,8 @@ class PostsController extends Controller
         }
     }
 
-    public function postFollowedByMe()
+    public
+    function postFollowedByMe()
     {
         $dt = Carbon::now()->toDateTimeString();
         $posts = Post::where('status', 1)

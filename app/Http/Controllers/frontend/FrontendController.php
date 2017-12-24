@@ -917,16 +917,16 @@ class FrontendController extends Controller
         $posts = Post::where('status', 1);
         if ($f1) {
             if ($f1 == 'all') {
-                $data['posts'] = $posts->orderBy('id', 'desc')->with('user', 'comments.user:id,name', 'likes.user:id,name')->get()->where('expire_date', '>', Carbon::now()->toDateTimeString());
+                $data['posts'] = $posts->where('expire_date', '>', Carbon::now()->toDateTimeString())->with('user', 'comments.user:id,name', 'likes.user:id,name')->orderBy('expire_date', 'asc')->get();
             } else {
-                $data['posts'] = $posts->with('user', 'comments.user:id,name', 'likes.user:id,name')->inRandomOrder()->get()->where('expire_date', '>', Carbon::now()->toDateTimeString());
+                $data['posts'] = $posts->where('expire_date', '>', Carbon::now()->toDateTimeString())->with('user', 'comments.user:id,name', 'likes.user:id,name')->inRandomOrder()->get();
             }
         } else {
             if ($f2) {
                 if ($f2 == 'around_me') {
                     if (Auth::user()->location) {
                         $data['posts'] = $posts->whereHas('user', function ($query) {
-                            $query->where('location', 'like', Auth::user()->location);
+                            $query->where('location', 'like', '%'.Auth::user()->location.'%');
                         });
                     } else {
                         return back()->with('errMessage', 'You Location is not Selected yet');

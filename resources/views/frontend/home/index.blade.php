@@ -46,7 +46,7 @@
                                                     <li>
                                                         <label for="aroundMe" class="filter-item">
                                                             <input id="aroundMe" name="f2" value="around_me"
-                                                                   type="radio" {{@$f1=='around_me'?' checked':''}}>
+                                                                   type="radio" {{@$f2=='around_me'?' checked':''}}>
                                                             <span>Around Me</span>
                                                         </label>
                                                     </li>
