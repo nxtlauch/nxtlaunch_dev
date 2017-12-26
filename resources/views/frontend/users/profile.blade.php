@@ -143,26 +143,25 @@
                                                                 <div class="plx__meta-text">
                                                                     <h4 class="plx__post-author-name">
                                                                         <strong><a href="{{route('frontend.user.profile',$post->user->id)}}"
-                                                                                   style="color: #000000">{{$post->user->name}}</a></strong>
-                                                                    </h4>
+                                                                                   style="color: #000000">{{$post->user->name}}</a></strong></h4>
                                                                 </div>
                                                                 <div class="clearfix"></div>
                                                                 @if($post->user_id != Auth::id())
                                                                     {{--<a href="javascript://" data-href="{{route('frontend.follow.user')}}" data-id="{{$post->user->id}}"
                                                                        class="plx__follow-btn user-follow_{{$post->user->id}} {{$post->user->followers->contains('followed_by',Auth::id())?' added':''}}">{{$post->user->followers->contains('followed_by',Auth::id())?'Following':'Follow'}}</a>--}}
-                                                                    <a href="javascript://"
-                                                                       data-href="{{route('frontend.follow.post')}}"
-                                                                       data-id="{{$post->id}}"
+                                                                    <a href="javascript://" data-href="{{route('frontend.follow.post')}}" data-id="{{$post->id}}"
                                                                        class="plx__follow-btn user-follow_{{$post->id}} {{$post->follows->contains('user_id',Auth::id())?' added':''}}">{{$post->follows->contains('user_id',Auth::id())?'Following':'Follow'}}</a>
                                                                 @endif
+
+                                                                <p class="post-title">{{$post->post_details}}</p>
                                                             </div>
+
                                                             <div class="ratio-4-3 plx__post-thumb"
                                                                  style="background-image: url('{{asset('content-dir/posts/images/'.$post->image)}}')"></div>
                                                             <div class="plx__post-info">
                                                                 <div class="plx__time-countdown m-b-5">
                                                                     @php($days=\Carbon\Carbon::parse($post->expire_date)->diffInDays())
-                                                                    <span title="{{\Carbon\Carbon::parse($post->expire_date)->format('M d, Y H:i')}}"
-                                                                          data-toggle="tooltip"
+                                                                    <span title="{{\Carbon\Carbon::parse($post->expire_date)->format('M d, Y H:i')}}" data-toggle="tooltip"
                                                                           class="plx__countdown {{$days<7?'text-danger':($days<30?'text-warning':'text-success')}}"
                                                                           data-date-time="{{$post->expire_date}}">
                     <span class="number day">08</span>d :
@@ -179,9 +178,7 @@
                                                                            data-id="{{$post->id}}"
                                                                            title="{{$post->likes->contains('user.id',Auth::id())?'Unlike':'Like'}}"
                                                                            class="plx__like {{$post->likes->contains('user.id',Auth::id())?' liked':' -liked'}}"></a>
-                                                                        <a href="#commentContainer{{$post->id}}"
-                                                                           title="Comment"
-                                                                           class="plx__comment toggleComment"></a>
+                                                                        <a href="#commentContainer{{$post->id}}" title="Comment" class="plx__comment toggleComment"></a>
                                                                         <span class="post-share">
                         <a href="#modalId-{{$post->id}}" title="Share" class="plx__share sharePopup"></a>
 
@@ -206,21 +203,15 @@
                     </span>
                                                                     </div>
 
-
                                                                     <div class="pull-right">
                                                                         <div class="options">
-                                                                            <a href="javascript://"
-                                                                               class="options-dot"></a>
+                                                                            <a href="javascript://" class="options-dot"></a>
                                                                             <ul class="options-list">
                                                                                 @if(!$post->postReports->contains('user_id',Auth::id()))
-                                                                                    <li><a href="javascript://"
-                                                                                           class="plx__report12"
-                                                                                           data-post="{{$post->id}}">Report</a>
+                                                                                    <li><a href="javascript://" class="plx__report12" data-post="{{$post->id}}">Report</a>
                                                                                     </li>
                                                                                 @else
-                                                                                    <li><a href="javascript://"
-                                                                                           data-post="{{$post->id}}">Reported</a>
-                                                                                    </li>
+                                                                                    <li><a href="javascript://" data-post="{{$post->id}}">Reported</a></li>
                                                                                 @endif
                                                                                 {{--<li><a href="#">Copy Link</a></li>--}}
                                                                             </ul>
@@ -232,15 +223,13 @@
                                                                     <p class="text-muted Plx__like__count">
                                                                         @include('frontend.home.render.likeCount')
                                                                     </p>
-                                                                    <p class="post-title">{{$post->post_details}}</p>
 
                                                                     <style>
                                                                         .max-height-200 {
                                                                             max-height: 150px;
                                                                         }
                                                                     </style>
-                                                                    <div id="commentContainer{{$post->id}}"
-                                                                         style="display: none;">
+                                                                    <div id="commentContainer{{$post->id}}" style="display: none;">
 
                                                                         @php($comments=$post->comments->sortByDesc('id')->take(2)->reverse())
 
@@ -251,36 +240,26 @@
                                                                         <p class="text-muted Plx__comment__count">
                                                                             @include('frontend.home.render.commentCount')
                                                                         </p>
-                                                                        <a href="#" data-id="{{$post->id}}"
-                                                                           data-count="{{$comments->count()}}"
-                                                                           class="leaveComment {{$post->comments->count()<=2?' hidden':''}} load-more-comment">Load
-                                                                            more
+                                                                        <a href="#" data-id="{{$post->id}}" data-count="{{$comments->count()}}"
+                                                                           class="leaveComment {{$post->comments->count()<=2?' hidden':''}} load-more-comment">Load more
                                                                             comments</a>
-                                                                        <input class="showingCommentCount" type="hidden"
-                                                                               value="{{$comments->count()}}">
+                                                                        <input class="showingCommentCount" type="hidden" value="{{$comments->count()}}">
                                                                         {{--                    <p><a href="{{route('frontend.post.details',$post->id)}}" data-id="{{$post->id}}" data-count="{{$comments->count()}}" class="leaveComment {{$post->comments->count()<=2?' hidden':''}}">View all comments</a></p>--}}
 
                                                                         <div class="scrollable max-height-200">
-                                                                            <ul id="commentFor-{{$post->id}}"
-                                                                                class="plx__comment-list">
+                                                                            <ul id="commentFor-{{$post->id}}" class="plx__comment-list">
                                                                                 @include('frontend.home.render.comment.comments')
                                                                             </ul>
                                                                         </div>
 
                                                                         <div class="post-comments">
-                                                                            <form method="post" data-id="{{$post->id}}"
-                                                                                  class="postComment"
+                                                                            <form method="post" data-id="{{$post->id}}" class="postComment"
                                                                                   action="{{route('frontend.post.comment',$post->id)}}">
                                                                                 {{--{{csrf_field()}}--}}
                                                                                 <div class="form-group comment-form">
-                                                                                    <input class="textareaComment"
-                                                                                           type="text" name="comment"
-                                                                                           placeholder="Write a comment..."
-                                                                                           required autocomplete="off">
-                                                                                    <button type="submit"
-                                                                                            class="submit-btn" disabled>
-                                                                                        <i class="fa fa-paper-plane"></i>
-                                                                                    </button>
+                                                                                    <input class="textareaComment" type="text" name="comment"
+                                                                                           placeholder="Write a comment..." required autocomplete="off">
+                                                                                    <button type="submit" class="submit-btn" disabled><i class="fa fa-paper-plane"></i></button>
                                                                                 </div>
                                                                                 <div class="text-right">
                                                                                 </div>
@@ -310,25 +289,24 @@
                                                                 <div class="plx__meta-text">
                                                                     <h4 class="plx__post-author-name">
                                                                         <strong><a href="{{route('frontend.user.profile',$post->user->id)}}"
-                                                                                   style="color: #000000">{{$post->user->name}}</a></strong>
-                                                                    </h4>
+                                                                                   style="color: #000000">{{$post->user->name}}</a></strong></h4>
                                                                 </div>
                                                                 <div class="clearfix"></div>
                                                                 @if($post->user_id != Auth::id())
                                                                     {{--<a href="javascript://" data-href="{{route('frontend.follow.user')}}" data-id="{{$post->user->id}}"
                                                                        class="plx__follow-btn user-follow_{{$post->user->id}} {{$post->user->followers->contains('followed_by',Auth::id())?' added':''}}">{{$post->user->followers->contains('followed_by',Auth::id())?'Following':'Follow'}}</a>--}}
-                                                                    <a href="javascript://"
-                                                                       data-href="{{route('frontend.follow.post')}}"
-                                                                       data-id="{{$post->id}}"
+                                                                    <a href="javascript://" data-href="{{route('frontend.follow.post')}}" data-id="{{$post->id}}"
                                                                        class="plx__follow-btn user-follow_{{$post->id}} {{$post->follows->contains('user_id',Auth::id())?' added':''}}">{{$post->follows->contains('user_id',Auth::id())?'Following':'Follow'}}</a>
                                                                 @endif
+
+                                                                <p class="post-title">{{$post->post_details}}</p>
                                                             </div>
+
                                                             <div class="ratio-4-3 plx__post-thumb"
                                                                  style="background-image: url('{{asset('content-dir/posts/images/'.$post->image)}}')"></div>
                                                             <div class="plx__post-info">
                                                                 <div class="plx__time-countdown m-b-5">
-                                                                    <span title="{{\Carbon\Carbon::parse($post->expire_date)->format('M d, Y H:i')}}"
-                                                                          data-toggle="tooltip"
+                                                                    <span title="{{\Carbon\Carbon::parse($post->expire_date)->format('M d, Y H:i')}}" data-toggle="tooltip"
                                                                           class="plx__countdown text-danger"
                                                                           data-date-time="{{$post->expire_date}}">
                     <span class="number day">08</span>d :
@@ -345,9 +323,7 @@
                                                                            data-id="{{$post->id}}"
                                                                            title="{{$post->likes->contains('user.id',Auth::id())?'Unlike':'Like'}}"
                                                                            class="plx__like {{$post->likes->contains('user.id',Auth::id())?' liked':' -liked'}}"></a>
-                                                                        <a href="#commentContainer{{$post->id}}"
-                                                                           title="Comment"
-                                                                           class="plx__comment toggleComment"></a>
+                                                                        <a href="#commentContainer{{$post->id}}" title="Comment" class="plx__comment toggleComment"></a>
                                                                         <span class="post-share">
                         <a href="#modalId-{{$post->id}}" title="Share" class="plx__share sharePopup"></a>
 
@@ -372,21 +348,15 @@
                     </span>
                                                                     </div>
 
-
                                                                     <div class="pull-right">
                                                                         <div class="options">
-                                                                            <a href="javascript://"
-                                                                               class="options-dot"></a>
+                                                                            <a href="javascript://" class="options-dot"></a>
                                                                             <ul class="options-list">
                                                                                 @if(!$post->postReports->contains('user_id',Auth::id()))
-                                                                                    <li><a href="javascript://"
-                                                                                           class="plx__report12"
-                                                                                           data-post="{{$post->id}}">Report</a>
+                                                                                    <li><a href="javascript://" class="plx__report12" data-post="{{$post->id}}">Report</a>
                                                                                     </li>
                                                                                 @else
-                                                                                    <li><a href="javascript://"
-                                                                                           data-post="{{$post->id}}">Reported</a>
-                                                                                    </li>
+                                                                                    <li><a href="javascript://" data-post="{{$post->id}}">Reported</a></li>
                                                                                 @endif
                                                                                 {{--<li><a href="#">Copy Link</a></li>--}}
                                                                             </ul>
@@ -398,15 +368,13 @@
                                                                     <p class="text-muted Plx__like__count">
                                                                         @include('frontend.home.render.likeCount')
                                                                     </p>
-                                                                    <p class="post-title">{{$post->post_details}}</p>
 
                                                                     <style>
                                                                         .max-height-200 {
                                                                             max-height: 150px;
                                                                         }
                                                                     </style>
-                                                                    <div id="commentContainer{{$post->id}}"
-                                                                         style="display: none;">
+                                                                    <div id="commentContainer{{$post->id}}" style="display: none;">
 
                                                                         @php($comments=$post->comments->sortByDesc('id')->take(2)->reverse())
 
@@ -417,36 +385,26 @@
                                                                         <p class="text-muted Plx__comment__count">
                                                                             @include('frontend.home.render.commentCount')
                                                                         </p>
-                                                                        <a href="#" data-id="{{$post->id}}"
-                                                                           data-count="{{$comments->count()}}"
-                                                                           class="leaveComment {{$post->comments->count()<=2?' hidden':''}} load-more-comment">Load
-                                                                            more
+                                                                        <a href="#" data-id="{{$post->id}}" data-count="{{$comments->count()}}"
+                                                                           class="leaveComment {{$post->comments->count()<=2?' hidden':''}} load-more-comment">Load more
                                                                             comments</a>
-                                                                        <input class="showingCommentCount" type="hidden"
-                                                                               value="{{$comments->count()}}">
+                                                                        <input class="showingCommentCount" type="hidden" value="{{$comments->count()}}">
                                                                         {{--                    <p><a href="{{route('frontend.post.details',$post->id)}}" data-id="{{$post->id}}" data-count="{{$comments->count()}}" class="leaveComment {{$post->comments->count()<=2?' hidden':''}}">View all comments</a></p>--}}
 
                                                                         <div class="scrollable max-height-200">
-                                                                            <ul id="commentFor-{{$post->id}}"
-                                                                                class="plx__comment-list">
+                                                                            <ul id="commentFor-{{$post->id}}" class="plx__comment-list">
                                                                                 @include('frontend.home.render.comment.comments')
                                                                             </ul>
                                                                         </div>
 
                                                                         <div class="post-comments">
-                                                                            <form method="post" data-id="{{$post->id}}"
-                                                                                  class="postComment"
+                                                                            <form method="post" data-id="{{$post->id}}" class="postComment"
                                                                                   action="{{route('frontend.post.comment',$post->id)}}">
                                                                                 {{--{{csrf_field()}}--}}
                                                                                 <div class="form-group comment-form">
-                                                                                    <input class="textareaComment"
-                                                                                           type="text" name="comment"
-                                                                                           placeholder="Write a comment..."
-                                                                                           required autocomplete="off">
-                                                                                    <button type="submit"
-                                                                                            class="submit-btn" disabled>
-                                                                                        <i class="fa fa-paper-plane"></i>
-                                                                                    </button>
+                                                                                    <input class="textareaComment" type="text" name="comment"
+                                                                                           placeholder="Write a comment..." required autocomplete="off">
+                                                                                    <button type="submit" class="submit-btn" disabled><i class="fa fa-paper-plane"></i></button>
                                                                                 </div>
                                                                                 <div class="text-right">
                                                                                 </div>

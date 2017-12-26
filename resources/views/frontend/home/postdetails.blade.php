@@ -15,14 +15,13 @@
                     <div class=" container  container-fixed-lg">
                         <!-- BEGIN PlACE PAGE CONTENT HERE -->
 
-                        {{--changed--}}
 
                         <div class="row">
                             {{--<div class="col-md-1 col-lg-1"></div>--}}
                             <div class="col-md-10 col-lg-10">
                                 <div class="row">
                                     <div class="col-lg-3 col-sm-4 d-flex flex-column">
-                                        <form action="{{route('frontend.filter')}}"  class="plx__filter-bar">
+                                        <form action="{{route('frontend.filter')}}" class="plx__filter-bar">
                                             <h4 id="toggleFilter" class="plx__widget-title clearfix">Filter By
 
                                             </h4>
@@ -30,13 +29,15 @@
                                                 <ul class="filter-block">
                                                     <li>
                                                         <label for="all" class="filter-item">
-                                                            <input id="all" name="f1" value="all" type="radio">
+                                                            <input id="all" name="f1" value="all"
+                                                                   type="checkbox" {{@$f1=='all'?' checked':''}}>
                                                             <span>All</span>
                                                         </label>
                                                     </li>
                                                     <li>
                                                         <label for="random" class="filter-item">
-                                                            <input id="random" name="f1" value="random" type="radio">
+                                                            <input id="random" name="f1" value="random"
+                                                                   type="checkbox" {{@$f1=='random'?' checked':''}}>
                                                             <span>Random</span>
                                                         </label>
                                                     </li>
@@ -45,21 +46,21 @@
                                                     <li>
                                                         <label for="aroundMe" class="filter-item">
                                                             <input id="aroundMe" name="f2" value="around_me"
-                                                                   type="radio">
+                                                                   type="checkbox" {{@$f2=='around_me'?' checked':''}}>
                                                             <span>Around Me</span>
                                                         </label>
                                                     </li>
                                                     <li>
                                                         <label for="nationality" class="filter-item">
                                                             <input id="nationality" name="f2" value="nationality"
-                                                                   type="radio">
+                                                                   type="checkbox" {{@$f2=='nationality'?' checked':''}}>
                                                             <span>Nationality</span>
                                                         </label>
                                                     </li>
                                                     <li>
                                                         <label for="worldWide" class="filter-item">
                                                             <input id="worldWide" name="f2" value="worldwide"
-                                                                   type="radio">
+                                                                   type="checkbox" {{@$f2=='worldwide'?' checked':''}}>
                                                             <span>World Wide</span>
                                                         </label>
                                                     </li>
@@ -67,32 +68,59 @@
                                                 <ul class="filter-block">
                                                     <li>
                                                         <label for="today" class="filter-item">
-                                                            <input id="today" name="f3" value="today" type="radio">
+                                                            <input id="today" name="f3" value="today"
+                                                                   type="checkbox" {{@$f3=='today'?' checked':''}}>
                                                             <span>Today</span>
                                                         </label>
                                                     </li>
                                                     <li>
                                                         <label for="thisWeek" class="filter-item">
-                                                            <input id="thisWeek" name="f3" value="week" type="radio">
+                                                            <input id="thisWeek" name="f3" value="week"
+                                                                   type="checkbox" {{@$f3=='week'?' checked':''}}>
                                                             <span>This Week</span>
                                                         </label>
                                                     </li>
                                                     <li>
                                                         <label for="thisMonth" class="filter-item">
-                                                            <input id="thisMonth" name="f3" value="month" type="radio">
+                                                            <input id="thisMonth" name="f3" value="month"
+                                                                   type="checkbox" {{@$f3=='month'?' checked':''}}>
                                                             <span>This Month</span>
                                                         </label>
                                                     </li>
                                                     <li>
                                                         <label for="thisYear" class="filter-item">
-                                                            <input id="thisYear" name="f3" value="year" type="radio">
+                                                            <input id="thisYear" name="f3" value="year"
+                                                                   type="checkbox" {{@$f3=='year'?' checked':''}}>
                                                             <span>This Year</span>
                                                         </label>
                                                     </li>
                                                 </ul>
-                                                <button type="submit" class="btn {{--pull-right btn-link--}} btn-block btn-primary">
+                                                <ul class="filter-block">
+                                                    <li>
+                                                        <label for="closestLaunches" class="filter-item">
+                                                            <input id="closestLaunches" name="f4" value="closest"
+                                                                   type="checkbox" {{@$f4=='closest'?' checked':''}}>
+                                                            <span>Closest launches</span>
+                                                        </label>
+                                                    </li>
+                                                    <li>
+                                                        <label for="latestLaunches" class="filter-item">
+                                                            <input id="latestLaunches" name="f4" value="latest"
+                                                                   type="checkbox" {{@$f4=='latest'?' checked':''}}>
+                                                            <span>Latest launches</span>
+                                                        </label>
+                                                    </li>
+                                                </ul>
+                                                <button type="submit"
+                                                        class="btn {{--pull-right btn-link--}} btn-block btn-primary">
                                                     Done
                                                 </button>
+                                                @if(@$cancel)
+                                                    <a href="{{route('frontend.home')}}"
+                                                       class="btn btn-block btn-default">
+                                                        Clear Filter
+                                                    </a>
+                                                @endif
 
                                             </div>
                                         </form>
@@ -106,22 +134,29 @@
                                                 <div class="plx__meta-text">
                                                     <h4 class="plx__post-author-name">
                                                         <strong><a href="{{route('frontend.user.profile',$post->user->id)}}"
-                                                                   style="color: #000000">{{$post->user->name}}</a></strong></h4>
+                                                                   style="color: #000000">{{$post->user->name}}</a></strong>
+                                                    </h4>
                                                 </div>
                                                 <div class="clearfix"></div>
                                                 @if($post->user_id != Auth::id())
                                                     {{--<a href="javascript://" data-href="{{route('frontend.follow.user')}}" data-id="{{$post->user->id}}"
                                                        class="plx__follow-btn user-follow_{{$post->user->id}} {{$post->user->followers->contains('followed_by',Auth::id())?' added':''}}">{{$post->user->followers->contains('followed_by',Auth::id())?'Following':'Follow'}}</a>--}}
-                                                    <a href="javascript://" data-href="{{route('frontend.follow.post')}}" data-id="{{$post->id}}"
+                                                    <a href="javascript://"
+                                                       data-href="{{route('frontend.follow.post')}}"
+                                                       data-id="{{$post->id}}"
                                                        class="plx__follow-btn user-follow_{{$post->id}} {{$post->follows->contains('user_id',Auth::id())?' added':''}}">{{$post->follows->contains('user_id',Auth::id())?'Following':'Follow'}}</a>
                                                 @endif
+
+                                                <p class="post-title">{{$post->post_details}}</p>
                                             </div>
+
                                             <div class="ratio-4-3 plx__post-thumb"
                                                  style="background-image: url('{{asset('content-dir/posts/images/'.$post->image)}}')"></div>
                                             <div class="plx__post-info">
                                                 <div class="plx__time-countdown m-b-5">
                                                     @php($days=\Carbon\Carbon::parse($post->expire_date)->diffInDays())
-                                                    <span title="{{\Carbon\Carbon::parse($post->expire_date)->format('M d, Y H:i')}}" data-toggle="tooltip"
+                                                    <span title="{{\Carbon\Carbon::parse($post->expire_date)->format('M d, Y H:i')}}"
+                                                          data-toggle="tooltip"
                                                           class="plx__countdown {{$days<7?'text-danger':($days<30?'text-warning':'text-success')}}"
                                                           data-date-time="{{$post->expire_date}}">
                     <span class="number day">08</span>d :
@@ -138,7 +173,8 @@
                                                            data-id="{{$post->id}}"
                                                            title="{{$post->likes->contains('user.id',Auth::id())?'Unlike':'Like'}}"
                                                            class="plx__like {{$post->likes->contains('user.id',Auth::id())?' liked':' -liked'}}"></a>
-                                                        <a href="#commentContainer{{$post->id}}" title="Comment" class="plx__comment toggleComment"></a>
+                                                        <a href="#commentContainer{{$post->id}}" title="Comment"
+                                                           class="plx__comment toggleComment"></a>
                                                         <span class="post-share">
                         <a href="#modalId-{{$post->id}}" title="Share" class="plx__share sharePopup"></a>
 
@@ -163,16 +199,17 @@
                     </span>
                                                     </div>
 
-
                                                     <div class="pull-right">
                                                         <div class="options">
                                                             <a href="javascript://" class="options-dot"></a>
                                                             <ul class="options-list">
                                                                 @if(!$post->postReports->contains('user_id',Auth::id()))
-                                                                    <li><a href="javascript://" class="plx__report12" data-post="{{$post->id}}">Report</a>
+                                                                    <li><a href="javascript://" class="plx__report12"
+                                                                           data-post="{{$post->id}}">Report</a>
                                                                     </li>
                                                                 @else
-                                                                    <li><a href="javascript://" data-post="{{$post->id}}">Reported</a></li>
+                                                                    <li><a href="javascript://"
+                                                                           data-post="{{$post->id}}">Reported</a></li>
                                                                 @endif
                                                                 {{--<li><a href="#">Copy Link</a></li>--}}
                                                             </ul>
@@ -184,7 +221,6 @@
                                                     <p class="text-muted Plx__like__count">
                                                         @include('frontend.home.render.likeCount')
                                                     </p>
-                                                    <p class="post-title">{{$post->post_details}}</p>
 
                                                     <style>
                                                         .max-height-200 {
@@ -202,10 +238,13 @@
                                                         <p class="text-muted Plx__comment__count">
                                                             @include('frontend.home.render.commentCount')
                                                         </p>
-                                                        <a href="#" data-id="{{$post->id}}" data-count="{{$comments->count()}}"
-                                                           class="leaveComment {{$post->comments->count()<=2?' hidden':''}} load-more-comment">Load more
+                                                        <a href="#" data-id="{{$post->id}}"
+                                                           data-count="{{$comments->count()}}"
+                                                           class="leaveComment {{$post->comments->count()<=2?' hidden':''}} load-more-comment">Load
+                                                            more
                                                             comments</a>
-                                                        <input class="showingCommentCount" type="hidden" value="{{$comments->count()}}">
+                                                        <input class="showingCommentCount" type="hidden"
+                                                               value="{{$comments->count()}}">
                                                         {{--                    <p><a href="{{route('frontend.post.details',$post->id)}}" data-id="{{$post->id}}" data-count="{{$comments->count()}}" class="leaveComment {{$post->comments->count()<=2?' hidden':''}}">View all comments</a></p>--}}
 
                                                         <div class="scrollable max-height-200">
@@ -215,13 +254,17 @@
                                                         </div>
 
                                                         <div class="post-comments">
-                                                            <form method="post" data-id="{{$post->id}}" class="postComment"
+                                                            <form method="post" data-id="{{$post->id}}"
+                                                                  class="postComment"
                                                                   action="{{route('frontend.post.comment',$post->id)}}">
                                                                 {{--{{csrf_field()}}--}}
                                                                 <div class="form-group comment-form">
-                                                                    <input class="textareaComment" type="text" name="comment"
-                                                                           placeholder="Write a comment..." required autocomplete="off">
-                                                                    <button type="submit" class="submit-btn" disabled><i class="fa fa-paper-plane"></i></button>
+                                                                    <input class="textareaComment" type="text"
+                                                                           name="comment"
+                                                                           placeholder="Write a comment..." required
+                                                                           autocomplete="off">
+                                                                    <button type="submit" class="submit-btn" disabled><i
+                                                                                class="fa fa-paper-plane"></i></button>
                                                                 </div>
                                                                 <div class="text-right">
                                                                 </div>
@@ -238,22 +281,6 @@
                                 </div>
                             </div>
                         </div>
-
-                    {{--end changed--}}
-
-
-                        {{--old--}}
-
-                        {{--<div class="row">
-                            <div class="col-md-3"></div>
-                            <div class="col-md-6">
-                                <div class="plx__post" id="post_id_{{$post->id}}">
-                                    @include('frontend.home.render.postdetailsrender')
-                                </div>
-                            </div>
-                        </div>--}}
-
-                        {{--End Old--}}
 
 
                         <!-- END PLACE PAGE CONTENT HERE -->

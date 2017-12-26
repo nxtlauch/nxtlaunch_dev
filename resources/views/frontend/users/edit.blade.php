@@ -55,10 +55,10 @@
                                             <div class="form-group">
                                                 <label>Description</label>
                                                 <input type="text" name="business_description" class="form-control"
-                                                       value="{{old('business_description')?old('business_description'):Auth::user()->userDetails->business_description}}">
-                                                @if ($errors->has('name'))
+                                                       value="{{old('business_description')?old('business_description'):@Auth::user()->userDetails->business_description}}">
+                                                @if ($errors->has('business_description'))
                                                     <span class="help-block">
-                                        <strong>{{ $errors->first('name') }}</strong>
+                                        <strong>{{ $errors->first('business_description') }}</strong>
                                     </span>
                                                 @endif
                                             </div>

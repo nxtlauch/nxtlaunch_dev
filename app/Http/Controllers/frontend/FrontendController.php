@@ -149,15 +149,16 @@ class FrontendController extends Controller
             $notification->save();
             if ($notification->noti_for == 2) {
                 if ($notification->post->status != 1 || $notification->post->expire_date < Carbon::now()->toDateTimeString()) {
-                    return back()->with('errMsg', 'This Post Is Corrently Inactive');
+                    return back()->with('errMessage', 'This Post Is Corrently Inactive');
                 }
 //                return redirect(route('frontend.home') . "#post_id_$notification->purpose_id");
                 return redirect(route('frontend.post.details', $notification->purpose_id));
             } elseif ($notification->noti_for == 3) {
                 return redirect()->route('frontend.user.profile', $notification->purpose_id);
             }
+        }else{
+            return back()->with('errMessage', 'This Notification Is Corrently Inactive');
         }
-
     }
 
     public function postDetails($id)
@@ -295,6 +296,10 @@ class FrontendController extends Controller
         }
         if ($user->save()) {
             $userDetails = UserDetail::where('user_id', $user->id)->first();
+            if (!$userDetails) {
+                $userDetails = new UserDetail();
+                $userDetails->user_id = $user->id;
+            }
             /*if ($request->profile_picture) {
                 $image = Slim::getImages('profile_picture')[0];
 
@@ -321,13 +326,15 @@ class FrontendController extends Controller
                 $userDetails->profile_picture = $filename;
             }
             $userDetails->business_description = $request->business_description;
-                
-                if($userDetails->save())
-                {
+
+            if ($userDetails->save()) {
                 return redirect(route('frontend.my.profile'))->with('succMessage', 'Your Profile Updated Successfully');
-                }
+            }else{
+                return back()->with('errMessage', 'Your Profile Details Can not Updated Successfully');
+            }
+        }else{
+            return back()->with('errMessage', 'Your Profile Can not Updated Successfully');
         }
-       
 
 
 //        $old_password = $request->old_password;
@@ -979,9 +986,9 @@ class FrontendController extends Controller
             }
             if ($f4) {
                 if ($f4 == 'closest') {
-                    $q = @$q ? $q->orderBy('expire_date', 'asc'): $posts->orderBy('expire_date', 'asc');
+                    $q = @$q ? $q->orderBy('expire_date', 'asc') : $posts->orderBy('expire_date', 'asc');
                 } elseif ($f4 == 'latest') {
-                    $q = @$q ? $q->orderBy('expire_date', 'desc'): $posts->orderBy('expire_date', 'desc');
+                    $q = @$q ? $q->orderBy('expire_date', 'desc') : $posts->orderBy('expire_date', 'desc');
                 }
 
             }
@@ -1002,9 +1009,10 @@ class FrontendController extends Controller
 
     public function test()
     {
-        $posts = Post::orderBy('id', 'desc')->skip(5)->take(2)->get();
+        /*$posts = Post::orderBy('id', 'desc')->skip(5)->take(2)->get();
         dd($posts);
-        return 'this is test method';
+        return 'this is test method';*/
+
     }
 
     public function test1()
