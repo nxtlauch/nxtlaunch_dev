@@ -52,6 +52,16 @@
                                     </span>
                                                 @endif
                                             </div>
+                                            <div class="form-group">
+                                                <label>Description</label>
+                                                <input type="text" name="business_description" class="form-control"
+                                                       value="{{old('business_description')?old('business_description'):Auth::user()->userDetails->business_description}}">
+                                                @if ($errors->has('name'))
+                                                    <span class="help-block">
+                                        <strong>{{ $errors->first('name') }}</strong>
+                                    </span>
+                                                @endif
+                                            </div>
                                             {{--<div class="form-group">
                                                 <label>Username</label>
                                                 <input type="email" class="form-control" value="username" disabled="">

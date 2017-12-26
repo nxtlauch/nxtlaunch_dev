@@ -250,7 +250,10 @@ class FrontendController extends Controller
     {
 //        Notification::where('noti_to', Auth::id())->where('noti_for', 3)->where('purpose_id', Auth::id())->where('status', 1)->update(['status' => 0]);
         $data = array();
-        $data['posts'] = Post::where('user_id', Auth::id())->orderBy('id', 'desc')->with('user', 'comments.user:id,name', 'likes.user:id,name')->get()->where('expire_date', '>', Carbon::now()->toDateTimeString());
+        $data['posts'] = Post::where('user_id', Auth::id())
+            ->orderBy('expire_date', 'asc')
+            ->with('user', 'comments.user:id,name', 'likes.user:id,name')
+            ->get();
         $data['user'] = Auth::user();
         return view('frontend.users.profile')->with($data);
 
@@ -259,7 +262,11 @@ class FrontendController extends Controller
     public function userProfile($id)
     {
         $data = array();
-        $data['posts'] = Post::where('status', 1)->where('user_id', $id)->orderBy('id', 'desc')->with('user', 'comments.user:id,name', 'likes.user:id,name')->get()->where('expire_date', '>', Carbon::now()->toDateTimeString());
+        $data['posts'] = Post::where('status', 1)
+            ->where('user_id', $id)
+            ->orderBy('expire_date', 'asc')
+            ->with('user', 'comments.user:id,name', 'likes.user:id,name')
+            ->get();
         $data['user'] = User::findOrFail($id);
         return view('frontend.users.profile')->with($data);
     }
@@ -274,6 +281,7 @@ class FrontendController extends Controller
     {
         $request->validate([
             'name' => 'required',
+            'business_description' => 'required',
 //            'old_password' => 'required',
         ]);
 
@@ -311,10 +319,15 @@ class FrontendController extends Controller
                 $img = Image::make($file);
                 $img->save($destinationPath . '/' . $filename);
                 $userDetails->profile_picture = $filename;
-                $userDetails->save();
             }
+            $userDetails->business_description = $request->business_description;
+                
+                if($userDetails->save())
+                {
+                return redirect(route('frontend.my.profile'))->with('succMessage', 'Your Profile Updated Successfully');
+                }
         }
-        return redirect(route('frontend.my.profile'))->with('succsMsg', 'Your Profile Updated Successfully');
+       
 
 
 //        $old_password = $request->old_password;
@@ -909,24 +922,26 @@ class FrontendController extends Controller
         $f1 = $request->f1;
         $f2 = $request->f2;
         $f3 = $request->f3;
+        $f4 = $request->f4;
         $data = array();
         $data['f1'] = $request->f1;
         $data['f2'] = $request->f2;
         $data['f3'] = $request->f3;
+        $data['f4'] = $request->f4;
         $data['cancel'] = 1;
-        $posts = Post::where('status', 1);
+        $posts = Post::where('status', 1)->where('expire_date', '>', Carbon::now()->toDateTimeString())->with('user', 'comments.user:id,name', 'likes.user:id,name');
         if ($f1) {
             if ($f1 == 'all') {
-                $data['posts'] = $posts->where('expire_date', '>', Carbon::now()->toDateTimeString())->with('user', 'comments.user:id,name', 'likes.user:id,name')->orderBy('expire_date', 'asc')->get();
+                $data['posts'] = $posts->orderBy('expire_date', 'asc')->get();
             } else {
-                $data['posts'] = $posts->where('expire_date', '>', Carbon::now()->toDateTimeString())->with('user', 'comments.user:id,name', 'likes.user:id,name')->inRandomOrder()->get();
+                $data['posts'] = $posts->inRandomOrder()->get();
             }
         } else {
             if ($f2) {
                 if ($f2 == 'around_me') {
                     if (Auth::user()->location) {
-                        $data['posts'] = $posts->whereHas('user', function ($query) {
-                            $query->where('location', 'like', '%'.Auth::user()->location.'%');
+                        $q = $posts->whereHas('user', function ($query) {
+                            $query->where('location', 'like', '%' . Auth::user()->location . '%');
                         });
                     } else {
                         return back()->with('errMessage', 'You Location is not Selected yet');
@@ -934,14 +949,14 @@ class FrontendController extends Controller
 
                 } elseif ($f2 == 'nationality') {
                     if (Auth::user()->location) {
-                        $data['posts'] = $posts->whereHas('user', function ($query) {
+                        $q = $posts->whereHas('user', function ($query) {
                             $query->where('location', 'like', Auth::user()->location);
                         });
                     } else {
                         return back()->with('errMessage', 'You Location is not Selected yet');
                     }
                 } elseif ($f2 == 'worldwide') {
-                    $data['posts'] = $posts->inRandomOrder();
+                    $q = $posts->inRandomOrder();
                 }
             }
             if ($f3) {
@@ -960,9 +975,17 @@ class FrontendController extends Controller
                     $startDate = $today->startOfYear()->toDateTimeString();
                     $endDate = $today->endOfYear()->toDateTimeString();
                 }
-                $data['posts'] = $posts->whereBetween('created_at', [$startDate, $endDate]);
+                $q = @$q ? $q->whereBetween('created_at', [$startDate, $endDate]) : $posts->whereBetween('created_at', [$startDate, $endDate]);
             }
-            $data['posts'] = $posts->with('user', 'comments.user:id,name', 'likes.user:id,name')->get()->where('expire_date', '>', Carbon::now()->toDateTimeString());
+            if ($f4) {
+                if ($f4 == 'closest') {
+                    $q = @$q ? $q->orderBy('expire_date', 'asc'): $posts->orderBy('expire_date', 'asc');
+                } elseif ($f4 == 'latest') {
+                    $q = @$q ? $q->orderBy('expire_date', 'desc'): $posts->orderBy('expire_date', 'desc');
+                }
+
+            }
+            $data['posts'] = $q->get();
         }
 
         return view('frontend.home.index')->with($data);

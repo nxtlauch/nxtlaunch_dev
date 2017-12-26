@@ -181,7 +181,16 @@
         })
     })
 
+    $('.filter-block').each(function () {
+        var input = $(this).find('input');
+        $(input).on('change', function() {
+            $(input).not(this).prop('checked', false);
+        });
+    })
+
     plxTab('.plx__tabs a', '.plx__tabs-item');
+    plxTab('.forPost a', '.forPostContent');
+    plxTab('.forFollowing a', '.forFollowingContent');
 
     $('#chat').on('click', '.newConversionForm', function (e) {
         e.preventDefault();

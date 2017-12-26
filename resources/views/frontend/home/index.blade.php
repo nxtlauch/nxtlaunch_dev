@@ -30,14 +30,14 @@
                                                     <li>
                                                         <label for="all" class="filter-item">
                                                             <input id="all" name="f1" value="all"
-                                                                   type="radio" {{@$f1=='all'?' checked':''}}>
+                                                                   type="checkbox" {{@$f1=='all'?' checked':''}}>
                                                             <span>All</span>
                                                         </label>
                                                     </li>
                                                     <li>
                                                         <label for="random" class="filter-item">
                                                             <input id="random" name="f1" value="random"
-                                                                   type="radio" {{@$f1=='random'?' checked':''}}>
+                                                                   type="checkbox" {{@$f1=='random'?' checked':''}}>
                                                             <span>Random</span>
                                                         </label>
                                                     </li>
@@ -46,21 +46,21 @@
                                                     <li>
                                                         <label for="aroundMe" class="filter-item">
                                                             <input id="aroundMe" name="f2" value="around_me"
-                                                                   type="radio" {{@$f2=='around_me'?' checked':''}}>
+                                                                   type="checkbox" {{@$f2=='around_me'?' checked':''}}>
                                                             <span>Around Me</span>
                                                         </label>
                                                     </li>
                                                     <li>
                                                         <label for="nationality" class="filter-item">
                                                             <input id="nationality" name="f2" value="nationality"
-                                                                   type="radio" {{@$f2=='nationality'?' checked':''}}>
+                                                                   type="checkbox" {{@$f2=='nationality'?' checked':''}}>
                                                             <span>Nationality</span>
                                                         </label>
                                                     </li>
                                                     <li>
                                                         <label for="worldWide" class="filter-item">
                                                             <input id="worldWide" name="f2" value="worldwide"
-                                                                   type="radio" {{@$f2=='worldwide'?' checked':''}}>
+                                                                   type="checkbox" {{@$f2=='worldwide'?' checked':''}}>
                                                             <span>World Wide</span>
                                                         </label>
                                                     </li>
@@ -69,29 +69,45 @@
                                                     <li>
                                                         <label for="today" class="filter-item">
                                                             <input id="today" name="f3" value="today"
-                                                                   type="radio" {{@$f3=='today'?' checked':''}}>
+                                                                   type="checkbox" {{@$f3=='today'?' checked':''}}>
                                                             <span>Today</span>
                                                         </label>
                                                     </li>
                                                     <li>
                                                         <label for="thisWeek" class="filter-item">
                                                             <input id="thisWeek" name="f3" value="week"
-                                                                   type="radio" {{@$f3=='week'?' checked':''}}>
+                                                                   type="checkbox" {{@$f3=='week'?' checked':''}}>
                                                             <span>This Week</span>
                                                         </label>
                                                     </li>
                                                     <li>
                                                         <label for="thisMonth" class="filter-item">
                                                             <input id="thisMonth" name="f3" value="month"
-                                                                   type="radio" {{@$f3=='month'?' checked':''}}>
+                                                                   type="checkbox" {{@$f3=='month'?' checked':''}}>
                                                             <span>This Month</span>
                                                         </label>
                                                     </li>
                                                     <li>
                                                         <label for="thisYear" class="filter-item">
                                                             <input id="thisYear" name="f3" value="year"
-                                                                   type="radio" {{@$f3=='year'?' checked':''}}>
+                                                                   type="checkbox" {{@$f3=='year'?' checked':''}}>
                                                             <span>This Year</span>
+                                                        </label>
+                                                    </li>
+                                                </ul>
+                                                <ul class="filter-block">
+                                                    <li>
+                                                        <label for="closestLaunches" class="filter-item">
+                                                            <input id="closestLaunches" name="f4" value="closest"
+                                                                   type="checkbox" {{@$f4=='closest'?' checked':''}}>
+                                                            <span>Closest launches</span>
+                                                        </label>
+                                                    </li>
+                                                    <li>
+                                                        <label for="latestLaunches" class="filter-item">
+                                                            <input id="latestLaunches" name="f4" value="latest"
+                                                                   type="checkbox" {{@$f4=='latest'?' checked':''}}>
+                                                            <span>Latest launches</span>
                                                         </label>
                                                     </li>
                                                 </ul>

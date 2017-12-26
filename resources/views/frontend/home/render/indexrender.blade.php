@@ -19,7 +19,10 @@
                 <a href="javascript://" data-href="{{route('frontend.follow.post')}}" data-id="{{$post->id}}"
                    class="plx__follow-btn user-follow_{{$post->id}} {{$post->follows->contains('user_id',Auth::id())?' added':''}}">{{$post->follows->contains('user_id',Auth::id())?'Following':'Follow'}}</a>
             @endif
+
+            <p class="post-title">{{$post->post_details}}</p>
         </div>
+
         <div class="ratio-4-3 plx__post-thumb"
              style="background-image: url('{{asset('content-dir/posts/images/'.$post->image)}}')"></div>
         <div class="plx__post-info">
@@ -67,7 +70,6 @@
                     </span>
                 </div>
 
-
                 <div class="pull-right">
                     <div class="options">
                         <a href="javascript://" class="options-dot"></a>
@@ -88,7 +90,6 @@
                 <p class="text-muted Plx__like__count">
                     @include('frontend.home.render.likeCount')
                 </p>
-                <p class="post-title">{{$post->post_details}}</p>
 
                 <style>
                     .max-height-200 {
@@ -100,7 +101,7 @@
                     @php($comments=$post->comments->sortByDesc('id')->take(2)->reverse())
 
                     {{--<p><a class="leaveComment {{$post->comments->count()>2?'hidden':''}} no-more-comment">Comments(<span--}}
-                                    {{--class="commentsCount">{{$post->comments->count()}}</span>)</a></p>--}}
+                    {{--class="commentsCount">{{$post->comments->count()}}</span>)</a></p>--}}
                     {{--                    <p><a href="{{route('frontend.post.details',$post->id)}}" class="leaveComment {{$post->comments->count()>2?'hidden':''}}">Comments(<span class="commentsCount">{{$post->comments->count()}}</span>)</a></p>--}}
 
                     <p class="text-muted Plx__comment__count">
