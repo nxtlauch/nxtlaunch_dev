@@ -156,7 +156,7 @@ class FrontendController extends Controller
             } elseif ($notification->noti_for == 3) {
                 return redirect()->route('frontend.user.profile', $notification->purpose_id);
             }
-        }else{
+        } else {
             return back()->with('errMessage', 'This Notification Is Corrently Inactive');
         }
     }
@@ -329,10 +329,10 @@ class FrontendController extends Controller
 
             if ($userDetails->save()) {
                 return redirect(route('frontend.my.profile'))->with('succMessage', 'Your Profile Updated Successfully');
-            }else{
+            } else {
                 return back()->with('errMessage', 'Your Profile Details Can not Updated Successfully');
             }
-        }else{
+        } else {
             return back()->with('errMessage', 'Your Profile Can not Updated Successfully');
         }
 
@@ -1059,7 +1059,10 @@ class FrontendController extends Controller
         if ($followexist) {
             $followexist->delete();
             if ($post->user->id != Auth::id()) {
-                $notification = Notification::where('noti_for', 2)->where('noti_activity', 4)->where('purpose_id', $post_id)->where('status', 1)->first();
+                $notification = Notification::where('noti_for', 2)
+                    ->where('noti_activity', 4)
+                    ->where('purpose_id', $post_id)
+                    ->where('status', 1)->first();
                 if ($notification) {
                     if ($notification->noti_text == 0) {
                         $notification->delete();
@@ -1074,11 +1077,19 @@ class FrontendController extends Controller
                     }
                 }
             }
-            $followNotification = Notification::where('noti_for', 2)->where('noti_activity', 6)->where('purpose_id', $post_id)->where('noti_to', Auth::id())->where('status', 1)->first();
+            $followNotification = Notification::where('noti_for', 2)
+                ->where('noti_activity', 6)
+                ->where('purpose_id', $post_id)
+                ->where('noti_to', Auth::id())
+                ->first();
             if ($followNotification) {
                 $followNotification->delete();
             }
-            $followBeforeDayNotification = Notification::where('noti_for', 2)->where('noti_activity', 7)->where('purpose_id', $post_id)->where('noti_to', Auth::id())->where('status', 1)->first();
+            $followBeforeDayNotification = Notification::where('noti_for', 2)
+                ->where('noti_activity', 7)
+                ->where('purpose_id', $post_id)
+                ->where('noti_to', Auth::id())
+                ->first();
             if ($followBeforeDayNotification) {
                 $followBeforeDayNotification->delete();
             }
