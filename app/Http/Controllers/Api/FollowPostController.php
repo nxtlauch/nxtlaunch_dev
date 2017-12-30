@@ -18,9 +18,7 @@ class FollowPostController extends Controller
     {
         $dt = Carbon::now()->toDateTimeString();
         $follows = FollowPost::where('user_id',Auth::id())
-            ->whereHas('post',function ($q) use($dt) {
-            $q->where('expire_date', '>', $dt);
-        })
+            ->whereHas('post')
             ->with('post.user','post.likes.user:id,name','post.comments.user:id,name','post.follows')
             ->orderBy('id', 'desc')
             ->get();
@@ -48,7 +46,8 @@ class FollowPostController extends Controller
             }
         }
         if ($follows->count()>0) {
-            $response['posts'] = $follows->pluck('post');
+            $response['posts_launches'] = $follows->where('post.expire_date', '>', $dt)->pluck('post');
+            $response['posts_launched'] = $follows->where('post.expire_date', '<', $dt)->pluck('post');
             $response['message'] = "My Followed post Render";
             return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
         } else {

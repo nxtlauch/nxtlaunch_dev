@@ -135,8 +135,17 @@ class UserController extends Controller
 
     }
 
-    public function userDetailsById($id)
+    public function userDetailsById(Request $request)
     {
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            $response['message'] = $validator->errors()->first();
+            return response()->json(array('meta' => array('status' => $this->failureStatus), 'response' => $response));
+        }
+        $id=$request->user_id;
         $user = User::where('id', $id)->with('userDetails')->first();
 
         if ($user) {

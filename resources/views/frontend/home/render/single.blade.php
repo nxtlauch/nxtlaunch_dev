@@ -1,6 +1,6 @@
 <div class="plx__post-header">
     <div class="plx__post-author-avatar"
-         style="background-image: url('{{@$post->user->userDetails->profile_picture?asset('content-dir/profile_picture/'.@$post->user->userDetails->profile_picture):asset('public/frontend-assets/assets/img/profiles/avatar.png')}}')"></div>
+         style="background-image: url('{{@$post->user->userDetails->profile_picture?asset('content-dir/profile_picture/'.@$post->user->userDetails->profile_picture):asset('public/frontend-assets/assets/img/profiles/avatar.jpg')}}')"></div>
     <div class="plx__meta-text">
         <h4 class="plx__post-author-name">
             <strong><a href="{{route('frontend.user.profile',$post->user->id)}}"
@@ -124,7 +124,7 @@
                     {{--{{dd($comment->user->name)}}--}}
                     <li>
                         <div class="user-avatar"
-                             style="background-image: url('{{@$comment->user->userDetails->profile_picture?asset('content-dir/profile_picture/'.@$comment->user->userDetails->profile_picture):asset('public/frontend-assets/assets/img/profiles/avatar.png')}}')"></div>
+                             style="background-image: url('{{@$comment->user->userDetails->profile_picture?asset('content-dir/profile_picture/'.@$comment->user->userDetails->profile_picture):asset('public/frontend-assets/assets/img/profiles/avatar.jpg')}}')"></div>
                         <div class="comment-text">
                             <p class="text"><strong
                                         class="m-r-5">{{$comment->user->name}}</strong>

@@ -134,9 +134,7 @@ class LikeController extends Controller
     public function myLiked(){
         $dt = Carbon::now()->toDateTimeString();
         $likes = Like::where('user_id', Auth::id())
-            ->whereHas('post',function ($q) use($dt) {
-                $q->where('expire_date', '>', $dt);
-            })
+            ->whereHas('post')
             ->with('post.user','post.likes.user:id,name','post.comments.user:id,name','post.follows')
             ->orderBy('id', 'desc')->get();
         foreach ($likes as $like) {
@@ -163,7 +161,8 @@ class LikeController extends Controller
             }
         }
         if ($likes->count()>0) {
-            $response['posts'] = $likes->pluck('post');
+            $response['posts_launches'] = $likes->where('post.expire_date', '>', $dt)->pluck('post');
+            $response['posts_launched'] = $likes->where('post.expire_date', '<', $dt)->pluck('post');
             $response['message'] = "My Likes Render";
             return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
         } else {

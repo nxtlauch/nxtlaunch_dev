@@ -56,6 +56,13 @@ Route::group(['middleware' => ['auth', 'only_user']], function () {
     Route::get('/new-launch', 'frontend\FrontendController@newLaunch')->name('frontend.newlaunch');
     Route::post('/new-launch', 'frontend\FrontendController@saveLaunch');
     /*End new post*/
+    /*edit Post*/
+    Route::get('/edit-launch/{id}', 'frontend\FrontendController@editLaunch')->name('frontend.editlaunch');
+    Route::post('/edit-launch/{id}', 'frontend\FrontendController@updateLaunch');
+    /*End edit post*/
+    /*delete Post*/
+    Route::get('/delete-launch/{id}', 'frontend\FrontendController@deleteLaunch')->name('frontend.deletelaunch');
+    /*End delete post*/
     /*post Like/Unlike*/
     Route::post('/post/like', 'frontend\FrontendController@likePost')->name('frontend.like.post');
     Route::post('/liked-like', 'frontend\FrontendController@likedLike')->name('frontend.liked.like');

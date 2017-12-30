@@ -12,6 +12,11 @@ class UserDetail extends Model
         'address',
         'birth_date',
     ];
+    protected $hidden=[
+        'profile_picture',
+        'address',
+        'birth_date',
+    ];
     public function user()
     {
         return $this->belongsTo('App\User');

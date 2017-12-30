@@ -54,7 +54,7 @@
                                            data-id="{{$user->id}}" href="javascript://">
                     <span class="thumbnail-wrapper d32 circular bg-success">
                         <img width="34" height="34" alt=""
-                             src="{{@$user->userDetails->profile_picture?asset('content-dir/profile_picture/'.@$user->userDetails->profile_picture):asset('public/frontend-assets/assets/img/profiles/avatar.png')}}"
+                             src="{{@$user->userDetails->profile_picture?asset('content-dir/profile_picture/'.@$user->userDetails->profile_picture):asset('public/frontend-assets/assets/img/profiles/avatar.jpg')}}"
                              class="col-top">
                     </span>
                                             <p class="p-l-10 ">

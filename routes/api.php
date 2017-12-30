@@ -26,7 +26,7 @@ Route::prefix('v1')->group(function () {
 //        Route::post('test', 'Api\LikeController@myLiked');
 
         Route::post('user-info', 'Api\UserController@userDetails');
-        Route::post('user-info/{id}', 'Api\UserController@userDetailsById');
+        Route::post('user-info-by-id', 'Api\UserController@userDetailsById');
         Route::post('logout', 'Api\UserController@logout');
         /*Post routes*/
         Route::post('posts', 'Api\PostsController@index');
@@ -36,6 +36,7 @@ Route::prefix('v1')->group(function () {
         Route::post('my-list', 'Api\PostsController@my_list');
         Route::post('search-post', 'Api\PostsController@searchPost');
         Route::post('filter-post', 'Api\PostsController@filterPost');
+        Route::post('filter-posts', 'Api\PostsController@filterPosts');
         /*End Post routes*/
 
         /*Like routes*/

@@ -144,6 +144,7 @@ class FrontendController extends Controller
     public function notificationDetalis($id)
     {
         $notification = Notification::find($id);
+//        dd($notification->purpose_id);
         if ($notification) {
             $notification->status = 0;
             $notification->save();
@@ -494,6 +495,83 @@ class FrontendController extends Controller
     }
 
     public
+    function editLaunch($id)
+    {
+        $post=Post::find($id);
+        if($post->user_id==Auth::id()){
+            $data = array();
+            $data['categories'] = Category::where('status', 1)->get();
+            $data['post'] = $post;
+            return view('frontend.home.edit_post')->with($data);
+        }else{
+            return back()->with('errMessage', "You are not post owner");
+        }
+
+    }
+
+
+    public
+    function updateLaunch(Request $request,$id)
+    {
+//        dd($request->all());
+        $request->validate([
+            'post_details' => 'required|max:255',
+            'category_id' => 'required',
+            'expire_date' => 'required',
+//            'image' => 'required',
+        ]);
+
+        $post = Post::find($id);
+        if ($post->user_id==Auth::id()){
+            /*if ($request->image) {
+            // Pass Slim's getImages the name of your file input, and since we only care about one image, postfix it with the first array key
+            $image = Slim::getImages('image')[0];
+
+            // Grab the ouput data (data modified after Slim has done its thing)
+            if (isset($image['output']['data'])) {
+                // Original file name
+                $name = $image['output']['name'];
+
+                // Base64 of the image
+                $data = $image['output']['data'];
+
+                // Server path
+                $path = base_path('content-dir/posts/images');
+
+                // Save the file to the server
+                $file = Slim::saveFile($data, $name, $path);
+                $post->image = $file['name'];
+            }
+        }*/
+
+
+            if ($request->hasFile('image')) {
+                $file = $request->file('image');
+                $filenam = time() . $file->getClientOriginalName();
+                $filename = str_replace(' ', '', $filenam);
+                $destinationPath = base_path('content-dir/posts/images');
+                $img = Image::make($file);
+                $img->save($destinationPath . '/' . $filename);
+                $post->image = $filename;
+            }
+
+//        $post->post_title = $request->post_title;
+            $post->post_details = $request->post_details;
+            $post->category_id = $request->category_id;
+            $post->expire_date = Carbon::parse($request->expire_date)->toDateTimeString();
+            if ($post->save()) {
+                return redirect()->route('frontend.my.profile')->with('succMessage', 'Post Updated Successfully');
+            } else {
+                return back()->with('errMessage', "Post Can't Update");
+            }
+        }else{
+            return back()->with('errMessage', "You are not post owner");
+        }
+
+    }
+
+
+    public
     function saveLaunch(Request $request)
     {
         $request->validate([
@@ -570,6 +648,16 @@ class FrontendController extends Controller
             return redirect()->route('frontend.home')->with('succMessage', 'Post Created Successfully');
         } else {
             return back()->with('errMessage', "Post Can't Create");
+        }
+    }
+
+    public function deleteLaunch($id){
+        $post = Post::find($id);
+        if ($post->delete()){
+            Notification::where('noti_for',2)->where('purpose_id',$id)->delete();
+            return back()->with('succMessage', 'Post Deleted Successfully');
+        } else {
+            return back()->with('errMessage', "Post Can't Delete");
         }
     }
 

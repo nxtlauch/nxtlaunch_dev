@@ -1,17 +1,13 @@
 <div class="header custom-bg p-r-0 bg-primary">
     <div class="header-inner header-md-height container plx__padding">
-        {{--<a href="#" class="btn-link toggle-sidebar hidden-lg-up pg pg-menu text-white"
-           data-toggle="horizontal-menu"></a>--}}
+        <a href="#" class="btn-link toggle-sidebar hidden-lg-up pg pg-menu text-white"
+           data-toggle="horizontal-menu"></a>
 
         <div class="">
             <a href="{{route('frontend.home')}}" class="brand inline no-border hidden-xs-down">
-                <img class="for-desktop" src="{{asset('public/frontend-assets/assets/img/logo_white.png')}}" alt="logo"
+                <img src="{{asset('public/frontend-assets/assets/img/logo_white.png')}}" alt="logo"
                      data-src="{{asset('public/frontend-assets/assets/img/logo_white.png')}}"
                      data-src-retina="{{asset('public/frontend-assets/assets/img/logo_white_2x.png')}}" width="78"
-                     height="22">
-                <img class="for-mobile" src="{{asset('public/frontend-assets/assets/img/nxt_logo.png')}}" alt="logo"
-                     data-src="{{asset('public/frontend-assets/assets/img/nxt_logo.png')}}"
-                     data-src-retina="{{asset('public/frontend-assets/assets/img/nxt_logo.png')}}" width="78"
                      height="22">
             </a>
 
@@ -58,17 +54,17 @@
                                                     @if($notification->noti_for==2 && $notification->noti_activity==1)
                                                         <i class="fa fa-heart-o m-r-10"></i>
                                                         <span><strong>{{$notification->user->name}}</strong>{{$notification->noti_text>0?" and $notification->noti_text others":''}}
-                                                            liked your post <strong> {{$notification->post->post_details}}</strong></span>
+                                                            liked your post <strong> {{@$notification->post->post_details}}</strong></span>
                                                     @elseif($notification->noti_for==2 && $notification->noti_activity==2)
                                                         <i class="fa fa-comments-o m-r-10"></i>
-                                                        <span><strong>{{$notification->user->name}}</strong> commented in you post <strong> {{$notification->post->post_details}}</strong></span>
+                                                        <span><strong>{{$notification->user->name}}</strong> commented in you post <strong> {{@$notification->post->post_details}}</strong></span>
                                                     @elseif($notification->noti_for==2 && $notification->noti_activity==4)
                                                         <i class="fa fa-comments-o m-r-10"></i>
-                                                        <span><strong>{{$notification->user->name}}</strong> following your post <strong> {{$notification->post->post_details}}</strong></span>
+                                                        <span><strong>{{$notification->user->name}}</strong> following your post <strong> {{@$notification->post->post_details}}</strong></span>
 
                                                     @elseif($notification->noti_for==2 && $notification->noti_activity==5)
                                                         <i class="fa fa-comments-o m-r-10"></i>
-                                                        <span><strong>{{$notification->user->name}}</strong> Launched a new Event<strong> {{$notification->post->post_details}}</strong></span>
+                                                        <span><strong>{{$notification->user->name}}</strong> Launched a new Event<strong> {{@$notification->post->post_details}}</strong></span>
                                                     @elseif($notification->noti_for==2 && $notification->noti_activity==6)
                                                         <i class="fa fa-comments-o m-r-10"></i>
                                                         <span><strong>{{$notification->user->name}}</strong> will launch his event<strong> after {{$diffInDays}}
@@ -172,12 +168,8 @@
                title="Launch An Event"  class="header-icon btn-link m-l-10 p-r-15 sm-no-margin d-inline-block"><img
                         src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUBAMAAAB/pwA+AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAtUExURf///////0dwTP////////////////////////////////////////////////zKVJ0AAAAPdFJOU/nfAAoqoYI5GGqwWc1AxF/GqhEAAACnSURBVAgdY1CCAOWbuQwQlnoAAzeEqbGAgYEXwnRkYGBgBjNVBHgYGB6BmY0MRRcYJoGYyg8YlBQYjBiUlI21GBgyEjiVGJQcOBOAmhgWKTFoCESDWFxGSgyqPAUgZpASUHSLAJDFBtTNoKQLEtwEZpo/YGAQB7KAoo0+DDyuYKZ65JEF4YJg5i6niR4buMDMx9pJSgnBYOaJO01KniCWEsOrEDANJADToyZjd5vZCQAAAABJRU5ErkJggg=="></a>
             <a href="{{route('frontend.home.explore')}}"
-               class="header-icon btn-link m-l-10 p-r-15 sm-no-margin d-inline-block"
-               title="Explore"><img
-                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAFqSURBVDhPvZQ9S8NgFIVDhVIt+DGIq6ODXbu0OLgLDorYsT+gIC7+AXHxrwgO6iYubm4OSgfxo4JLQUFQp8TnxNOaVgtNgx54+t733JuTFJI3+DdFUZSDahiGRVtd4Y1DRTBTsP27GMgzWIcmdcT6BoewoT5rGe7Uk1TLiy9OCrMIW9DyrIbP4Ag+4ACrwHrvXku41g2+nxRDj99WMym8Pfcn2c5rzv4Dy4Sg7oRW4jCJTU1mv/DjwI6wqvYVojD9q0yBObxb9x6F6xv1PDZ8oIS35nZSq25/KU2ghH/iEc2oHoMFt1M/od7BOXgyqreh5pHUgQ1YhGVTgncYLRB7B/+KdUpQX3t29ED3ToVqKXNgv4YKRC/09mHWo9kD9UP/FXYpZ+BHIL02DP5S2J/DCqXer3XqS/vPcKFaotYBoQOl94jD2ATpGJZsd8W1OhuTwU2oU+Y90isa0wyUvB0o5vQtl7Xa+msFwSeK6Yg8Ru6J7AAAAABJRU5ErkJggg=="></a>
-            {{--<a href="{{route('frontend.home.explore')}}"
                class="header-icon pg pg-alt_menu btn-link m-l-10 p-r-15 sm-no-margin d-inline-block"
-               title="Explore"></a>--}}
+               title="Explore"></a>
             {{--<a  href="{{route('frontend.home')}}" class="header-icon btn-link m-l-10 p-r-15 sm-no-margin d-inline-block"><img
                         src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUBAMAAAB/pwA+AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAtUExURf///////0dwTP////////////////////////////////////////////////zKVJ0AAAAPdFJOU/nfAAoqoYI5GGqwWc1AxF/GqhEAAACnSURBVAgdY1CCAOWbuQwQlnoAAzeEqbGAgYEXwnRkYGBgBjNVBHgYGB6BmY0MRRcYJoGYyg8YlBQYjBiUlI21GBgyEjiVGJQcOBOAmhgWKTFoCESDWFxGSgyqPAUgZpASUHSLAJDFBtTNoKQLEtwEZpo/YGAQB7KAoo0+DDyuYKZ65JEF4YJg5i6niR4buMDMx9pJSgnBYOaJO01KniCWEsOrEDANJADToyZjd5vZCQAAAABJRU5ErkJggg=="></a>
             <a href="{{Auth::user()->role_id==4?route('frontend.newlaunch'):'javascript://'}}"

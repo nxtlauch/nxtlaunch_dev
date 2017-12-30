@@ -588,6 +588,116 @@ class PostsController extends Controller
 
     }
 
+    public function filterPosts(Request $request)
+    {
+
+
+
+
+        $f1 = $request->f1;
+        $f2 = $request->f2;
+        $f3 = $request->f3;
+        $f4 = $request->f4;
+        if ($f1==null && $f2==null && $f3==null && $f4==null){
+            $response['message'] = "No key is selected";
+            return response()->json(['meta' => array('status' => $this->failureStatus), 'response' => $response]);
+        }
+
+        $posts = Post::where('status', 1)->where('expire_date', '>', Carbon::now()->toDateTimeString())->with('user', 'comments.user:id,name', 'likes.user:id,name', 'follows');
+        if ($f1) {
+            if ($f1 == 'all') {
+                $filterd_posts = $posts->orderBy('expire_date', 'asc')->get();
+            } else {
+                $filterd_posts = $posts->inRandomOrder()->get();
+            }
+        } else {
+            if ($f2) {
+                if ($f2 == 'around_me') {
+                    if (Auth::user()->location) {
+                        $q = $posts->whereHas('user', function ($query) {
+                            $query->where('location', 'like', '%' . Auth::user()->location . '%');
+                        });
+                    } else {
+                        $response['message'] = "You have no location information";
+                        return response()->json(['meta' => array('status' => $this->failureStatus), 'response' => $response]);
+                    }
+
+                } elseif ($f2 == 'nationality') {
+                    if (Auth::user()->location) {
+                        $q = $posts->whereHas('user', function ($query) {
+                            $query->where('location', 'like', Auth::user()->location);
+                        });
+                    } else {
+                        $response['message'] = "You have no location information";
+                        return response()->json(['meta' => array('status' => $this->failureStatus), 'response' => $response]);
+                    }
+                } elseif ($f2 == 'worldwide') {
+                    $q = $posts->inRandomOrder();
+                }
+            }
+            if ($f3) {
+                $today = Carbon::today();
+                if ($f3 == 'today') {
+                    $startDate = $today->startOfDay()->toDateTimeString();
+                    $endDate = $today->endOfDay()->toDateTimeString();
+                } elseif ($f3 == 'week') {
+                    $startDate = $today->startOfWeek()->toDateTimeString();
+                    $endDate = $today->endOfWeek()->toDateTimeString();
+                } elseif ($f3 == 'month') {
+                    $startDate = $today->startOfMonth()->toDateTimeString();
+                    $endDate = $today->endOfMonth()->toDateTimeString();
+                } elseif ($f3 == 'year') {
+                    $startDate = $today->startOfYear()->toDateTimeString();
+                    $endDate = $today->endOfYear()->toDateTimeString();
+                }
+                $q = @$q ? $q->whereBetween('created_at', [$startDate, $endDate]) : $posts->whereBetween('created_at', [$startDate, $endDate]);
+            }
+            if ($f4) {
+                if ($f4 == 'closest') {
+                    $q = @$q ? $q->orderBy('expire_date', 'asc') : $posts->orderBy('expire_date', 'asc');
+                } elseif ($f4 == 'latest') {
+                    $q = @$q ? $q->orderBy('expire_date', 'desc') : $posts->orderBy('expire_date', 'desc');
+                }
+
+            }
+            $filterd_posts = $q->get();
+        }
+
+
+        if ($filterd_posts->count() > 0) {
+            foreach ($filterd_posts as $post) {
+                $user = clone $post->user;
+                if (@$user->userDetails->profile_picture) {
+                    $post->user->profile_picture = $user->userDetails->profile_picture;
+                } else {
+                    $post->user->profile_picture = "avatar.png";
+                }
+                if ($post->likes->contains('user_id', Auth::id())) {
+                    $post->liked_by_me = 1;
+                } else {
+                    $post->liked_by_me = 0;
+                }
+                if ($post->comments->contains('user_id', Auth::id())) {
+                    $post->commented_by_me = 1;
+                } else {
+                    $post->commented_by_me = 0;
+                }
+                if ($post->follows->contains('user_id', Auth::id())) {
+                    $post->followed_by_me = 1;
+                } else {
+                    $post->followed_by_me = 0;
+                }
+            }
+            $response['posts'] = $filterd_posts;
+            $response['message'] = "Filter Posts Render";
+            return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
+        } else {
+            $response['message'] = "No Post Found";
+            return response()->json(['meta' => array('status' => $this->failureStatus), 'response' => $response]);
+        }
+
+    }
+
     /*private function json($status = NULL, $response = NULL)
     {
         echo json_encode(array('meta' => array('status' => $status), 'response' => $response));
