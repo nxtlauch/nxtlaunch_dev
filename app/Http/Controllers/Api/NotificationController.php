@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Notification;
+use App\Traits\ApiStatusTrait;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -10,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 
 class NotificationController extends Controller
 {
+    use ApiStatusTrait;
     public $successStatus = 200;
     public $failureStatus = 100;
 
@@ -40,10 +42,10 @@ class NotificationController extends Controller
         if ($notifications->count() > 0) {
             $response['notifications'] = $notifications;
             $response['message'] = "My Notification Render";
-            return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
+            return $this->successApiResponse($response);
         } else {
             $response['message'] = "You have no notification";
-            return response()->json(['meta' => array('status' => $this->failureStatus), 'response' => $response]);
+            return $this->failureApiResponse($response);
         }
 
     }

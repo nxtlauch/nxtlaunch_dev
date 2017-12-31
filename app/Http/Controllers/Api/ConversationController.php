@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Conversation;
 use App\ConversationMember;
+use App\Traits\ApiStatusTrait;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -11,6 +12,7 @@ use Illuminate\Support\Facades\Validator;
 
 class ConversationController extends Controller
 {
+    use ApiStatusTrait;
 
     public $successStatus = 200;
     public $failureStatus = 100;
@@ -37,10 +39,10 @@ class ConversationController extends Controller
             }
             $response['conversation'] = $conversation;
             $response['message'] = "Conversation Created Successfully";
-            return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
+            return $this->successApiResponse($response);
         }else{
             $response['message'] = "Conversation Can not Created";
-            return response()->json(['meta' => array('status' => $this->failureStatus), 'response' => $response]);
+            return $this->failureApiResponse($response);
         }
     }
 }

@@ -9,6 +9,8 @@ use App\Notification;
 use App\Post;
 use App\RecentSearch;
 use App\Tag;
+use App\Traits\ApiStatusTrait;
+use App\Traits\PostApiTrait;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -18,6 +20,7 @@ use Intervention\Image\Facades\Image;
 
 class PostsController extends Controller
 {
+    use PostApiTrait, ApiStatusTrait;
     public $successStatus = 200;
     public $failureStatus = 100;
 
@@ -29,7 +32,6 @@ class PostsController extends Controller
      */
     public function index()
     {
-
         $dt = Carbon::now()->toDateTimeString();
         $post1 = Post::where('status', 1)
             ->where(function ($q) {
@@ -58,107 +60,29 @@ class PostsController extends Controller
         } else {
             $posts = $post1;
         }
-        foreach ($posts as $post) {
-            $user = clone $post->user;
-            if (@$user->userDetails->profile_picture) {
-                $post->user->profile_picture = $user->userDetails->profile_picture;
-            } else {
-                $post->user->profile_picture = "avatar.png";
-            }
-            if ($post->likes->contains('user_id', Auth::id())) {
-                $post->liked_by_me = 1;
-            } else {
-                $post->liked_by_me = 0;
-            }
-            if ($post->comments->contains('user_id', Auth::id())) {
-                $post->commented_by_me = 1;
-            } else {
-                $post->commented_by_me = 0;
-            }
-            if ($post->follows->contains('user_id', Auth::id())) {
-                $post->followed_by_me = 1;
-            } else {
-                $post->followed_by_me = 0;
-            }
-        }
+        $this->postStructure($posts, Auth::id());
         if ($posts->count() > 0) {
             $response['posts'] = $posts;
             $response['message'] = "All Posts Render";
-            return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
+            return $this->successApiResponse($response);
         } else {
             $response['message'] = "No Post Found";
-            return response()->json(['meta' => array('status' => $this->failureStatus), 'response' => $response]);
+            return $this->failureApiResponse($response);
         }
-
-        /*$dt = Carbon::now()->toDateTimeString();
-        $posts = Post::where('status', 1)->orderBy('id', 'desc')->with('user', 'comments.user:id,name', 'likes.user:id,name')->where('expire_date', '>', $dt)->get();
-        foreach ($posts as $post) {
-            $user = clone $post->user;
-            if (@$user->userDetails->profile_picture) {
-                $post->user->profile_picture = $user->userDetails->profile_picture;
-            } else {
-                $post->user->profile_picture = "avatar.png";
-            }
-            if ($post->likes->contains('user_id', Auth::id())) {
-                $post->liked_by_me = 1;
-            } else {
-                $post->liked_by_me = 0;
-            }
-            if ($post->comments->contains('user_id', Auth::id())) {
-                $post->commented_by_me = 1;
-            } else {
-                $post->commented_by_me = 0;
-            }
-            if ($post->follows->contains('user_id', Auth::id())) {
-                $post->followed_by_me = 1;
-            } else {
-                $post->followed_by_me = 0;
-            }
-        }
-        if (!empty($posts)) {
-            $response['posts'] = $posts;
-            $response['message'] = "All Posts Render";
-            return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
-        } else {
-            $response['message'] = "No Post Found";
-            return response()->json(['meta' => array('status' => $this->failureStatus), 'response' => $response]);
-        }*/
     }
 
     public function unauthHome()
     {
         $dt = Carbon::now()->toDateTimeString();
         $posts = Post::where('status', 1)->orderBy('expire_date', 'asc')->with('user', 'comments.user:id,name', 'likes.user:id,name')->where('expire_date', '>', $dt)->take(10)->get();
-        foreach ($posts as $post) {
-            $user = clone $post->user;
-            if (@$user->userDetails->profile_picture) {
-                $post->user->profile_picture = $user->userDetails->profile_picture;
-            } else {
-                $post->user->profile_picture = "avatar.png";
-            }
-            if ($post->likes->contains('user_id', Auth::id())) {
-                $post->liked_by_me = 1;
-            } else {
-                $post->liked_by_me = 0;
-            }
-            if ($post->comments->contains('user_id', Auth::id())) {
-                $post->commented_by_me = 1;
-            } else {
-                $post->commented_by_me = 0;
-            }
-            if ($post->follows->contains('user_id', Auth::id())) {
-                $post->followed_by_me = 1;
-            } else {
-                $post->followed_by_me = 0;
-            }
-        }
+        $this->postStructure($posts, Auth::id());
         if ($posts->count() > 0) {
             $response['posts'] = $posts;
             $response['message'] = "All Posts Render";
-            return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
+            return $this->successApiResponse($response);
         } else {
             $response['message'] = "No Post Found";
-            return response()->json(['meta' => array('status' => $this->failureStatus), 'response' => $response]);
+            return $this->failureApiResponse($response);
         }
     }
 
@@ -166,36 +90,14 @@ class PostsController extends Controller
     {
         $dt = Carbon::now()->toDateTimeString();
         $posts = Post::where('status', 1)->orderBy('id', 'desc')->with('user', 'comments.user:id,name', 'likes.user:id,name')->where('expire_date', '>', $dt)->get();
-        foreach ($posts as $post) {
-            $user = clone $post->user;
-            if (@$user->userDetails->profile_picture) {
-                $post->user->profile_picture = $user->userDetails->profile_picture;
-            } else {
-                $post->user->profile_picture = "avatar.png";
-            }
-            if ($post->likes->contains('user_id', Auth::id())) {
-                $post->liked_by_me = 1;
-            } else {
-                $post->liked_by_me = 0;
-            }
-            if ($post->comments->contains('user_id', Auth::id())) {
-                $post->commented_by_me = 1;
-            } else {
-                $post->commented_by_me = 0;
-            }
-            if ($post->follows->contains('user_id', Auth::id())) {
-                $post->followed_by_me = 1;
-            } else {
-                $post->followed_by_me = 0;
-            }
-        }
+        $this->postStructure($posts, Auth::id());
         if ($posts->count() > 0) {
             $response['posts'] = $posts;
             $response['message'] = "All Posts Render";
-            return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
+            return $this->successApiResponse($response);
         } else {
             $response['message'] = "No Post Found";
-            return response()->json(['meta' => array('status' => $this->failureStatus), 'response' => $response]);
+            return $this->failureApiResponse($response);
         }
     }
 
@@ -226,7 +128,7 @@ class PostsController extends Controller
         ]);
         if ($validator->fails()) {
             $response['message'] = $validator->errors()->first();
-            return response()->json(array('meta' => array('status' => $this->failureStatus), 'response' => $response));
+            return $this->failureApiResponse($response);
         }
 
         $post = new Post();
@@ -270,10 +172,10 @@ class PostsController extends Controller
             /*end notification and tag save*/
             $response['post_id'] = $post->id;
             $response['message'] = "Post Created Successfully";
-            return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
+            return $this->successApiResponse($response);
         } else {
             $response['message'] = "Post Can't Create";
-            return response()->json(['meta' => array('status' => $this->failureStatus), 'response' => $response]);
+            return $this->failureApiResponse($response);
         }
     }
 
@@ -287,33 +189,13 @@ class PostsController extends Controller
     {
         $post = Post::where('id', $id)->with(['user', 'comments.user', 'likes.user'])->first();
         if ($post) {
-            $user = clone $post->user;
-            if (@$user->userDetails->profile_picture) {
-                $post->user->profile_picture = $user->userDetails->profile_picture;
-            } else {
-                $post->user->profile_picture = "avatar.png";
-            }
-            if ($post->likes->contains('user_id', Auth::id())) {
-                $post->liked_by_me = 1;
-            } else {
-                $post->liked_by_me = 0;
-            }
-            if ($post->comments->contains('user_id', Auth::id())) {
-                $post->commented_by_me = 1;
-            } else {
-                $post->commented_by_me = 0;
-            }
-            if ($post->follows->contains('user_id', Auth::id())) {
-                $post->followed_by_me = 1;
-            } else {
-                $post->followed_by_me = 0;
-            }
+            $this->singlePostStructure($post);
             $response['post'] = $post;
             $response['message'] = "Post info Render";
-            return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
+            return $this->successApiResponse($response);
         } else {
             $response['message'] = "Post info not Found";
-            return response()->json(['meta' => array('status' => $this->failureStatus), 'response' => $response]);
+            return $this->failureApiResponse($response);
         }
     }
 
@@ -345,7 +227,7 @@ class PostsController extends Controller
         ]);
         if ($validator->fails()) {
             $response['message'] = $validator->errors()->first();
-            return response()->json(array('meta' => array('status' => $this->failureStatus), 'response' => $response));
+            return $this->failureApiResponse($response);
         }
 
         $post = Post::find($id);
@@ -366,10 +248,10 @@ class PostsController extends Controller
         if ($post->save()) {
             $response['post_id'] = $post->id;
             $response['message'] = "Post Updated Successfully";
-            return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
+            return $this->successApiResponse($response);
         } else {
             $response['message'] = "Post Doesn't Updated";
-            return response()->json(['meta' => array('status' => $this->failureStatus), 'response' => $response]);
+            return $this->failureApiResponse($response);
         }
     }
 
@@ -385,14 +267,14 @@ class PostsController extends Controller
         if ($post) {
             if ($post->delete()) {
                 $response['message'] = "Post Deleted Successfully";
-                return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
+                return $this->successApiResponse($response);
             } else {
                 $response['message'] = "Post Doesn't Deleted";
-                return response()->json(['meta' => array('status' => $this->failureStatus), 'response' => $response]);
+                return $this->failureApiResponse($response);
             }
         } else {
             $response['message'] = "No post available in id $id";
-            return response()->json(['meta' => array('status' => $this->failureStatus), 'response' => $response]);
+            return $this->failureApiResponse($response);
         }
 
     }
@@ -401,36 +283,14 @@ class PostsController extends Controller
     {
         $dt = Carbon::now()->toDateTimeString();
         $posts = Post::where('user_id', Auth::id())->where('status', 1)->orderBy('id', 'desc')->with('user', 'comments.user:id,name', 'likes.user:id,name')->where('expire_date', '>', $dt)->get();
-        foreach ($posts as $post) {
-            $user = clone $post->user;
-            if (@$user->userDetails->profile_picture) {
-                $post->user->profile_picture = $user->userDetails->profile_picture;
-            } else {
-                $post->user->profile_picture = "avatar.png";
-            }
-            if ($post->likes->contains('user_id', Auth::id())) {
-                $post->liked_by_me = 1;
-            } else {
-                $post->liked_by_me = 0;
-            }
-            if ($post->comments->contains('user_id', Auth::id())) {
-                $post->commented_by_me = 1;
-            } else {
-                $post->commented_by_me = 0;
-            }
-            if ($post->follows->contains('user_id', Auth::id())) {
-                $post->followed_by_me = 1;
-            } else {
-                $post->followed_by_me = 0;
-            }
-        }
-        if ($posts->count()) {
+        $this->postStructure($posts,Auth::id());
+        if ($posts->count()>0) {
             $response['posts'] = $posts;
             $response['message'] = "Authenticated User Posts";
-            return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
+            return $this->successApiResponse($response);
         } else {
             $response['message'] = "No Post Found";
-            return response()->json(['meta' => array('status' => $this->failureStatus), 'response' => $response]);
+            return $this->failureApiResponse($response);
         }
     }
 
@@ -441,7 +301,7 @@ class PostsController extends Controller
         ]);
         if ($validator->fails()) {
             $response['message'] = $validator->errors()->first();
-            return response()->json(array('meta' => array('status' => $this->failureStatus), 'response' => $response));
+            return $this->failureApiResponse($response);
         }
         $search_key = $request->search_key;
         $searchExist = RecentSearch::where('user_id', Auth::id())->where('search_text', $search_key)->first();
@@ -458,35 +318,13 @@ class PostsController extends Controller
         $matchbrand = "MATCH (post_details) AGAINST ('" . $search_key . "' IN BOOLEAN MODE)";
         $posts = Post::whereRaw($matchbrand)->where('status', 1)->orderBy('id', 'desc')->where('expire_date', '>', Carbon::now()->toDateTimeString())->with('user', 'comments.user:id,name', 'likes.user:id,name', 'follows')->get();
         if ($posts->count() > 0) {
-            foreach ($posts as $post) {
-                $user = clone $post->user;
-                if (@$user->userDetails->profile_picture) {
-                    $post->user->profile_picture = $user->userDetails->profile_picture;
-                } else {
-                    $post->user->profile_picture = "avatar.png";
-                }
-                if ($post->likes->contains('user_id', Auth::id())) {
-                    $post->liked_by_me = 1;
-                } else {
-                    $post->liked_by_me = 0;
-                }
-                if ($post->comments->contains('user_id', Auth::id())) {
-                    $post->commented_by_me = 1;
-                } else {
-                    $post->commented_by_me = 0;
-                }
-                if ($post->follows->contains('user_id', Auth::id())) {
-                    $post->followed_by_me = 1;
-                } else {
-                    $post->followed_by_me = 0;
-                }
-            }
+            $this->postStructure($posts,Auth::id());
             $response['posts'] = $posts;
             $response['message'] = "Search Result";
-            return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
+            return $this->successApiResponse($response);
         } else {
             $response['message'] = "No Post Found";
-            return response()->json(['meta' => array('status' => $this->failureStatus), 'response' => $response]);
+            return $this->failureApiResponse($response);
         }
 
     }
@@ -498,7 +336,7 @@ class PostsController extends Controller
         ]);
         if ($validator->fails()) {
             $response['message'] = $validator->errors()->first();
-            return response()->json(array('meta' => array('status' => $this->failureStatus), 'response' => $response));
+            return $this->failureApiResponse($response);
         }
         $filter_key = $request->filter_key;
 
@@ -515,7 +353,7 @@ class PostsController extends Controller
                 })->orderBy('id', 'desc');
             } else {
                 $response['message'] = 'You Location is not Selected yet';
-                return response()->json(array('meta' => array('status' => $this->failureStatus), 'response' => $response));
+                return $this->failureApiResponse($response);
             }
         } elseif ($filter_key == 'nationality') {
             if (Auth::user()->location) {
@@ -524,7 +362,7 @@ class PostsController extends Controller
                 })->orderBy('id', 'desc');
             } else {
                 $response['message'] = 'You Location is not Selected yet';
-                return response()->json(array('meta' => array('status' => $this->failureStatus), 'response' => $response));
+                return $this->failureApiResponse($response);
             }
         } elseif ($filter_key == 'worldwide') {
             $p = $posts->inRandomOrder();
@@ -550,57 +388,30 @@ class PostsController extends Controller
             $p = $posts->whereBetween('created_at', [$startDate, $endDate])->orderBy('id', 'desc');
         } else {
             $response['message'] = 'Invalid Filter key';
-            return response()->json(array('meta' => array('status' => $this->failureStatus), 'response' => $response));
+            return $this->failureApiResponse($response);
         }
         $filterd_posts = $p->with('user', 'comments.user:id,name', 'likes.user:id,name', 'follows')->get();
 
         if ($filterd_posts->count() > 0) {
-            foreach ($filterd_posts as $post) {
-                $user = clone $post->user;
-                if (@$user->userDetails->profile_picture) {
-                    $post->user->profile_picture = $user->userDetails->profile_picture;
-                } else {
-                    $post->user->profile_picture = "avatar.png";
-                }
-                if ($post->likes->contains('user_id', Auth::id())) {
-                    $post->liked_by_me = 1;
-                } else {
-                    $post->liked_by_me = 0;
-                }
-                if ($post->comments->contains('user_id', Auth::id())) {
-                    $post->commented_by_me = 1;
-                } else {
-                    $post->commented_by_me = 0;
-                }
-                if ($post->follows->contains('user_id', Auth::id())) {
-                    $post->followed_by_me = 1;
-                } else {
-                    $post->followed_by_me = 0;
-                }
-            }
+            $this->postStructure($filterd_posts,Auth::id());
             $response['posts'] = $filterd_posts;
             $response['message'] = "Filter Posts Render";
-            return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
+            return $this->successApiResponse($response);
         } else {
             $response['message'] = "No Post Found";
-            return response()->json(['meta' => array('status' => $this->failureStatus), 'response' => $response]);
+            return $this->failureApiResponse($response);
         }
-
     }
 
     public function filterPosts(Request $request)
     {
-
-
-
-
         $f1 = $request->f1;
         $f2 = $request->f2;
         $f3 = $request->f3;
         $f4 = $request->f4;
-        if ($f1==null && $f2==null && $f3==null && $f4==null){
+        if ($f1 == null && $f2 == null && $f3 == null && $f4 == null) {
             $response['message'] = "No key is selected";
-            return response()->json(['meta' => array('status' => $this->failureStatus), 'response' => $response]);
+            return $this->failureApiResponse($response);
         }
 
         $posts = Post::where('status', 1)->where('expire_date', '>', Carbon::now()->toDateTimeString())->with('user', 'comments.user:id,name', 'likes.user:id,name', 'follows');
@@ -619,7 +430,7 @@ class PostsController extends Controller
                         });
                     } else {
                         $response['message'] = "You have no location information";
-                        return response()->json(['meta' => array('status' => $this->failureStatus), 'response' => $response]);
+                        return $this->failureApiResponse($response);
                     }
 
                 } elseif ($f2 == 'nationality') {
@@ -629,7 +440,7 @@ class PostsController extends Controller
                         });
                     } else {
                         $response['message'] = "You have no location information";
-                        return response()->json(['meta' => array('status' => $this->failureStatus), 'response' => $response]);
+                        return $this->failureApiResponse($response);
                     }
                 } elseif ($f2 == 'worldwide') {
                     $q = $posts->inRandomOrder();
@@ -663,204 +474,15 @@ class PostsController extends Controller
             $filterd_posts = $q->get();
         }
 
-
         if ($filterd_posts->count() > 0) {
-            foreach ($filterd_posts as $post) {
-                $user = clone $post->user;
-                if (@$user->userDetails->profile_picture) {
-                    $post->user->profile_picture = $user->userDetails->profile_picture;
-                } else {
-                    $post->user->profile_picture = "avatar.png";
-                }
-                if ($post->likes->contains('user_id', Auth::id())) {
-                    $post->liked_by_me = 1;
-                } else {
-                    $post->liked_by_me = 0;
-                }
-                if ($post->comments->contains('user_id', Auth::id())) {
-                    $post->commented_by_me = 1;
-                } else {
-                    $post->commented_by_me = 0;
-                }
-                if ($post->follows->contains('user_id', Auth::id())) {
-                    $post->followed_by_me = 1;
-                } else {
-                    $post->followed_by_me = 0;
-                }
-            }
+            $this->postStructure($filterd_posts,Auth::id());
             $response['posts'] = $filterd_posts;
             $response['message'] = "Filter Posts Render";
-            return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
+            return $this->successApiResponse($response);
         } else {
             $response['message'] = "No Post Found";
-            return response()->json(['meta' => array('status' => $this->failureStatus), 'response' => $response]);
+            return $this->failureApiResponse($response);
         }
 
-    }
-
-    /*private function json($status = NULL, $response = NULL)
-    {
-        echo json_encode(array('meta' => array('status' => $status), 'response' => $response));
-    }*/
-
-    public
-    function test()
-    {
-        return 'dd';
-        //return Auth::guard('api')->check();
-
-    }
-
-    public
-    function test1()
-    {
-        $dt = Carbon::now()->toDateTimeString();
-        $post1 = Post::where('status', 1)
-            ->where(function ($q) {
-                $q->whereHas('user.followers', function ($query) {
-                    $query->where('followed_by', Auth::id());
-                })
-                    ->orWhereHas('user.posts.follows', function ($z) {
-                        $z->where('user_id', Auth::id());
-                    });
-            })
-            ->orderBy('id', 'desc')
-            ->with('user', 'comments.user:id,name', 'likes.user:id,name')
-            ->where('expire_date', '>', $dt)
-            ->get();
-        $postIds = $post1->pluck('id');
-        if ($post1->count() < 10) {
-            $take = 10 - $post1->count();
-            $post2 = Post::where('status', 1)
-                ->orderBy('id', 'desc')
-                ->with('user', 'comments.user:id,name', 'likes.user:id,name')
-                ->where('expire_date', '>', $dt)
-                ->whereNotIn('id', $postIds)
-                ->take($take)
-                ->get();
-            $posts = $post1->merge($post2);
-        } else {
-            $posts = $post1;
-        }
-        foreach ($posts as $post) {
-            $user = clone $post->user;
-            if (@$user->userDetails->profile_picture) {
-                $post->user->profile_picture = $user->userDetails->profile_picture;
-            } else {
-                $post->user->profile_picture = "avatar.png";
-            }
-            if ($post->likes->contains('user_id', Auth::id())) {
-                $post->liked_by_me = 1;
-            } else {
-                $post->liked_by_me = 0;
-            }
-            if ($post->comments->contains('user_id', Auth::id())) {
-                $post->commented_by_me = 1;
-            } else {
-                $post->commented_by_me = 0;
-            }
-            if ($post->follows->contains('user_id', Auth::id())) {
-                $post->followed_by_me = 1;
-            } else {
-                $post->followed_by_me = 0;
-            }
-        }
-        if ($posts->count() > 0) {
-            $response['posts'] = $posts;
-            $response['message'] = "All Posts Render";
-            return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
-        } else {
-            $response['message'] = "No Post Found";
-            return response()->json(['meta' => array('status' => $this->failureStatus), 'response' => $response]);
-        }
-
-    }
-
-    public
-    function myLiked()
-    {
-        $dt = Carbon::now()->toDateTimeString();
-        $posts = Post::where('status', 1)
-            ->with('user', 'likes.user:id,name', 'comments.user:id,name')
-            ->where('expire_date', '>', $dt)
-            ->whereHas('likes', function ($q) {
-                $q->where('user_id', Auth::id());
-            })
-            ->get()->sortByDesc('likes.id');
-        foreach ($posts as $post) {
-            $user = clone $post->user;
-            if (@$user->userDetails->profile_picture) {
-                $post->user->profile_picture = $user->userDetails->profile_picture;
-            } else {
-                $post->user->profile_picture = "avatar.png";
-            }
-            if ($post->likes->contains('user_id', Auth::id())) {
-                $post->liked_by_me = 1;
-            } else {
-                $post->liked_by_me = 0;
-            }
-            if ($post->comments->contains('user_id', Auth::id())) {
-                $post->commented_by_me = 1;
-            } else {
-                $post->commented_by_me = 0;
-            }
-            if ($post->follows->contains('user_id', Auth::id())) {
-                $post->followed_by_me = 1;
-            } else {
-                $post->followed_by_me = 0;
-            }
-        }
-        if (!empty($posts)) {
-            $response['posts'] = $posts;
-            $response['message'] = "My Likes Render";
-            return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
-        } else {
-            $response['message'] = "No Post Found";
-            return response()->json(['meta' => array('status' => $this->failureStatus), 'response' => $response]);
-        }
-    }
-
-    public
-    function postFollowedByMe()
-    {
-        $dt = Carbon::now()->toDateTimeString();
-        $posts = Post::where('status', 1)
-            ->with('user', 'likes.user:id,name', 'comments.user:id,name')
-            ->where('expire_date', '>', $dt)
-            ->whereHas('follows', function ($q) {
-                $q->where('user_id', Auth::id());
-            })
-            ->get()->sortByDesc('likes.id');
-        foreach ($posts as $post) {
-            $user = clone $post->user;
-            if (@$user->userDetails->profile_picture) {
-                $post->user->profile_picture = $user->userDetails->profile_picture;
-            } else {
-                $post->user->profile_picture = "avatar.png";
-            }
-            if ($post->likes->contains('user_id', Auth::id())) {
-                $post->liked_by_me = 1;
-            } else {
-                $post->liked_by_me = 0;
-            }
-            if ($post->comments->contains('user_id', Auth::id())) {
-                $post->commented_by_me = 1;
-            } else {
-                $post->commented_by_me = 0;
-            }
-            if ($post->follows->contains('user_id', Auth::id())) {
-                $post->followed_by_me = 1;
-            } else {
-                $post->followed_by_me = 0;
-            }
-        }
-        if ($posts->count() > 0) {
-            $response['posts'] = $posts;
-            $response['message'] = "My Followed post Render";
-            return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
-        } else {
-            $response['message'] = "No Post You followed yet";
-            return response()->json(['meta' => array('status' => $this->failureStatus), 'response' => $response]);
-        }
     }
 }

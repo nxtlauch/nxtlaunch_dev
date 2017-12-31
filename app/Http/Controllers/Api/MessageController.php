@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Message;
+use App\Traits\ApiStatusTrait;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -10,6 +11,7 @@ use Illuminate\Support\Facades\Validator;
 
 class MessageController extends Controller
 {
+    use ApiStatusTrait;
     public $successStatus = 200;
     public $failureStatus = 100;
 
@@ -20,17 +22,17 @@ class MessageController extends Controller
         ]);
         if ($validator->fails()) {
             $response['message'] = $validator->errors()->first();
-            return response()->json(array('meta' => array('status' => $this->failureStatus), 'response' => $response));
+            return $this->failureApiResponse($response);
         }
 
         $messages = Message::where('to_id', $request->conversation_id)->get();
         if ($messages->count() > 0) {
             $response['msg_history'] = $messages;
             $response['message'] = "Chat History Render";
-            return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
+            return $this->successApiResponse($response);
         } else {
             $response['message'] = "No chat History available";
-            return response()->json(['meta' => array('status' => $this->failureStatus), 'response' => $response]);
+            return $this->failureApiResponse($response);
         }
     }
 
@@ -41,7 +43,7 @@ class MessageController extends Controller
         ]);
         if ($validator->fails()) {
             $response['message'] = $validator->errors()->first();
-            return response()->json(array('meta' => array('status' => $this->failureStatus), 'response' => $response));
+            return $this->failureApiResponse($response);
         }
         $message = new Message();
         $message->from_id = Auth::id();
@@ -50,10 +52,10 @@ class MessageController extends Controller
         if ($message->save()) {
             $response['new_msg'] = $message;
             $response['message'] = "Message send successfully";
-            return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
+            return $this->successApiResponse($response);
         } else {
             $response['message'] = "Message is not saved successfully";
-            return response()->json(['meta' => array('status' => $this->failureStatus), 'response' => $response]);
+            return $this->failureApiResponse($response);
         }
     }
 }

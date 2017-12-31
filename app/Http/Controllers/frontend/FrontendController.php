@@ -734,7 +734,7 @@ class FrontendController extends Controller
     public function likedByMe()
     {
         $data = array();
-        $data['posts'] = Like::where('user_id', Auth::id())->orderBy('id', 'desc')->get()->where('post.expire_date', '>', Carbon::now()->toDateTimeString());
+        $data['posts'] = Like::where('user_id', Auth::id())->orderBy('id', 'desc')->get();
         return view('frontend.followings.followings')->with($data);
     }
 
@@ -817,7 +817,9 @@ class FrontendController extends Controller
     {
         $data = array();
         $data['brands'] = Follow::where('followed_by', Auth::id())->orderBy('id', 'desc')->get();
-//        dd($data['brands']);
+        $data['posts'] = FollowPost::where('user_id', Auth::id())->orderBy('id', 'desc')->get();
+//        dd($data['posts']);
+
         return view('frontend.my-list.my_list')->with($data);
     }
 

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Comment;
+use App\Traits\ApiStatusTrait;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -10,6 +11,7 @@ use Illuminate\Support\Facades\Validator;
 
 class CommentController extends Controller
 {
+    use ApiStatusTrait;
     public $successStatus = 200;
     public $failureStatus = 100;
 
@@ -47,11 +49,10 @@ class CommentController extends Controller
         ]);
         if ($validator->fails()) {
             $response['message'] = $validator->errors()->first();
-            return response()->json(array('meta' => array('status' => $this->failureStatus), 'response' => $response));
+            return $this->failureApiResponse($response);
         }
 
         $post = new Comment();
-
         $post->user_id = Auth::id();
         $post->post_id = $request->post_id;
         $post->comment = $request->comment;
@@ -59,10 +60,10 @@ class CommentController extends Controller
         if ($post->save()) {
             $response['comment'] = $post;
             $response['message'] = "Commented Successfully";
-            return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
+            return $this->successApiResponse($response);
         } else {
             $response['message'] = "Can not Comment";
-            return response()->json(['meta' => array('status' => $this->failureStatus), 'response' => $response]);
+            return $this->failureApiResponse($response);
         }
     }
 
@@ -78,10 +79,10 @@ class CommentController extends Controller
         if ($comment) {
             $response['comment'] = $comment;
             $response['message'] = "Comment Render";
-            return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
+            return $this->successApiResponse($response);
         } else {
             $response['message'] = "Comment info not Found";
-            return response()->json(['meta' => array('status' => $this->failureStatus), 'response' => $response]);
+            return $this->failureApiResponse($response);
         }
     }
 
@@ -119,10 +120,10 @@ class CommentController extends Controller
         if ($comment->save()) {
             $response['comment_id'] = $comment->id;
             $response['message'] = "Comment Updated Successfully";
-            return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
+            return $this->successApiResponse($response);
         } else {
             $response['message'] = "Comment can't Update";
-            return response()->json(['meta' => array('status' => $this->failureStatus), 'response' => $response]);
+            return $this->failureApiResponse($response);
         }
     }
 
@@ -137,10 +138,10 @@ class CommentController extends Controller
         $comment = Comment::find($id);
         if ($comment->delete()) {
             $response['message'] = "Comment Deleted Successfully";
-            return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
+            return $this->successApiResponse($response);
         } else {
             $response['message'] = "Comment can't Delete";
-            return response()->json(['meta' => array('status' => $this->failureStatus), 'response' => $response]);
+            return $this->failureApiResponse($response);
         }
     }
 }

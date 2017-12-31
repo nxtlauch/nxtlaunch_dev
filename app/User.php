@@ -2,6 +2,7 @@
 
 namespace App;
 
+use Carbon\Carbon;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Laravel\Passport\HasApiTokens;
@@ -25,7 +26,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token','device_token','location', 'phone','provider_id'
+        'password', 'remember_token','device_token','location', 'phone','provider_id','posts'
     ];
 
     /*user role*/
@@ -39,6 +40,20 @@ class User extends Authenticatable
     {
         return $this->hasMany('App\Post');
     }
+
+        /*launches posts*/
+    public function post_launches()
+    {
+        return $this->hasMany('App\Post')->where('expire_date', '>', Carbon::now()->toDateTimeString());
+    }
+
+          /*launched posts*/
+    public function post_launched()
+    {
+        return $this->hasMany('App\Post')->where('expire_date', '<', Carbon::now()->toDateTimeString());
+    }
+
+
 
     /*user comments*/
     public function comments()

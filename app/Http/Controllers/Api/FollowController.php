@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Follow;
+use App\Traits\ApiStatusTrait;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -10,6 +11,7 @@ use Illuminate\Support\Facades\Validator;
 
 class FollowController extends Controller
 {
+    use ApiStatusTrait;
     public $successStatus = 200;
     public $failureStatus = 100;
 
@@ -54,14 +56,14 @@ class FollowController extends Controller
         ]);
         if ($validator->fails()) {
             $response['message'] = $validator->errors()->first();
-            return response()->json(array('meta' => array('status' => $this->failureStatus), 'response' => $response));
+            return $this->failureApiResponse($response);
         }
         $follow_exist = Follow::where('user_id', $request->user_id)->where('followed_by', Auth::id())->first();
         if ($follow_exist) {
             $follow_exist->delete();
             $response['message'] = "unfollowed this user";
             $response['followed'] = 0;
-            return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
+            return $this->successApiResponse($response);
         } else {
             $follow = new Follow();
             $follow->user_id = $request->user_id;
@@ -70,10 +72,10 @@ class FollowController extends Controller
                 $response['follow_id'] = $follow->id;
                 $response['followed'] = 1;
                 $response['message'] = "followed this user successfully";
-                return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
+                return $this->successApiResponse($response);
             } else {
                 $response['message'] = "User can't Follow";
-                return response()->json(['meta' => array('status' => $this->failureStatus), 'response' => $response]);
+                return $this->failureApiResponse($response);
             }
         }
     }
@@ -123,10 +125,10 @@ class FollowController extends Controller
         $follow = Follow::find($id);
         if ($follow->delete()) {
             $response['message'] = "Post Unfollowed Successfully";
-            return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
+            return $this->successApiResponse($response);
         } else {
             $response['message'] = "Post Doesn't Unfollow";
-            return response()->json(['meta' => array('status' => $this->failureStatus), 'response' => $response]);
+            return $this->failureApiResponse($response);
         }
     }
 
@@ -134,21 +136,17 @@ class FollowController extends Controller
     public function my_following()
     {
         $follows = Follow::where('followed_by', Auth::id())->with(['user.userDetails'])->orderBy('id', 'desc')->get()->pluck('user');
-        if ($follows) {
+        if ($follows->count()>0) {
             foreach ($follows as $brand) {
                 $brand->followed_by_me = 1;
-                if (@$brand->userDetails->profile_picture) {
-                    $brand->profile_picture = $brand->userDetails->profile_picture;
-                } else {
-                    $brand->profile_picture = "avatar.png";
-                }
+
             }
             $response['brands'] = $follows;
             $response['message'] = "My following users";
-            return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
+            return $this->successApiResponse($response);
         } else {
             $response['message'] = "No Post Found";
-            return response()->json(['meta' => array('status' => $this->failureStatus), 'response' => $response]);
+            return $this->failureApiResponse($response);
         }
     }
     /*End Authenticated User following Post*/

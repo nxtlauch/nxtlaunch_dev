@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\FollowPost;
+use App\Traits\ApiStatusTrait;
+use App\Traits\LikeApiTrait;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -11,6 +13,7 @@ use Illuminate\Support\Facades\Validator;
 
 class FollowPostController extends Controller
 {
+    use ApiStatusTrait,LikeApiTrait;
     public $successStatus = 200;
     public $failureStatus = 100;
 
@@ -22,7 +25,8 @@ class FollowPostController extends Controller
             ->with('post.user','post.likes.user:id,name','post.comments.user:id,name','post.follows')
             ->orderBy('id', 'desc')
             ->get();
-        foreach ($follows as $follow) {
+        $this->likedPostStructure($follows);
+        /*foreach ($follows as $follow) {
             $user = clone $follow->post->user;
             if (@$user->userDetails->profile_picture) {
                 $follow->post->user->profile_picture = $user->userDetails->profile_picture;
@@ -44,7 +48,7 @@ class FollowPostController extends Controller
             }else{
                 $follow->post->followed_by_me=0;
             }
-        }
+        }*/
         if ($follows->count()>0) {
             $response['posts_launches'] = $follows->where('post.expire_date', '>', $dt)->pluck('post');
             $response['posts_launched'] = $follows->where('post.expire_date', '<', $dt)->pluck('post');
@@ -79,14 +83,14 @@ class FollowPostController extends Controller
         ]);
         if ($validator->fails()) {
             $response['message'] = $validator->errors()->first();
-            return response()->json(array('meta' => array('status' => $this->failureStatus), 'response' => $response));
+            return $this->failureApiResponse($response);
         }
         $followPostEsixt = FollowPost::where('post_id', $request->post_id)->where('user_id', Auth::id())->first();
         if ($followPostEsixt) {
             $followPostEsixt->delete();
             $response['followed'] = 0;
             $response['message'] = "You successfully unfollowed this post";
-            return response()->json(['meta' => array('status' => $this->failureStatus), 'response' => $response]);
+            return $this->successApiResponse($response);
         } else {
             $like = new FollowPost();
             $like->user_id = Auth::id();
@@ -95,10 +99,10 @@ class FollowPostController extends Controller
                 $response['follow_id'] = $like->id;
                 $response['followed'] = 1;
                 $response['message'] = "Post Followed Successfully";
-                return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
+                return $this->successApiResponse($response);
             } else {
                 $response['message'] = "Post Doesn't Liked";
-                return response()->json(['meta' => array('status' => $this->failureStatus), 'response' => $response]);
+                return $this->failureApiResponse($response);
             }
         }
 
@@ -146,13 +150,13 @@ class FollowPostController extends Controller
      */
     public function destroy($id)
     {
-        $like = Like::find($id);
+        $like = FollowPost::find($id);
         if ($like->delete()) {
             $response['message'] = "Post Unliked Successfully";
-            return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
+            return $this->successApiResponse($response);
         } else {
             $response['message'] = "Post Doesn't Unliked";
-            return response()->json(['meta' => array('status' => $this->failureStatus), 'response' => $response]);
+            return $this->failureApiResponse($response);
         }
     }
 }

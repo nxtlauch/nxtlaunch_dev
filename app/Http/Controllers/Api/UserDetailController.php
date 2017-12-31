@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Traits\ApiStatusTrait;
 use App\UserDetail;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
@@ -11,6 +12,7 @@ use Intervention\Image\Facades\Image;
 
 class UserDetailController extends Controller
 {
+    use ApiStatusTrait;
     public $successStatus = 200;
     public $failureStatus = 100;
 
@@ -48,7 +50,7 @@ class UserDetailController extends Controller
         ]);
         if ($validator->fails()) {
             $response['message'] = $validator->errors()->first();
-            return response()->json(array('meta' => array('status' => $this->failureStatus), 'response' => $response));
+            return $this->failureApiResponse($response);
         }
 
         $userDetail = UserDetail::where('user_id', Auth::id())->first();
@@ -70,10 +72,10 @@ class UserDetailController extends Controller
         if ($userDetail->save()) {
             $response['userdetails_id'] = $userDetail->id;
             $response['message'] = "User Details Updated Successfully";
-            return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
+            return $this->successApiResponse($response);
         } else {
             $response['message'] = "User Details can't Updated";
-            return response()->json(['meta' => array('status' => $this->failureStatus), 'response' => $response]);
+            return $this->failureApiResponse($response);
         }
     }
 
@@ -89,10 +91,10 @@ class UserDetailController extends Controller
         if ($userDetail) {
             $response['userDetail'] = $userDetail;
             $response['message'] = "User Details Render";
-            return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
+            return $this->successApiResponse($response);
         } else {
             $response['message'] = "User Details not Found";
-            return response()->json(['meta' => array('status' => $this->failureStatus), 'response' => $response]);
+            return $this->failureApiResponse($response);
         }
     }
 
@@ -144,10 +146,10 @@ class UserDetailController extends Controller
         if ($userDetail->save()) {
             $response['post_id'] = $userDetail->id;
             $response['message'] = "Post Created Successfully";
-            return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
+            return $this->successApiResponse($response);
         } else {
             $response['message'] = "Post Doesn't Created";
-            return response()->json(['meta' => array('status' => $this->failureStatus), 'response' => $response]);
+            return $this->failureApiResponse($response);
         }*/
     }
 
@@ -163,10 +165,10 @@ class UserDetailController extends Controller
         /*$userDetail = Post::find($id);
         if ($userDetail->delete()) {
             $response['message'] = "Post Deleted Successfully";
-            return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
+            return $this->successApiResponse($response);
         } else {
             $response['message'] = "Post Doesn't Deleted";
-            return response()->json(['meta' => array('status' => $this->failureStatus), 'response' => $response]);
+            return $this->failureApiResponse($response);
         }*/
     }
 
@@ -179,7 +181,7 @@ class UserDetailController extends Controller
         ]);
         if ($validator->fails()) {
             $response['message'] = $validator->errors()->first();
-            return response()->json(array('meta' => array('status' => $this->failureStatus), 'response' => $response));
+            return $this->failureApiResponse($response);
         }
 
         $userDetail = UserDetail::where('user_id', Auth::id())->first();
@@ -193,10 +195,10 @@ class UserDetailController extends Controller
         if ($userDetail->save()) {
             $response['userdetails_id'] = $userDetail->id;
             $response['message'] = "Pro user Registered Successfully";
-            return response()->json(['meta' => array('status' => $this->successStatus), 'response' => $response]);
+            return $this->successApiResponse($response);
         } else {
             $response['message'] = "Pro user can't Registered ";
-            return response()->json(['meta' => array('status' => $this->failureStatus), 'response' => $response]);
+            return $this->failureApiResponse($response);
         }
     }
 }

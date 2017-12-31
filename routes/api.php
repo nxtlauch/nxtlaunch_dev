@@ -18,12 +18,9 @@ Route::prefix('v1')->group(function () {
     Route::post('sign-up', 'Api\UserController@register');
     Route::post('unauth-posts', 'Api\PostsController@unauthHome');
     Route::post('explore', 'Api\PostsController@explore');
-//    Route::post('test', 'Api\PostsController@test');
 
     /*Authenticated routes */
     Route::group(['middleware' => 'auth:api'], function () {
-//        Route::post('test', 'Api\PostsController@test1');
-//        Route::post('test', 'Api\LikeController@myLiked');
 
         Route::post('user-info', 'Api\UserController@userDetails');
         Route::post('user-info-by-id', 'Api\UserController@userDetailsById');
@@ -41,7 +38,6 @@ Route::prefix('v1')->group(function () {
 
         /*Like routes*/
         Route::post('like', 'Api\LikeController@store');
-//        Route::post('my-like', 'Api\PostsController@myLiked');
         Route::post('my-like', 'Api\LikeController@myLiked');
 //        Route::resource('like', 'Api\LikeController')->only('store', 'destroy');
         /*End Like Route*/
@@ -64,7 +60,6 @@ Route::prefix('v1')->group(function () {
 
         /*follow a post*/
         Route::post('post-follows', 'Api\FollowPostController@index');
-//        Route::post('post-follows', 'Api\PostsController@postFollowedByMe');
         Route::post('post-follow', 'Api\FollowPostController@store');
 //        Route::resource('post-follow', 'Api\FollowPostController')->only('index', 'store');
         /*end follow a post*/
