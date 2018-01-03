@@ -120,13 +120,16 @@
         margin-right: 15px;
     }
     .horizontal-app-menu .header .header-inner .brand.inline img {
-        height: 32px;
+        height: 20px;
+    }
+    .horizontal-app-menu .header .header-inner .brand.inline img.for-mobile {
+        height: 30px;
     }
 }
 
 @media screen and (max-width: 568px) {
     .main-search-form {
-        width: 100px;
+        width: 90px;
     }
 }
 
@@ -151,6 +154,29 @@
 }
 .notification-panel .notification-body .notification-item .heading .time {
     color: #999999;
+}
+
+@media screen and (max-width: 991px) {
+    .notification-panel {
+        width: 280px !important;
+    }
+}
+.for-mobile {
+    display: none;
+}
+@media screen and (max-width: 767px) {
+    .for-desktop {
+        display: none;
+    }
+    .for-mobile {
+        display: block;
+    }
+}
+
+@media screen and (max-width: 991px) {
+    .notification-panel {
+        width: 280px !important;
+    }
 }
 
 /*Main Search*/
@@ -192,6 +218,7 @@
     background-color: #ffffff;
     padding: 5px 0;
     display: none;
+    min-width: 250px;
 }
 .search-result-mini .more-btn {
     width: 100%;
@@ -550,6 +577,11 @@
 .plx__post.alt .plx__follow-btn {
     top: 2px;
     right: 0;
+}
+@media screen and (max-width: 667px) {
+    .plx__post.alt .plx__follow-btn {
+        top: -4px;
+    }
 }
 .plx__follow-btn:hover {
     background-color: rgba(69, 157, 225, 0.1);

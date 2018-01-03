@@ -13809,7 +13809,6 @@ Main components
   .header .brand {
     width: auto;
   }
-  .header .notification-list,
   .header .search-link {
     display: none;
   }
@@ -14311,7 +14310,6 @@ Main components
   .header {
     height: 48px;
   }
-  .header .notification-list,
   .header .search-link {
     display: none;
   }
@@ -14616,14 +14614,18 @@ Main components
   body .header .header-inner .quickview-link {
     top: 14px;
   }
-  body .header .notification-list,
+  .header .notification-list {
+    padding: 0 10px 0 0 !important;
+  }
+  #plx__mainSearch {
+    padding-right: 10px;
+  }
   body .header .search-link {
     display: none;
   }
   body .header .dropdown-submenu {
     top: 12px;
   }
-  body .header .notification-list,
   body .header .search-link {
     display: none;
   }
