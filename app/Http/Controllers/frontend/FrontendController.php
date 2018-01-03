@@ -105,46 +105,14 @@ class FrontendController extends Controller
 
     public function notifications()
     {
-        /*$notifications = Notification::where('noti_to', Auth::id())->where('status', 1)->update(['status' => 0]);
-        $notifications = Notification::where('noti_to', Auth::id())->get();*/
         $data = array();
-//        $data['all_notifications'] = Notification::select('*', DB::raw('count(*) as total, MAX(created_at) AS created_at'))->where('noti_to', Auth::id())->orderBy('created_at', 'desc')->groupBy('noti_activity', 'purpose_id')->get();
         $data['all_notifications'] = Notification::where('noti_to', Auth::id())->orderBy('created_at', 'desc')->get();
-//        $data['all_notifications'] = Notification::select(DB::raw('SELECT * FROM notifications WHERE created_at IN (SELECT MAX(created_at) FROM notifications GROUP BY noti_activity,purpose_id)'))->get();
-//        $data['all_notifications'] = Notification::select('*', DB::raw('count(*) as total, MAX(created_at) AS created_at'))->where('noti_to', Auth::id())->orderBy('created_at','desc')->groupBy('noti_activity','purpose_id')->get();
-//        $data['all_notifications'] = Notification::whereRaw('id IN (select MAX(id) FROM notifications GROUP BY noti_activity,purpose_id)')->get();
-//        dd($data['all_notifications']);
         return view('frontend.notifications')->with($data);
     }
-
-    /*public function notifications()
-    {
-        $data = array();
-        $data['all_notifications'] = Notification::where('noti_to', Auth::id())
-            ->orderBy('created_at')
-            ->get()
-            ->sortBy('created_at')
-            ->groupBy('noti_activity')
-            ->map(function ($events) {
-                return $events
-                    ->groupBy('purpose_id')
-                   ;
-            })
-            ->sortBy('created_at')
-         ;
-        $my_objects = $data['all_notifications']->sort(function($a) {
-           dd($a);
-        });
-
-
-        dd($data['all_notifications'],$my_objects);
-        return view('frontend.notifications')->with($data);
-    }*/
 
     public function notificationDetalis($id)
     {
         $notification = Notification::find($id);
-//        dd($notification->purpose_id);
         if ($notification) {
             $notification->status = 0;
             $notification->save();
@@ -152,7 +120,6 @@ class FrontendController extends Controller
                 if ($notification->post->status != 1 || $notification->post->expire_date < Carbon::now()->toDateTimeString()) {
                     return back()->with('errMessage', 'This Post Is Corrently Inactive');
                 }
-//                return redirect(route('frontend.home') . "#post_id_$notification->purpose_id");
                 return redirect(route('frontend.post.details', $notification->purpose_id));
             } elseif ($notification->noti_for == 3) {
                 return redirect()->route('frontend.user.profile', $notification->purpose_id);
@@ -164,7 +131,6 @@ class FrontendController extends Controller
 
     public function postDetails($id)
     {
-//        Notification::where('noti_to', Auth::id())->where('noti_for', 2)->where('purpose_id', $id)->where('status', 1)->update(['status' => 0]);
         $data = array();
         $data['post'] = Post::findOrFail($id);
         return view('frontend.home.postdetails')->with($data);
@@ -243,7 +209,7 @@ class FrontendController extends Controller
                 $data['comment'] = View::make('frontend.home.render.comment.single-comment', array('comment' => $comment))->render();
                 return Response::json($data);
             }
-            return back()->with('succsMsg', 'Successfully Commented');
+            return back()->with('succMessage', 'Successfully Commented');
 
         }
     }
@@ -404,7 +370,7 @@ class FrontendController extends Controller
     {
         $data = array();
         if (Auth::user()->role_id == 4) {
-            return redirect()->route('frontend.home')->with('errMsg', 'You Are Already Pro User');
+            return redirect()->route('frontend.home')->with('errMessage', 'You Are Already Pro User');
         }
         $data['categories'] = UserCategory::all();
         return view('frontend.auth.new_pro_user_register')->with($data);
@@ -444,7 +410,7 @@ class FrontendController extends Controller
     {
         $data = array();
         if (Auth::user()->role_id == 4) {
-            return redirect()->route('frontend.home')->with('errMsg', 'You Are Already Pro User');
+            return redirect()->route('frontend.home')->with('errMessage', 'You Are Already Pro User');
         }
         $data['categories'] = UserCategory::all();
         return view('frontend.auth.pro_user_register')->with($data);
@@ -462,7 +428,7 @@ class FrontendController extends Controller
             'business_description' => 'required',
         ]);
         if (Auth::user()->role_id == 4) {
-            return redirect()->route('frontend.home')->with('errMsg', 'You Are Already Pro User');
+            return redirect()->route('frontend.home')->with('errMessage', 'You Are Already Pro User');
         } else {
             $user = User::findOrFail(Auth::id());
             $user->role_id = 4;
@@ -475,12 +441,12 @@ class FrontendController extends Controller
                 $userDetalis->category_name = $request->category_name;
                 $userDetalis->business_description = $request->business_description;
                 if ($userDetalis->save()) {
-                    return redirect()->route('frontend.home')->with('succsMsg', 'You Register as a Pro User');
+                    return redirect()->route('frontend.home')->with('succMessage', 'You Register as a Pro User');
                 } else {
-                    return redirect()->route('frontend.home')->with('errMsg', 'User Details Can not save');
+                    return redirect()->route('frontend.home')->with('errMessage', 'User Details Can not save');
                 }
             } else {
-                return redirect()->route('frontend.home')->with('errMsg', 'Try Again');
+                return redirect()->route('frontend.home')->with('errMessage', 'Try Again');
             }
         }
     }
@@ -497,13 +463,13 @@ class FrontendController extends Controller
     public
     function editLaunch($id)
     {
-        $post=Post::find($id);
-        if($post->user_id==Auth::id()){
+        $post = Post::find($id);
+        if ($post->user_id == Auth::id()) {
             $data = array();
             $data['categories'] = Category::where('status', 1)->get();
             $data['post'] = $post;
             return view('frontend.home.edit_post')->with($data);
-        }else{
+        } else {
             return back()->with('errMessage', "You are not post owner");
         }
 
@@ -511,7 +477,7 @@ class FrontendController extends Controller
 
 
     public
-    function updateLaunch(Request $request,$id)
+    function updateLaunch(Request $request, $id)
     {
 //        dd($request->all());
         $request->validate([
@@ -522,7 +488,7 @@ class FrontendController extends Controller
         ]);
 
         $post = Post::find($id);
-        if ($post->user_id==Auth::id()){
+        if ($post->user_id == Auth::id()) {
             /*if ($request->image) {
             // Pass Slim's getImages the name of your file input, and since we only care about one image, postfix it with the first array key
             $image = Slim::getImages('image')[0];
@@ -564,7 +530,7 @@ class FrontendController extends Controller
             } else {
                 return back()->with('errMessage', "Post Can't Update");
             }
-        }else{
+        } else {
             return back()->with('errMessage', "You are not post owner");
         }
 
@@ -651,10 +617,11 @@ class FrontendController extends Controller
         }
     }
 
-    public function deleteLaunch($id){
+    public function deleteLaunch($id)
+    {
         $post = Post::find($id);
-        if ($post->delete()){
-            Notification::where('noti_for',2)->where('purpose_id',$id)->delete();
+        if ($post->delete()) {
+            Notification::where('noti_for', 2)->where('purpose_id', $id)->delete();
             return back()->with('succMessage', 'Post Deleted Successfully');
         } else {
             return back()->with('errMessage', "Post Can't Delete");
@@ -699,7 +666,6 @@ class FrontendController extends Controller
                 }
             }
             $data['status'] = 0;
-//            return response()->json(['status' => 0, 'message' => 'Post Unliked Successfully']);
         } else {
             $like = new Like();
             $like->post_id = $request->post_id;
@@ -724,7 +690,6 @@ class FrontendController extends Controller
 
                 }
             }
-//            return response()->json(['status' => 1, 'message' => 'Post Liked Successfully']);
         }
         $data['content'] = View::make('frontend.home.render.likeCount', array('post' => $post))->render();
         return Response::json($data);
@@ -746,13 +711,11 @@ class FrontendController extends Controller
         $postexist = Like::where('post_id', $request->post_id)->where('user_id', Auth::id())->first();
         if ($postexist) {
             $postexist->delete();
-//            return response()->json(['status' => 0, 'message' => 'Post Unliked Successfully']);
         } else {
             $like = new Like();
             $like->post_id = $request->post_id;
             $like->user_id = Auth::id();
             $like->save();
-//            return response()->json(['status' => 1, 'message' => 'Post Liked Successfully']);
         }
         $post = Post::findOrFail($request->post_id);
         return Response::json(View::make('frontend.followings.render.single', array('post' => $post))->render());
@@ -808,8 +771,6 @@ class FrontendController extends Controller
             }
         }
         return Response::json($data);
-        /*$posts = Post::orderBy('id', 'desc')->with('user', 'comments.user:id,name', 'likes.user:id,name')->get()->where('expire_date', '>', Carbon::now()->toDateTimeString());
-        return Response::json(View::make('frontend.home.render.indexrender', array('posts' => $posts))->render());*/
     }
 
     /*my followed*/
@@ -984,8 +945,6 @@ class FrontendController extends Controller
         if ($postReport->save()) {
             $data['status'] = 1;
             return Response::json($data);
-            /*$post = Post::findOrFail($request->post_id);
-            return Response::json(View::make('frontend.home.render.single', array('post' => $post))->render());*/
         }
     }
 
@@ -1205,7 +1164,6 @@ class FrontendController extends Controller
                     }
                     $notification->user_id = Auth::id();
                     $notification->save();
-
                 }
                 /*$followNotification = new Notification();
                 $followNotification->user_id = $post->user->id;
@@ -1235,5 +1193,11 @@ class FrontendController extends Controller
             return 'true';
         }
 
+    }
+
+    public function notificationExists($notification_for, $notification_activity, $purpose_id)
+    {
+        $notification = Notification::where('noti_for', $notification_for)->where('noti_activity', $notification_activity)->where('purpose_id', $purpose_id)->first();
+        return $notification;
     }
 }

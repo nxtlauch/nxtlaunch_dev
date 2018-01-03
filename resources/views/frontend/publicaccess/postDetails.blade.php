@@ -48,7 +48,6 @@
                                            data-href="{{route('frontend.post.details.like')}}"
                                            data-id="{{$post->id}}"
                                            title="{{$post->likes->contains('user.id',Auth::id())?'Unlike':'Like'}}"
-                                           {{--                                                           class="plx__like {{$post->likes->contains('user.id',Auth::id())?' liked':' -liked'}}"></a>--}}
                                            class="redirectlogin plx__like {{$post->likes->contains('user.id',Auth::id())?' liked':' -liked'}}"></a>
                                         <a href="#" title="Comment" class="redirectlogin plx__comment"></a>
                                         <a href="#" title="Share" class="redirectlogin plx__share"></a>
