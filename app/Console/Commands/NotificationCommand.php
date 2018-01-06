@@ -41,16 +41,20 @@ class NotificationCommand extends Command
      */
     public function handle()
     {
-        Log::info('Inserting Notification: '.time());
+        Log::info('Inserting Notification: ' . time());
         $now = Carbon::now();
         $posts = Post::where('status', 1)->where('expire_date', '>', $now->toDateTimeString())->get();
-        if (isset($posts)){
+        if (isset($posts)) {
             foreach ($posts as $post) {
                 $expired_date = new Carbon($post->expire_date);
                 $diffInDays = $expired_date->diffInDays($now);
-                if ($diffInDays <= 7) {
-                    foreach ($post->follows as $follow) {
-                        $notification = Notification::where('noti_to', $follow->user_id)->where('noti_activity', 6)->where('noti_for', 2)->where('purpose_id', $post->id)->first();
+                $diffInHours = $expired_date->diffInHours($now);
+                $diffInmin = $expired_date->diffInMinutes($now);
+
+                foreach ($post->follows as $follow) {
+                    if ($diffInDays <= 7) {
+                        $this->notificationCheck($follow->user_id, 6, $post->id, $post->user->id);
+                        /*$notification = Notification::where('noti_to', $follow->user_id)->where('noti_activity', 6)->where('noti_for', 2)->where('purpose_id', $post->id)->first();
                         if (!$notification) {
                             $followNotification = new Notification();
                             $followNotification->user_id = $post->user->id;
@@ -60,11 +64,31 @@ class NotificationCommand extends Command
                             $followNotification->noti_to = $follow->user_id;
                             $followNotification->save();
 
-                        }
+                        }*/
+                    } elseif ($diffInDays <= 1) {
+                        $this->notificationCheck($follow->user_id, 7, $post->id, $post->user->id);
+                    } elseif ($diffInHours <= 1) {
+                        $this->notificationCheck($follow->user_id, 8, $post->id, $post->user->id);
+                    } elseif ($diffInmin <= 5) {
+                        $this->notificationCheck($follow->user_id, 9, $post->id, $post->user->id);
                     }
                 }
             }
         }
 
+    }
+
+    private function notificationCheck($user_id, $noti_activity, $post_id, $post_user_id)
+    {
+        $notification = Notification::where('noti_to', $user_id)->where('noti_activity', $noti_activity)->where('noti_for', 2)->where('purpose_id', $post_id)->first();
+        if (!$notification) {
+            $followNotification = new Notification();
+            $followNotification->user_id = $post_user_id;
+            $followNotification->noti_for = 2;
+            $followNotification->noti_activity = $noti_activity;
+            $followNotification->purpose_id = $post_id;
+            $followNotification->noti_to = $user_id;
+            $followNotification->save();
+        }
     }
 }

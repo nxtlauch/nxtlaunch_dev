@@ -120,5 +120,9 @@ class User extends Authenticatable
     {
         return $this->hasMany('App\FollowPost');
     }
+    /*user settings*/
+    public function userSettings(){
+        return $this->hasOne('App\UserNotificationSetting');
+    }
 
 }

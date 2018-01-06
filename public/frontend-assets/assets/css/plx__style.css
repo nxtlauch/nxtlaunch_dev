@@ -1684,3 +1684,26 @@
 .select2-selection--multiple .select2-selection__rendered .select2-search--inline {
     margin-left: 0;
 }
+/*Sidebar Nag Tab*/
+.sidebar-nav-tab {
+    padding: 0;
+    margin-bottom: 30px;
+}
+.sidebar-nav-tab li {
+    list-style-type: none;
+    margin-bottom: 12px;
+}
+.sidebar-nav-tab li a {
+    display: block;
+    color: #6e6e6e;
+}
+.sidebar-nav-tab li a.active {
+    color: #2F5496;
+    font-weight: bold;
+}
+.card.tab-item {
+    display: none;
+}
+.card.tab-item.active {
+    display: block;
+}

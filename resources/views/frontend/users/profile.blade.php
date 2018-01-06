@@ -218,9 +218,9 @@
                                                                 </div>
 
                                                                 <div class="post-texts">
-                                                                    <p class="text-muted Plx__like__count">
+                                                                    {{--<p class="text-muted Plx__like__count">
                                                                         @include('frontend.home.render.likeCount')
-                                                                    </p>
+                                                                    </p>--}}
 
                                                                     <style>
                                                                         .max-height-200 {
@@ -417,9 +417,9 @@
                                                                 </div>
 
                                                                 <div class="post-texts">
-                                                                    <p class="text-muted Plx__like__count">
+                                                                    {{--<p class="text-muted Plx__like__count">
                                                                         @include('frontend.home.render.likeCount')
-                                                                    </p>
+                                                                    </p>--}}
 
                                                                     <style>
                                                                         .max-height-200 {

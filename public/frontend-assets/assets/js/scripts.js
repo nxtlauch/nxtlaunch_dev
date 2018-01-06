@@ -188,6 +188,7 @@
         });
     })
 
+    plxTab('.sidebar-nav-tab li a', '.tab-item');
     plxTab('.plx__tabs a', '.plx__tabs-item');
     plxTab('.forPost a', '.forPostContent');
     plxTab('.forFollowing a', '.forFollowingContent');

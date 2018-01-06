@@ -16,17 +16,12 @@
                     <div class=" container  container-fixed-lg">
                         <!-- BEGIN PlACE PAGE CONTENT HERE -->
                         <div class="row">
-                            <div class="col-md-2">
-                                <ul class="sidebar-nav-tab">
-                                    <li><a href="#userSettings" class="active">User Settings</a></li>
-                                    <li><a href="#notificationSettings" class="">Notification Settings</a></li>
-                                </ul>
-                            </div>
+                            <div class="col-md-2"></div>
                             <div class="col-md-8">
-                                <div id="userSettings" class="active card tab-item card-default">
-                                    <div class="card-header m-b-10">
+                                <div class="card card-default">
+                                    <div class="card-header ">
                                         <div class="card-title">
-                                            <strong>Profile Edit</strong>
+                                            Profile Edit
                                         </div>
                                     </div>
                                     <div class="card-block">
@@ -98,34 +93,6 @@
                                             <div class="form-group">
                                                 <label>Confirm Password</label>
                                                 <input type="password" name="confirm_password" class="form-control">
-                                            </div>
-                                            <button type="submit" class="btn btn-primary">Update</button>
-                                        </form>
-                                    </div>
-                                </div>
-                                
-                                <div id="notificationSettings" class="tab-item card card-default">
-                                    <div class="card-header m-b-10">
-                                        <div class="card-title">
-                                            <strong>Notification Settings</strong>
-                                        </div>
-                                    </div>
-                                    <div class="card-block">
-                                        <form action="#">
-                                            Remind Me:
-                                            <div class="m-b-15">
-                                                <div class="checkbox mr-2 check-success inline">
-                                                    <input type="checkbox" value="1" id="remindType1" aria-invalid="false">
-                                                    <label for="remindType1">Before 7 Days</label>
-                                                </div>
-                                                <div class="checkbox mr-2 check-success inline">
-                                                    <input type="checkbox" value="1" id="remindType2" aria-invalid="false">
-                                                    <label for="remindType2">Before 1 Day</label>
-                                                </div>
-                                                <div class="checkbox mr-2 check-success inline">
-                                                    <input type="checkbox" value="1" id="remindType3" aria-invalid="false">
-                                                    <label for="remindType3">Launch Time</label>
-                                                </div>
                                             </div>
                                             <button type="submit" class="btn btn-primary">Update</button>
                                         </form>

@@ -80,7 +80,7 @@
                                                                title="{{$post->post->likes->contains('user.id',Auth::id())?'Unlike':'Like'}}"
                                                                class="plx__like {{$post->post->likes->contains('user.id',Auth::id())?' liked':' -liked'}}"></a><span
                                                                     class="likeCount">{{$post->post->likes->count()}}</span>
-                                                            <a href="{{route('frontend.home')."#post_id_".$post->post->id}}" title="Comment" class="plx__comment"></a>
+                                                            {{--<a href="{{route('frontend.home')."#post_id_".$post->post->id}}" title="Comment" class="plx__comment"></a>--}}
                                                             <a href="{{route('frontend.post.details',$post->post->id)}}"
                                                                title="Comment" class="plx__comment"></a>
                                                             <span>{{$post->post->comments->count()}}</span>
@@ -140,7 +140,7 @@
                                                                title="{{$post->post->likes->contains('user.id',Auth::id())?'Unlike':'Like'}}"
                                                                class="plx__like {{$post->post->likes->contains('user.id',Auth::id())?' liked':' -liked'}}"></a><span
                                                                     class="likeCount">{{$post->post->likes->count()}}</span>
-                                                            <a href="{{route('frontend.home')."#post_id_".$post->post->id}}" title="Comment" class="plx__comment"></a>
+                                                            {{--<a href="{{route('frontend.home')."#post_id_".$post->post->id}}" title="Comment" class="plx__comment"></a>--}}
                                                             <a href="{{route('frontend.post.details',$post->post->id)}}"
                                                                title="Comment" class="plx__comment"></a>
                                                             <span>{{$post->post->comments->count()}}</span>
