@@ -48,4 +48,7 @@ class Post extends Model
     public function tags(){
         return $this->hasMany('App\Tag');
     }
+    public function postNotificationStatus(){
+        return $this->hasOne('App\PostNotificationStatus');
+    }
 }
