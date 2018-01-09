@@ -46,12 +46,19 @@
                                                                  style="background-image: url('{{@$post->post->user->userDetails->profile_picture?asset('content-dir/profile_picture/'.@$post->post->user->userDetails->profile_picture):asset('public/frontend-assets/assets/img/profiles/avatar.jpg')}}')"></div>
                                                             <div class="plx__meta-text">
                                                                 <h4 class="plx__post-author-name">
-                                                                    <strong>{{@$post->post->user->name}}</strong>
+                                                                    <strong>{{@$post->post->user->name}}</strong> &nbsp;
+                                                                    @if(@$post->post->user_id != Auth::id())
+                                                                        <a href="javascript://"
+                                                                           data-href="{{route('frontend.follow.post')}}"
+                                                                           data-id="{{@$post->post->id}}"
+                                                                           data-post="{{@$post->post->id}}"
+                                                                           class="plx__btn btn btn-xs user-follow_{{@$post->post->id}} {{@$post->post->follows->contains('user_id',Auth::id())?' btn-primary':''}}">{{$post->post->follows->contains('user_id',Auth::id())?'Following':'Follow'}}</a>
+                                                                    @endif
                                                                 </h4>
                                                                 <div class="plx__time-countdown">
                                                                     @php($days=\Carbon\Carbon::parse($post->post->expire_date)->diffInDays())
                                                                     <span title="{{\Carbon\Carbon::parse($post->expire_date)->format('M d, Y H:i')}}"
-                                                                          class="plx__countdown {{$days<7?'text-danger':($days<30?'text-warning':'text-success')}}"
+                                                                          class="plx__countdown text-danger"
                                                                           data-date-time="{{$post->post->expire_date}}">
                     <span class="number day">08</span>d :
                     <span class="number hour">14</span>h :
@@ -61,13 +68,14 @@
                                                                 </div>
                                                             </div>
                                                             <div class="clearfix"></div>
-                                                            @if(@$post->post->user_id != Auth::id())
-                                                                <a href="javascript://"
-                                                                   data-href="{{route('frontend.follow.post')}}"
-                                                                   data-id="{{@$post->post->id}}"
-                                                                   data-post="{{@$post->post->id}}"
-                                                                   class="plx__follow-btn user-follow_{{@$post->post->id}} {{@$post->post->follows->contains('user_id',Auth::id())?' added':''}}">{{$post->post->follows->contains('user_id',Auth::id())?'Following':'Follow'}}</a>
-                                                            @endif
+
+                                                            <div class="options">
+                                                                <a href="javascript://" class="options-dot"></a>
+                                                                <ul class="options-list">
+                                                                    <li><a href="javascript://" class="change_notification" data-post="{{@$post->post->id}}">Notification Settings</a>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
                                                         </div>
                                                         <div class="post-texts">
                                                             <p class="post-title">{{$post->post->post_details}}</p>
@@ -106,7 +114,14 @@
                                                                  style="background-image: url('{{@$post->post->user->userDetails->profile_picture?asset('content-dir/profile_picture/'.@$post->post->user->userDetails->profile_picture):asset('public/frontend-assets/assets/img/profiles/avatar.jpg')}}')"></div>
                                                             <div class="plx__meta-text">
                                                                 <h4 class="plx__post-author-name">
-                                                                    <strong>{{@$post->post->user->name}}</strong>
+                                                                    <strong>{{@$post->post->user->name}}</strong> &nbsp;
+                                                                    @if(@$post->post->user_id != Auth::id())
+                                                                        <a href="javascript://"
+                                                                           data-href="{{route('frontend.follow.post')}}"
+                                                                           data-id="{{@$post->post->id}}"
+                                                                           data-post="{{@$post->post->id}}"
+                                                                           class="plx__btn btn btn-xs user-follow_{{@$post->post->id}} {{@$post->post->follows->contains('user_id',Auth::id())?' btn-primary':''}}">{{$post->post->follows->contains('user_id',Auth::id())?'Following':'Follow'}}</a>
+                                                                    @endif
                                                                 </h4>
                                                                 <div class="plx__time-countdown">
                                                                     @php($days=\Carbon\Carbon::parse($post->post->expire_date)->diffInDays())
@@ -121,13 +136,14 @@
                                                                 </div>
                                                             </div>
                                                             <div class="clearfix"></div>
-                                                            @if(@$post->post->user_id != Auth::id())
-                                                                <a href="javascript://"
-                                                                   data-href="{{route('frontend.follow.post')}}"
-                                                                   data-id="{{@$post->post->id}}"
-                                                                   data-post="{{@$post->post->id}}"
-                                                                   class="plx__follow-btn user-follow_{{@$post->post->id}} {{@$post->post->follows->contains('user_id',Auth::id())?' added':''}}">{{$post->post->follows->contains('user_id',Auth::id())?'Following':'Follow'}}</a>
-                                                            @endif
+
+                                                            <div class="options">
+                                                                <a href="javascript://" class="options-dot"></a>
+                                                                <ul class="options-list">
+                                                                    <li><a href="javascript://" class="change_notification" data-post="{{@$post->post->id}}">Notification Settings</a>
+                                                                    </li>
+                                                                </ul>
+                                                            </div>
                                                         </div>
                                                         <div class="post-texts">
                                                             <p class="post-title">{{$post->post->post_details}}</p>

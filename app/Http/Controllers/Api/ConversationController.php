@@ -16,7 +16,9 @@ class ConversationController extends Controller
 
     public $successStatus = 200;
     public $failureStatus = 100;
-    public function saveChatRoom(Request $request){
+
+    public function saveChatRoom(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'name' => 'required|max:255',
             'user_ids' => 'required'
@@ -28,9 +30,9 @@ class ConversationController extends Controller
         $conversation = new Conversation();
         $conversation->name = $request->name;
         $conversation->user_id = Auth::id();
-        if ($conversation->save()){
-            $user_ids=rtrim($request->user_ids,',');
-            $users=explode(',',$user_ids);
+        if ($conversation->save()) {
+            $user_ids = rtrim($request->user_ids, ',');
+            $users = explode(',', $user_ids);
             foreach ($users as $user_id) {
                 $member = new ConversationMember();
                 $member->conversation_id = $conversation->id;
@@ -40,9 +42,30 @@ class ConversationController extends Controller
             $response['conversation'] = $conversation;
             $response['message'] = "Conversation Created Successfully";
             return $this->successApiResponse($response);
-        }else{
+        } else {
             $response['message'] = "Conversation Can not Created";
             return $this->failureApiResponse($response);
         }
     }
+
+    public function conversationList()
+    {
+        $conversations = Conversation::orderBy('id', 'desc')
+            ->where(function ($q) {
+                $q->whereHas('user', function ($query) {
+                    $query->where('id', Auth::id());
+                })
+                    ->orWhereHas('members', function ($z) {
+                        $z->where('user_id', Auth::id());
+                    });
+            })->get();
+        if ($conversations->count() > 0) {
+            $response['conversation_list'] = $conversations;
+            return $this->successApiResponse($response);
+        } else {
+            $response['message'] = 'There is no conversation for you';
+            return $this->failureApiResponse($response);
+        }
+    }
+
 }

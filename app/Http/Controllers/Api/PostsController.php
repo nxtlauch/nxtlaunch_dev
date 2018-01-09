@@ -101,6 +101,21 @@ class PostsController extends Controller
         }
     }
 
+    public function unauthExplore()
+    {
+        $dt = Carbon::now()->toDateTimeString();
+        $posts = Post::where('status', 1)->orderBy('id', 'desc')->with('user', 'comments.user:id,name', 'likes.user:id,name')->where('expire_date', '>', $dt)->get();
+        $this->postStructure($posts, Auth::id());
+        if ($posts->count() > 0) {
+            $response['posts'] = $posts;
+            $response['message'] = "All Posts Render";
+            return $this->successApiResponse($response);
+        } else {
+            $response['message'] = "No Post Found";
+            return $this->failureApiResponse($response);
+        }
+    }
+
     /**
      * Show the form for creating a new resource.
      *
@@ -283,8 +298,8 @@ class PostsController extends Controller
     {
         $dt = Carbon::now()->toDateTimeString();
         $posts = Post::where('user_id', Auth::id())->where('status', 1)->orderBy('id', 'desc')->with('user', 'comments.user:id,name', 'likes.user:id,name')->where('expire_date', '>', $dt)->get();
-        $this->postStructure($posts,Auth::id());
-        if ($posts->count()>0) {
+        $this->postStructure($posts, Auth::id());
+        if ($posts->count() > 0) {
             $response['posts'] = $posts;
             $response['message'] = "Authenticated User Posts";
             return $this->successApiResponse($response);
@@ -318,7 +333,7 @@ class PostsController extends Controller
         $matchbrand = "MATCH (post_details) AGAINST ('" . $search_key . "' IN BOOLEAN MODE)";
         $posts = Post::whereRaw($matchbrand)->where('status', 1)->orderBy('id', 'desc')->where('expire_date', '>', Carbon::now()->toDateTimeString())->with('user', 'comments.user:id,name', 'likes.user:id,name', 'follows')->get();
         if ($posts->count() > 0) {
-            $this->postStructure($posts,Auth::id());
+            $this->postStructure($posts, Auth::id());
             $response['posts'] = $posts;
             $response['message'] = "Search Result";
             return $this->successApiResponse($response);
@@ -393,7 +408,7 @@ class PostsController extends Controller
         $filterd_posts = $p->with('user', 'comments.user:id,name', 'likes.user:id,name', 'follows')->get();
 
         if ($filterd_posts->count() > 0) {
-            $this->postStructure($filterd_posts,Auth::id());
+            $this->postStructure($filterd_posts, Auth::id());
             $response['posts'] = $filterd_posts;
             $response['message'] = "Filter Posts Render";
             return $this->successApiResponse($response);
@@ -475,7 +490,7 @@ class PostsController extends Controller
         }
 
         if ($filterd_posts->count() > 0) {
-            $this->postStructure($filterd_posts,Auth::id());
+            $this->postStructure($filterd_posts, Auth::id());
             $response['posts'] = $filterd_posts;
             $response['message'] = "Filter Posts Render";
             return $this->successApiResponse($response);

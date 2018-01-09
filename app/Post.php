@@ -51,4 +51,7 @@ class Post extends Model
     public function postNotificationStatus(){
         return $this->hasOne('App\PostNotificationStatus');
     }
+    public function customPostNotification(){
+        return $this->hasMany('App\CustomPostNotification');
+    }
 }

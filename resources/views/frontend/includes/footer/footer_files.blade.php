@@ -152,7 +152,7 @@
     });
 
     /*follow*/
-    $(document).on("click", ".plx__follow-btn", function (e) {
+    $(document).on("click", ".plx__follow-btn, .plx__btn", function (e) {
         e.preventDefault();
         var link = $(this).data('href');
         var user_id = $(this).data('id');
@@ -180,11 +180,6 @@
                     followUnfollow.removeClass('added');
                     followUnfollow.html('Follow');
                 }
-//                    $(".user-follow_" + user_id).removeClass('add')
-
-                /*$("#postrender").empty();
-                $("#postrender").html(data);
-                shouldInit();*/
             },
             error: function (data) {
                 console.log('Error:', data);
@@ -193,6 +188,99 @@
     });
     /*End follow*/
 
+    /*notification modal*/
+    $(document).on("click", ".change_notification", function (e) {
+        e.preventDefault();
+
+        var post_id = $(this).data('post');
+
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+            }
+        });
+        $.ajax({
+            type: 'post',
+            url: '{{route('frontend.check.custom.notification')}}',
+            data: {
+                '_token': $('input[name=_token]').val(),
+                'post_id': post_id
+            },
+            dataType: 'json',
+            success: function (data) {
+                $("#customNotificationModal").find('.refresh-custom-notification-modal').html(data.content);
+                $("#customNotificationModal").modal('show');
+            },
+            error: function (data) {
+                console.log('Error:', data);
+            }
+        });
+    });
+    /*End notification modal*/
+
+    /*Comment */
+    $(document).on("submit", "form#customNotificationForm", function (e) {
+        e.preventDefault();
+        var url="{{route('frontend.save.custom.notification')}}";
+        var formData = new FormData($("#customNotificationForm")[0]);
+        $.ajax({
+            type: "POST",
+            url: url,
+            enctype: 'multipart/form-data',
+            headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+            data:formData ,
+            processData : false,
+            contentType : false,
+            cache: false,
+            success: function(data) {
+                $("#customNotificationModal").modal('hide');
+            }
+        });
+
+
+       /* var formObj = $(this);
+        var comment = formObj.find('.textareaComment').val();
+        var formURL = formObj.attr("action");
+        var post_id = $(this).data('id');
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+            }
+        });
+        $.ajax({
+            type: 'post',
+            url: formURL,
+            data: {
+                '_token': $('input[name=_token]').val(),
+                'comment': comment
+            },
+            dataType: 'json',
+            success: function (data) {
+                $("#post_id_" + post_id).find('.Plx__comment__count').html(data.content);
+                $('#commentFor-' + post_id).append(data.comment);
+                formObj.find('.textareaComment').val('');
+
+                var showingCommentCount = $("#post_id_" + post_id).find('.showingCommentCount'),
+                    showingCommentCountValue = $(showingCommentCount).val();
+                var currentShowing = $('#post_id_' + post_id).find('.load-more-comment').data('count');
+                if (parseInt(showingCommentCountValue) < 2) {
+                    $(showingCommentCount).val(parseInt(showingCommentCountValue) + 1);
+                }
+
+
+                if ($('ul#commentFor-' + post_id + ' li').length > 2) {
+                    $('#commentFor-' + post_id + " li").first().remove();
+                    $("#post_id_" + post_id).find('.load-more-comment').removeClass('hidden');
+                }
+                formObj.find('.submit-btn').prop('disabled', true);
+
+            },
+            error: function (data) {
+                console.log('Error:', data);
+            }
+        });*/
+
+    });
     /*Comment */
     $(document).on("submit", "form.postComment", function (e) {
         e.preventDefault();
@@ -220,19 +308,14 @@
 
                 var showingCommentCount = $("#post_id_" + post_id).find('.showingCommentCount'),
                     showingCommentCountValue = $(showingCommentCount).val();
-
-                /*var currentCount = $('#post_id_' + post_id).find('.commentsCount').text();
-                $('#post_id_' + post_id).find('.commentsCount').text(parseInt(currentCount) + 1);*/
                 var currentShowing = $('#post_id_' + post_id).find('.load-more-comment').data('count');
                 if (parseInt(showingCommentCountValue) < 2) {
-                    // $('#post_id_' + post_id).find('.load-more-comment').attr('data-count', (parseInt(currentShowing) + 1));
                     $(showingCommentCount).val(parseInt(showingCommentCountValue) + 1);
                 }
 
 
                 if ($('ul#commentFor-' + post_id + ' li').length > 2) {
                     $('#commentFor-' + post_id + " li").first().remove();
-                    // $("#post_id_" + post_id).find('.no-more-comment').addClass('hidden');
                     $("#post_id_" + post_id).find('.load-more-comment').removeClass('hidden');
                 }
                 formObj.find('.submit-btn').prop('disabled', true);

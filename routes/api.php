@@ -17,7 +17,7 @@ Route::prefix('v1')->group(function () {
     Route::post('sign-in', 'Api\UserController@login');
     Route::post('sign-up', 'Api\UserController@register');
     Route::post('unauth-posts', 'Api\PostsController@unauthHome');
-    Route::post('explore', 'Api\PostsController@explore');
+    Route::post('unauth-explore', 'Api\PostsController@unauthExplore');
 
     /*Authenticated routes */
     Route::group(['middleware' => 'auth:api'], function () {
@@ -26,6 +26,7 @@ Route::prefix('v1')->group(function () {
         Route::post('user-info-by-id', 'Api\UserController@userDetailsById');
         Route::post('logout', 'Api\UserController@logout');
         /*Post routes*/
+        Route::post('explore', 'Api\PostsController@explore');
         Route::post('posts', 'Api\PostsController@index');
         Route::post('post', 'Api\PostsController@store');
         Route::post('post/{id}', 'Api\PostsController@show');
@@ -83,6 +84,7 @@ Route::prefix('v1')->group(function () {
         /*End notification api */
 
         /*messages*/
+        Route::post('conversation-list', 'Api\ConversationController@conversationList');
         Route::post('save-conversation', 'Api\ConversationController@saveChatRoom');
         Route::post('chat-history', 'Api\MessageController@chatHistory');
         Route::post('new-message', 'Api\MessageController@saveMessage');

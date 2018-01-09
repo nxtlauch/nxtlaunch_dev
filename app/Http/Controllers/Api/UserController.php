@@ -42,7 +42,6 @@ class UserController extends Controller
                 return $this->failureApiResponse($response);
             }
             $deviceToken = $this->findDeviceToken(Auth::id(),$request->device_token);
-
             if ($deviceToken) {
                 $deviceToken->status = 1;
                 $deviceToken->save();
@@ -58,7 +57,6 @@ class UserController extends Controller
             $response['message'] = "Credentials do not match";
             return $this->failureApiResponse($response);
 //            return response()->json(array('meta' => array('status' => $this->failureStatus), 'response' => $response));
-
         }
     }
 

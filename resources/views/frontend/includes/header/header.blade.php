@@ -133,7 +133,6 @@
                             @empty
                             @endforelse--}}
                         </ul>
-
                         <ul class="search-list alt scrollable">
                             @php
                                 $search_sugstns= App\RecentSearch::where('user_id', Auth::id())->orderBy('created_at', 'desc')->take(5)->get();
@@ -194,7 +193,7 @@
                         src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUBAMAAAB/pwA+AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAtUExURf///0dwTP///////////////////////////////////////////////////0Ev7+QAAAAOdFJOUw8ARCQ/ZtEHMuxgaG+d9WK6ngAAAHpJREFUCB1jEIQDBpHQqEIIj8Hu3buLUKbfu3fP0kDgIgOQCQHPGSo6oKCRoQ8h6gdjPgCpnbPt1r1378BMR3FBaSgTaIUwlKkoKCgDZSYIClpCmc8KBfKgzHcJZkATwSa8ezYPzgQyQKKcYBpITGQQVoICRgaIs0EkAA2ncXEBvGMPAAAAAElFTkSuQmCC"></a>
             <a href="{{route('frontend.my.follow')}}"
                class="header-icon btn-link m-l-10 p-r-15 sm-no-margin d-inline-block"
-               title="My Liked"><img height="17"
+               title="My Followed"><img height="17"
                                      src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAAUCAYAAABSx2cSAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMDY3IDc5LjE1Nzc0NywgMjAxNS8wMy8zMC0yMzo0MDo0MiAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6MUU4RjM0OTZGMDRBMTFFN0IwQkVBNEU3NDg2MzBCNjEiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6MUU4RjM0OTVGMDRBMTFFN0IwQkVBNEU3NDg2MzBCNjEiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTUgKFdpbmRvd3MpIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6REZGODAxMTNGMDQ4MTFFNzkwODhGODZCNTVGODQyQ0YiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6REZGODAxMTRGMDQ4MTFFNzkwODhGODZCNTVGODQyQ0YiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz5zK7bkAAABhElEQVR42pyUvS9EQRTFZ5hdH7EiEYREIiERjUYkJKJRiGIbidofoFLoFTodjShEIVHQahRK4rNRit2EXWxBVPYtuzvOfY5k8jL7wU1+++7bzL1nzp33nrbWHiqlpkBe1R/N4FyjOEDSpP4eBYOfd5AAy6ANrINX6QzKoMEp+AQdYDpcY39iEyhyARadex9bUmTodQz0gBjoBUnwRGXtKJdpcVzqxHMayQB4YXFnnZ7Thp2k4xkwVC1RWUeUS1zTF06cnnccPzdgpYbnvV/PX6DL6Z5g5xFgI8qytp3WAvH8gKQf3IM4c4kir9Ftx5lnTOSpiTn3xjOkRie3olxAcgLm+GcKHIFdz7aLtLUKJg238egseAN34LrKMWVBqyjLkXSDfTZaoEKqiudB8CzKAb3M0rPmdbjGQxJO+wPJLZhn0Sm4BNv07IblINfAkCQtfIOyXCD+Dzi0SiHDHRXlHBsscZIbIMcdVHolZ2SwUpznGf/rY3AMJjg45fHpC9np1bcAAwBtzc0MpxoRXAAAAABJRU5ErkJggg==">
             </a>
             {{--<a href="{{route('frontend.my.follow')}}"

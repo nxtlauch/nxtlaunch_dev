@@ -107,7 +107,6 @@
 
         <!-- Modal content-->
         <form id="reportForm" method="post" class="modal-content">
-            {{--<input id="ReportRoute" type="hidden" name="url">--}}
             <input id="PostID" type="hidden" name="post_id">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -120,6 +119,36 @@
             <div class="modal-footer">
                 <button type="submit" class="btn btn-info">Report</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<div class="modal fade" id="customNotificationModal" role="dialog">
+    <div class="modal-dialog">
+
+        <!-- Modal content-->
+        {{--<form id="customNotificationForm" action="{{route('frontend.save.custom.notification')}}" method="post"--}}
+        <form id="customNotificationForm" class="modal-content">
+            {{--<div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h6 class="modal-title">When you want to get this post notification ?</h6>
+            </div>--}}
+
+            <div class="modal-header clearfix text-left">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="pg-close fs-14"></i>
+                </button>
+                <h5>Notification <span class="semi-bold">Settings</span></h5>
+                <p class="p-b-10">When you want to get this post notification?</p>
+            </div>
+
+            <div class="refresh-custom-notification-modal">
+
+            </div>
+            <div class="modal-footer text-left">
+                <button type="submit" class="btn btn-info">Save</button>
+                {{--<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>--}}
             </div>
         </form>
 

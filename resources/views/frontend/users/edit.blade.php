@@ -17,10 +17,10 @@
                         <!-- BEGIN PlACE PAGE CONTENT HERE -->
                         <div class="row">
                             <div class="col-md-2">
-                                <ul class="sidebar-nav-tab">
+                                {{--<ul class="sidebar-nav-tab">
                                     <li><a href="#userSettings" class="active">User Settings</a></li>
                                     <li><a href="#notificationSettings" class="">Notification Settings</a></li>
-                                </ul>
+                                </ul>--}}
                             </div>
                             <div class="col-md-8">
                                 <div id="userSettings" class="active card tab-item card-default">
@@ -104,7 +104,7 @@
                                     </div>
                                 </div>
                                 
-                                <div id="notificationSettings" class="tab-item card card-default">
+                                {{--<div id="notificationSettings" class="tab-item card card-default">
                                     <div class="card-header m-b-10">
                                         <div class="card-title">
                                             <strong>Notification Settings</strong>
@@ -130,7 +130,7 @@
                                             <button type="submit" class="btn btn-primary">Update</button>
                                         </form>
                                     </div>
-                                </div>
+                                </div>--}}
                             </div>
                         </div>
 

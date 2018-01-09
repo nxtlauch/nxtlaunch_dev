@@ -6,12 +6,14 @@ use App\Category;
 use App\Comment;
 use App\Conversation;
 use App\ConversationMember;
+use App\CustomPostNotification;
 use App\Follow;
 use App\FollowPost;
 use App\Like;
 use App\Message;
 use App\Notification;
 use App\Post;
+use App\PostNotificationStatus;
 use App\PostReport;
 use App\RecentSearch;
 use App\Tag;
@@ -1056,61 +1058,111 @@ class FrontendController extends Controller
         return Response::json(View::make('frontend.includes.header.searchlist')->with($data)->render());
     }
 
-    public function test()
-    {
-
-        $now = Carbon::now();
-        $posts = Post::where('status', 1)->whereHas('follows.user.userSettings')->where('expire_date', '>', $now->toDateTimeString())->get();
-        if ($posts->count() > 0) {
-            foreach ($posts as $post) {
-                $expired_date = new Carbon($post->expire_date);
-                $diffInDays = $expired_date->diffInDays($now);
-                $diffInHours = $expired_date->diffInHours($now);
-                $diffInmin = $expired_date->diffInMinutes($now);
-
-                foreach ($post->follows as $follow) {
-                    if ($follow->user->userSettings) {
-                        if ($diffInDays <= 7 && $follow->user->userSettings->seven_days_reminder == 1) {
-                            $this->notificationCheck($follow->user_id, 6, $post->id, $post->user->id);
-                            /*$notification = Notification::where('noti_to', $follow->user_id)->where('noti_activity', 6)->where('noti_for', 2)->where('purpose_id', $post->id)->first();
-                            if (!$notification) {
-                                $followNotification = new Notification();
-                                $followNotification->user_id = $post->user->id;
-                                $followNotification->noti_for = 2;
-                                $followNotification->noti_activity = 6;
-                                $followNotification->purpose_id = $post->id;
-                                $followNotification->noti_to = $follow->user_id;
-                                $followNotification->save();
-
-                            }*/
-                        } elseif ($diffInDays <= 1 && $follow->user->userSettings->one_day_reminder == 1) {
-                            $this->notificationCheck($follow->user_id, 7, $post->id, $post->user->id);
-                        } elseif ($diffInHours <= 1 && $follow->user->userSettings->one_hour_reminder == 1) {
-                            $this->notificationCheck($follow->user_id, 8, $post->id, $post->user->id);
-                        } elseif ($diffInmin <= 5 && $follow->user->userSettings->five_minutes_reminder == 1) {
-                            $this->notificationCheck($follow->user_id, 9, $post->id, $post->user->id);
-                        }
-                    }
-
-                }
-            }
-        }
-
-    }
-
-    private function notificationCheck($user_id, $noti_activity, $post_id, $post_user_id)
-    {
-        $notification = Notification::where('noti_to', $user_id)->where('noti_activity', $noti_activity)->where('noti_for', 2)->where('purpose_id', $post_id)->first();
-        if (!$notification) {
-            $followNotification = new Notification();
-            $followNotification->user_id = $post_user_id;
-            $followNotification->noti_for = 2;
-            $followNotification->noti_activity = $noti_activity;
-            $followNotification->purpose_id = $post_id;
-            $followNotification->noti_to = $user_id;
-            $followNotification->save();
-        }
-    }
+//    public function test()
+//    {
+//        $now = Carbon::now();
+////        $posts = Post::where('status', 1)->whereHas('follows')->with('follows')->where('expire_date', '>', $now->toDateTimeString())->orderBy('expire_date','asc')->get();
+//        $posts = Post::where('status', 1)->whereHas('follows')->with('follows')->whereBetween('expire_date', [$now->toDateTimeString(),$now->addDays(7)->toDateTimeString()])->orderBy('expire_date','asc')->get();
+//        dd($posts);
+//        if ($posts->count() > 0) {
+//            foreach ($posts as $post) {
+//                $customNotification = $post->customPostNotification->pluck('user_id');
+//                $expired_date = new Carbon($post->expire_date);
+//                $diffInDays = $expired_date->diffInDays($now);
+//                if ($diffInDays > 7) {
+//                    break;
+//                }
+//                $diffInHours = $expired_date->diffInHours($now);
+//                $diffInmin = $expired_date->diffInMinutes($now);
+//                foreach ($post->customPostNotification as $notification) {
+//                    if ($notification->reminder_before == 1) {
+//                        if ($diffInDays <= 7) {
+//                            $this->notificationCheck($notification->user_id, 6, $post->id, $post->user->id);
+//                        }
+//                    } elseif ($notification->reminder_before == 2) {
+//                        if ($diffInDays <= 1) {
+//                            $this->notificationCheck($notification->user_id, 7, $post->id, $post->user->id);
+//                        }
+//                    } elseif ($notification->reminder_before == 3) {
+//                        if ($diffInHours <= 1) {
+//                            $this->notificationCheck($notification->user_id, 8, $post->id, $post->user->id);
+//                        }
+//                    } elseif ($notification->reminder_before == 4) {
+//                        if ($diffInmin <= 20) {
+//                            $this->notificationCheck($notification->user_id, 9, $post->id, $post->user->id);
+//                        }
+//                    }
+//                }
+//                $allFollows = $post->follows->pluck('user_id');
+//                $follows = $allFollows->diff($customNotification);
+//                foreach ($follows as $user_id) {
+//                    $this->notificationCheck($user_id, 6, $post->id, $post->user->id);
+//                }
+//            }
+//        }
+//        /*
+//        $activity = 0;
+//        $now = Carbon::now();
+//        $posts = Post::where('status', 1)->whereHas('follows.user.userSettings')->where('expire_date', '>', $now->toDateTimeString())->get();
+//        if ($posts->count() > 0) {
+//            foreach ($posts as $post) {
+//                $expired_date = new Carbon($post->expire_date);
+//                $diffInDays = $expired_date->diffInDays($now);
+//                $diffInHours = $expired_date->diffInHours($now);
+//                $diffInmin = $expired_date->diffInMinutes($now);
+//                if ($post->postNotificationStatus) {
+//                    $postNotificationStatus = $post->postNotificationStatus;
+//                } else {
+//                    $postNotificationStatus = new PostNotificationStatus();
+//                    $postNotificationStatus->post_id = $post->id;
+//                    $postNotificationStatus->save();
+//                }
+//
+//                foreach ($post->follows as $follow) {
+//                    if ($postNotificationStatus->seven_days_reminder == 0 && $diffInDays <= 7 && $follow->user->userSettings->seven_days_reminder == 1) {
+//                        $this->notificationCheck($follow->user_id, 6, $post->id, $post->user->id);
+//                        $activity = 6;
+//                    } elseif ($postNotificationStatus->one_day_reminder == 0 && $diffInDays <= 1 && $follow->user->userSettings->one_day_reminder == 1) {
+//                        $this->notificationCheck($follow->user_id, 7, $post->id, $post->user->id);
+//                        $activity = 7;
+//                    } elseif ($postNotificationStatus->one_hour_reminder == 0 && $diffInHours <= 1 && $follow->user->userSettings->one_hour_reminder == 1) {
+//                        $this->notificationCheck($follow->user_id, 8, $post->id, $post->user->id);
+//                        $activity = 8;
+//                    } elseif ($postNotificationStatus->five_minutes_reminder == 0 && $diffInmin <= 5 && $follow->user->userSettings->five_minutes_reminder == 1) {
+//                        $this->notificationCheck($follow->user_id, 9, $post->id, $post->user->id);
+//                        $activity = 9;
+//                    }
+//                }
+//                if ($activity != 0) {
+//                    if ($activity == 6) {
+//                        $postNotificationStatus->seven_days_reminder = 1;
+//                    } elseif ($activity == 7) {
+//                        $postNotificationStatus->one_day_reminder = 1;
+//                    } elseif ($activity == 8) {
+//                        $postNotificationStatus->one_hour_reminder = 1;
+//                    } elseif ($activity == 9) {
+//                        $postNotificationStatus->five_minutes_reminder = 1;
+//                    }
+//                    $postNotificationStatus->save();
+//                }
+//            }
+//        }*/
+//
+//    }
+//
+//    private function notificationCheck($user_id, $noti_activity, $post_id, $post_user_id)
+//    {
+//        $notification = Notification::where('noti_to', $user_id)->where('noti_activity', $noti_activity)->where('noti_for', 2)->where('purpose_id', $post_id)->first();
+//        if (!$notification) {
+//            $followNotification = new Notification();
+//            $followNotification->user_id = $post_user_id;
+//            $followNotification->noti_for = 2;
+//            $followNotification->noti_activity = $noti_activity;
+//            $followNotification->purpose_id = $post_id;
+//            $followNotification->noti_to = $user_id;
+//            $followNotification->save();
+//        }
+//    }
 
     public function test1()
     {
@@ -1245,7 +1297,48 @@ class FrontendController extends Controller
 
     public function notificationExists($notification_for, $notification_activity, $purpose_id)
     {
-        $notification = Notification::where('noti_for', $notification_for)->where('noti_activity', $notification_activity)->where('purpose_id', $purpose_id)->first();
+        $notification = Notification::where('noti_for', $notification_for)
+            ->where('noti_activity', $notification_activity)
+            ->where('purpose_id', $purpose_id)
+            ->first();
         return $notification;
+    }
+
+    public function checkCustomNotification(Request $request)
+    {
+        if ($request->ajax()) {
+            $cstm_notification = CustomPostNotification::where('post_id', $request->post_id)
+                ->where('user_id', Auth::id())
+                ->first();
+            $data = array();
+            $data['content'] = View::make('frontend.includes.modal.render.notification', array('cstm_notification' => @$cstm_notification, 'post_id' => $request->post_id))->render();
+            if ($cstm_notification) {
+                $data['status'] = 1;
+            } else {
+                $data['status'] = 0;
+            }
+            return Response::json($data);
+        }
+
+
+    }
+
+    public function saveCustomNotification(Request $request)
+    {
+        if ($request->ajax()) {
+            $cstm_notification = CustomPostNotification::where('post_id', $request->post_id)
+                ->where('user_id', Auth::id())
+                ->first();
+            if (!$cstm_notification) {
+                $cstm_notification = new CustomPostNotification();
+                $cstm_notification->post_id = $request->post_id;
+                $cstm_notification->user_id = Auth::id();
+            }
+            $cstm_notification->reminder_before = $request->reminder_before;
+            $cstm_notification->save();
+            $data = array();
+            $data['status'] = 1;
+            return Response::json($data);
+        }
     }
 }

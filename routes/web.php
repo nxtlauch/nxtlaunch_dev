@@ -116,6 +116,11 @@ Route::group(['middleware' => ['auth', 'only_user']], function () {
     Route::get('frontend/datalist','frontend\FrontendController@datalist')->name('frontend.search.datalist');
     /*load-comment*/
     Route::post('/post-comment-load', 'frontend\FrontendController@loadComments')->name('frontend.commentload');
+    /*check cutom notification ajax*/
+    Route::post('/check-custom-notification', 'frontend\FrontendController@checkCustomNotification')->name('frontend.check.custom.notification');
+    Route::post('/save-custom-notification', 'frontend\FrontendController@saveCustomNotification')->name('frontend.save.custom.notification');
+
+
 });
 
 
