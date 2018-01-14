@@ -82,7 +82,7 @@
             <img src="{{asset('public/frontend-assets')}}/assets/img/nxt_logo.png" alt="logo"
                  data-src="{{asset('public/frontend-assets')}}/assets/img/nxt_logo.png"
                  data-src-retina="{{asset('public/frontend-assets')}}/assets/img/nxt_logo_2x.png" height="60">
-            <p class="p-t-35">Sign up to see what's comming up</p>
+            <p class="p-t-35">Sign up to see what's coming up</p>
 
             <a href="{{url('login/facebook')}}" class="btn btn-block btn-info">Sign Up with Facebook</a>
 
@@ -158,9 +158,9 @@
                 <div class="text-center"><strong>OR</strong></div>
                 <a href="{{route('frontend.home')}}" class="btn btn-block btn-default m-t-10 m-b-30">Explore</a>
                 <p>By signing up, you agree to our TERMS and Privacy Policy</p>
-                <p>
+                {{--<p>
                     <small>for business, celebrity and band</small>
-                </p>
+                </p>--}}
                 <hr>
                 <p class="semi-bold">Have an account? <a href="{{route('login')}}">Login</a></p>
             </form>

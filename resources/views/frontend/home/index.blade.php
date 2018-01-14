@@ -14,123 +14,43 @@
                     <!-- START CONTAINER FLUID -->
                     <div class=" container  container-fixed-lg">
                         <!-- BEGIN PlACE PAGE CONTENT HERE -->
-
-
                         <div class="row">
-                            {{--<div class="col-md-1 col-lg-1"></div>--}}
-                            <div class="col-md-10 col-lg-10">
+                            <div class="col-md-2 col-lg-2"></div>
+                            <div class="col-md-8 col-lg-8">
                                 <div class="row">
-                                    <div class="col-lg-3 col-sm-4 d-flex flex-column">
-                                        <form action="{{route('frontend.filter')}}" class="plx__filter-bar">
-                                            <h4 id="toggleFilter" class="plx__widget-title clearfix">Filter By
-
-                                            </h4>
-                                            <div class="filter-list">
-                                                <ul class="filter-block">
-                                                    <li>
-                                                        <label for="all" class="filter-item">
-                                                            <input id="all" name="f1" value="all"
-                                                                   type="checkbox" {{@$f1=='all'?' checked':''}}>
-                                                            <span>All</span>
-                                                        </label>
-                                                    </li>
-                                                    <li>
-                                                        <label for="random" class="filter-item">
-                                                            <input id="random" name="f1" value="random"
-                                                                   type="checkbox" {{@$f1=='random'?' checked':''}}>
-                                                            <span>Random</span>
-                                                        </label>
-                                                    </li>
-                                                </ul>
-                                                <ul class="filter-block">
-                                                    <li>
-                                                        <label for="aroundMe" class="filter-item">
-                                                            <input id="aroundMe" name="f2" value="around_me"
-                                                                   type="checkbox" {{@$f2=='around_me'?' checked':''}}>
-                                                            <span>Around Me</span>
-                                                        </label>
-                                                    </li>
-                                                    <li>
-                                                        <label for="nationality" class="filter-item">
-                                                            <input id="nationality" name="f2" value="nationality"
-                                                                   type="checkbox" {{@$f2=='nationality'?' checked':''}}>
-                                                            <span>Nationality</span>
-                                                        </label>
-                                                    </li>
-                                                    <li>
-                                                        <label for="worldWide" class="filter-item">
-                                                            <input id="worldWide" name="f2" value="worldwide"
-                                                                   type="checkbox" {{@$f2=='worldwide'?' checked':''}}>
-                                                            <span>World Wide</span>
-                                                        </label>
-                                                    </li>
-                                                </ul>
-                                                <ul class="filter-block">
-                                                    <li>
-                                                        <label for="today" class="filter-item">
-                                                            <input id="today" name="f3" value="today"
-                                                                   type="checkbox" {{@$f3=='today'?' checked':''}}>
-                                                            <span>Today</span>
-                                                        </label>
-                                                    </li>
-                                                    <li>
-                                                        <label for="thisWeek" class="filter-item">
-                                                            <input id="thisWeek" name="f3" value="week"
-                                                                   type="checkbox" {{@$f3=='week'?' checked':''}}>
-                                                            <span>This Week</span>
-                                                        </label>
-                                                    </li>
-                                                    <li>
-                                                        <label for="thisMonth" class="filter-item">
-                                                            <input id="thisMonth" name="f3" value="month"
-                                                                   type="checkbox" {{@$f3=='month'?' checked':''}}>
-                                                            <span>This Month</span>
-                                                        </label>
-                                                    </li>
-                                                    <li>
-                                                        <label for="thisYear" class="filter-item">
-                                                            <input id="thisYear" name="f3" value="year"
-                                                                   type="checkbox" {{@$f3=='year'?' checked':''}}>
-                                                            <span>This Year</span>
-                                                        </label>
-                                                    </li>
-                                                </ul>
-                                                <ul class="filter-block">
-                                                    <li>
-                                                        <label for="closestLaunches" class="filter-item">
-                                                            <input id="closestLaunches" name="f4" value="closest"
-                                                                   type="checkbox" {{@$f4=='closest'?' checked':''}}>
-                                                            <span>Closest launches</span>
-                                                        </label>
-                                                    </li>
-                                                    <li>
-                                                        <label for="latestLaunches" class="filter-item">
-                                                            <input id="latestLaunches" name="f4" value="latest"
-                                                                   type="checkbox" {{@$f4=='latest'?' checked':''}}>
-                                                            <span>Latest launches</span>
-                                                        </label>
-                                                    </li>
-                                                </ul>
-                                                <button type="submit"
-                                                        class="btn {{--pull-right btn-link--}} btn-block btn-primary">
-                                                    Done
-                                                </button>
-                                                @if(@$cancel)
-                                                    <a href="{{route('frontend.home')}}"
-                                                       class="btn btn-block btn-default">
-                                                        Clear Filter
-                                                    </a>
-                                                @endif
-
+                                    <div class="col-lg-12 col-sm-12 d-flex flex-column" id="postrender">
+                                        <form class="form-inline m-b-15" method="post"
+                                              action="{{route('frontend.filter.posts')}}">
+                                            {{csrf_field()}}
+                                            <input type="hidden" name="page" value="{{@$page}}">
+                                            <div class="form-group form-group-sm m-b-15 m-r-15">
+                                                <label for="">Filter by</label> &nbsp; &nbsp;
+                                                <select name="time" id="" class="form-control form-control-sm">
+                                                    <option value="0" selected>Anytime</option>
+                                                    <option value="1" {{@$time==1?'selected':''}}>Today</option>
+                                                    <option value="2" {{@$time==2?'selected':''}}>This Week</option>
+                                                    <option value="3" {{@$time==3?'selected':''}}>This Month</option>
+                                                    <option value="4" {{@$time==4?'selected':''}}>This Year</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group form-group-sm m-b-15 m-r-15">
+                                                <select name="location" id="" class="form-control form-control-sm">
+                                                    <option value="0" selected>Global</option>
+                                                    <option value="1" {{@$location==1?'selected':''}}>Nearest</option>
+                                                    {{--<option value="1" {{@$location==1?'selected':''}}>3 km</option>--}}
+                                                    {{--<option value="2" {{@$location==2?'selected':''}}>8 km</option>--}}
+                                                    {{--<option value="3" {{@$location==3?'selected':''}}>16 km</option>--}}
+                                                    {{--<option value="4" {{@$location==4?'selected':''}}>40 km</option>--}}
+                                                    {{--<option value="5" {{@$location==5?'selected':''}}>80</option>--}}
+                                                </select>
+                                            </div>
+                                            <div class="form-group form-group-sm m-b-15">
+                                                <button type="submit" class="btn  btn-success btn-sm">Filter</button>
                                             </div>
                                         </form>
-                                    </div>
 
-                                    <div class="col-lg-9 col-sm-8 d-flex flex-column" id="postrender">
                                         @include('frontend.home.render.indexrender')
                                     </div>
-
-
                                 </div>
                             </div>
                         </div>

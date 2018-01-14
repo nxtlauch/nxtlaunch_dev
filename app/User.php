@@ -17,7 +17,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'location', 'phone', 'password', 'role_id','device_token'
+        'name', 'email', 'location', 'phone', 'password', 'role_id', 'device_token'
     ];
 
     /**
@@ -26,7 +26,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $hidden = [
-        'password', 'remember_token','device_token','location', 'phone','provider_id','posts'
+        'password', 'remember_token', 'device_token', 'location', 'phone', 'provider_id', 'posts'
     ];
 
     /*user role*/
@@ -41,18 +41,17 @@ class User extends Authenticatable
         return $this->hasMany('App\Post');
     }
 
-        /*launches posts*/
+    /*launches posts*/
     public function post_launches()
     {
         return $this->hasMany('App\Post')->where('expire_date', '>', Carbon::now()->toDateTimeString());
     }
 
-          /*launched posts*/
+    /*launched posts*/
     public function post_launched()
     {
         return $this->hasMany('App\Post')->where('expire_date', '<', Carbon::now()->toDateTimeString());
     }
-
 
 
     /*user comments*/
@@ -115,14 +114,22 @@ class User extends Authenticatable
     {
         return $this->hasMany('App\UserReport');
     }
+
     /*user following Post*/
     public function followPosts()
     {
         return $this->hasMany('App\FollowPost');
     }
+
     /*user settings*/
-    public function userSettings(){
+    public function userSettings()
+    {
         return $this->hasOne('App\UserNotificationSetting');
+    }
+
+    public function userInterests()
+    {
+        return $this->hasMany('App\UserInterest');
     }
 
 }

@@ -126,7 +126,8 @@
                             <div class="form-group comment-form">
                                 <input class="textareaComment" type="text" name="comment"
                                        placeholder="Write a comment..." required autocomplete="off">
-                                <button type="submit" class="submit-btn" disabled><i class="fa fa-paper-plane"></i></button>
+                                <button type="submit" class="submit-btn" disabled><i class="fa fa-paper-plane"></i>
+                                </button>
                             </div>
                             <div class="text-right">
                             </div>
@@ -138,5 +139,5 @@
         </div>
     </div>
 @empty
-    <h3 class="text-center">No Post Found</h3>
+    <h3 class="text-center">No Event Found in your area.</h3>
 @endforelse

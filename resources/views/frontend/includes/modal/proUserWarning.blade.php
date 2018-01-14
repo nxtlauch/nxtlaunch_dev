@@ -140,7 +140,7 @@
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="pg-close fs-14"></i>
                 </button>
                 <h5>Notification <span class="semi-bold">Settings</span></h5>
-                <p class="p-b-10">When you want to get this post notification?</p>
+                <p class="p-b-10">Remind me before launch?</p>
             </div>
 
             <div class="refresh-custom-notification-modal">

@@ -1,17 +1,17 @@
 <input type="hidden" name="post_id" value="{{@$post_id}}">
 <div class="modal-body">
     <div class="radio radio-success inline m-t-0">
-        <input id="sevenDays" name="stickup_toggler" type="radio" value="full">
-        <label for="sevenDays">Before 7 days</label>
+        <input id="sevenDays" name="reminder_before" type="radio" value="1" {{(@$cstm_notification->reminder_before==1 || !$cstm_notification)?'checked':''}}>
+        <label for="sevenDays">7 days</label>
         <br>
-        <input id="oneDay" name="stickup_toggler" type="radio" value="default" checked="">
-        <label for="oneDay">Before 1 day</label>
+        <input id="oneDay" name="reminder_before" type="radio" value="2" {{(@$cstm_notification->reminder_before==2)?'checked':''}}>
+        <label for="oneDay">1 day</label>
         <br>
-        <input id="oneHour" name="stickup_toggler" type="radio" value="mini">
-        <label for="oneHour">Before 1 Hour</label>
+        <input id="oneHour" name="reminder_before" type="radio" value="3" {{(@$cstm_notification->reminder_before==3)?'checked':''}}>
+        <label for="oneHour">1 Hour</label>
         <br>
-        <input id="twentyMins" name="stickup_toggler" type="radio" value="mini">
-        <label for="twentyMins">Before 20 min</label>
+        <input id="twentyMins" name="reminder_before" type="radio" value="4" {{(@$cstm_notification->reminder_before==4)?'checked':''}}>
+        <label for="twentyMins">20 min</label>
     </div>
 
     {{--<div class="form-group">

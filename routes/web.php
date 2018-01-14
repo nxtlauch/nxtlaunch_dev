@@ -37,6 +37,9 @@ Auth::routes();
 Route::get('/post/{id}/details', 'frontend\FrontendController@postDetailsById')->name('frontend.post.details.id');
 Route::get('registration-check-email', 'frontend\FrontendController@registrationCheckEmail')->name('registration.check.email');
 
+///*new user choose categories*/
+//Route::get('/new-user-choose-categories', 'frontend\FrontendController@newUserChooseCategoriesForm');
+///*End new user choose categories*/
 
 Route::group(['middleware' => ['auth', 'only_user']], function () {
     Route::get('/new-pro-user-registration', 'frontend\FrontendController@newProUserRegistrationForm')->name('new.pro.user.registration');
@@ -45,6 +48,10 @@ Route::group(['middleware' => ['auth', 'only_user']], function () {
     Route::get('/pro-user-registration', 'frontend\FrontendController@proUserRegistrationForm')->name('pro.user.registration');
     Route::post('/pro-user-registration', 'frontend\FrontendController@proUserRegistration');
     /*end pro user registration*/
+    /*new user choose categories*/
+    Route::get('/new-user-choose-interests', 'frontend\FrontendController@newUserChooseCategoriesForm')->name('new.user.choose.interests');
+    Route::post('/new-user-choose-interests', 'frontend\FrontendController@newUserChooseCategories');
+    /*End new user choose categories*/
     /*home page*/
     Route::get('/', 'frontend\FrontendController@home')->name('frontend.home');
     Route::get('/explore', 'frontend\FrontendController@homeExplore')->name('frontend.home.explore');
@@ -110,6 +117,10 @@ Route::group(['middleware' => ['auth', 'only_user']], function () {
     /*End USer REport*/
     /*filter*/
     Route::get('filter', 'frontend\FrontendController@filter')->name('frontend.filter');
+    Route::post('filter-posts', 'frontend\FrontendController@filterPosts')->name('frontend.filter.posts');
+    Route::get('filter-posts', function (){
+        return redirect(route('frontend.home'));
+    });
     /*End filter*/
     /*Search Data*/
     Route::post('frontend/datalist','frontend\FrontendController@datalist')->name('frontend.search.datalist');
@@ -125,6 +136,8 @@ Route::group(['middleware' => ['auth', 'only_user']], function () {
 
 
 Route::group(['middleware' => 'guest'], function () {
+    Route::get('/user-register', 'frontend\FrontendController@userRegister')->name('user.register');
+    Route::get('/register-pro-user', 'frontend\FrontendController@registerProUser')->name('confirm.pro.user');
     Route::get('/unauth-explore', 'frontend\FrontendController@explore')->name('frontend.home');
 
     Route::get('login/facebook', 'frontend\FacebookController@redirectToProvider');

@@ -109,11 +109,11 @@
                                                                             <span title="{{\Carbon\Carbon::parse($post->expire_date)->format('M d, Y H:i')}}"
                                                                                   class="plx__countdown {{$days<7?'text-danger':($days<30?'text-warning':'text-success')}}"
                                                                                   data-date-time="{{$post->expire_date}}">
-                     <span class="number day">08</span>d :
-                     <span class="number hour">14</span>h :
-                     <span class="number minutes">03</span>m :
-                     <span class="number seconds">21</span>s
-                 </span>
+                                                                                 <span class="number day">08</span>d :
+                                                                                 <span class="number hour">14</span>h :
+                                                                                 <span class="number minutes">03</span>m :
+                                                                                 <span class="number seconds">21</span>s
+                                                                             </span>
                                                                         </div>
                                                                     </div>
                                                                     <div class="clearfix"></div>
@@ -337,7 +337,7 @@
 
                                                     @empty
                                                         <div class="alert alert-info text-center" role="alert">
-                                                            No post found
+                                                            No event found
                                                         </div>
                                                     @endforelse
                                                 </div>
@@ -402,7 +402,7 @@
 
                                                     @empty
                                                         <div class="alert alert-info text-center" role="alert">
-                                                            No post Launched Yet
+                                                            No event Launched Yet
                                                         </div>
                                                     @endforelse
                                                 </div>

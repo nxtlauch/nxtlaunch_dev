@@ -151,6 +151,14 @@
         });
     });
 
+    $('.sortBy').each(function () {
+        $(this).change(function () {
+            var targetId = $(this).val();
+            $('.short-items').removeClass('active');
+            $(targetId).addClass('active');
+        })
+    });
+
     /*follow*/
     $(document).on("click", ".plx__follow-btn, .plx__btn", function (e) {
         e.preventDefault();

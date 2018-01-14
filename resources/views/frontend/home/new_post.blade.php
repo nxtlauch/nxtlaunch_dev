@@ -101,6 +101,17 @@
                                     </span>
                                             @endif
                                         </div>--}}
+                                        <div class="form-group{{ $errors->has('link') ? ' has-error' : '' }}">
+                                            <label for="">Website Link
+                                            </label>
+                                            <input class="form-control" type="text" name="link" value="{{old('link')?old('link'):''}}">
+                                            @if ($errors->has('link'))
+                                                <span class="help-block">
+                                        <strong>{{ $errors->first('link') }}</strong>
+                                    </span>
+                                            @endif
+                                        </div>
+
 
 
                                         <button class="btn btn-block btn-primary">Launch Event</button>

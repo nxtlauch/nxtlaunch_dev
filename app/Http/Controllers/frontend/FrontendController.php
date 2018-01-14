@@ -20,6 +20,7 @@ use App\Tag;
 use App\User;
 use App\UserCategory;
 use App\UserDetail;
+use App\UserInterest;
 use App\UserReport;
 use Carbon\Carbon;
 use function GuzzleHttp\Promise\all;
@@ -30,6 +31,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Response;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\View;
 use Intervention\Image\Facades\Image;
 use App\Slim;
@@ -75,33 +77,9 @@ class FrontendController extends Controller
     {
         $dt = Carbon::now()->toDateTimeString();
         $data = array();
-        $post1 = Post::where('status', 1)
-            ->where('expire_date', '>', $dt)
-            ->where(function ($q) {
-                $q->whereHas('user.followers', function ($query) {
-                    $query->where('followed_by', Auth::id());
-                })
-                    ->orWhereHas('user.posts.follows', function ($z) {
-                        $z->where('user_id', Auth::id());
-                    });
-            })->with('user', 'comments.user:id,name', 'likes.user:id,name')
-            ->orderBy('expire_date', 'asc')
-            ->get();
-        if ($post1->count() < 10) {
-            $postIds = $post1->pluck('id');
-            $take = 10 - $post1->count();
-            $post2 = Post::where('status', 1)
-                ->where('expire_date', '>', $dt)
-                ->whereNotIn('id', $postIds)
-                ->with('user', 'comments.user:id,name', 'likes.user:id,name')
-                ->orderBy('expire_date', 'asc')
-                ->take($take)
-                ->get();
-            $posts = $post1->merge($post2);
-        } else {
-            $posts = $post1;
-        }
+        $posts = $this->homePosts();
         $data['posts'] = $posts;
+        $data['page'] = 1;
         return view('frontend.home.index')->with($data);
     }
 
@@ -212,7 +190,6 @@ class FrontendController extends Controller
                 return Response::json($data);
             }
             return back()->with('succMessage', 'Successfully Commented');
-
         }
     }
 
@@ -295,6 +272,7 @@ class FrontendController extends Controller
                 $userDetails->profile_picture = $filename;
             }
             $userDetails->business_description = $request->business_description;
+            $userDetails->web_url = $request->web_url;
 
             if ($userDetails->save()) {
                 return redirect(route('frontend.my.profile'))->with('succMessage', 'Your Profile Updated Successfully');
@@ -357,6 +335,7 @@ class FrontendController extends Controller
     {
         $data = array();
         $data['posts'] = Post::orderBy('id', 'desc')->with('user:id,name', 'comments.user:id,name', 'likes.user:id,name')->get()->where('expire_date', '>', Carbon::now()->toDateTimeString());
+
         return view('frontend.publicaccess.explore')->with($data);
     }
 
@@ -364,7 +343,8 @@ class FrontendController extends Controller
     {
         $dt = Carbon::now()->toDateTimeString();
         $data = array();
-        $data['posts'] = Post::where('status', 1)->orderBy('id', 'desc')->with('user', 'comments.user:id,name', 'likes.user:id,name')->get()->where('expire_date', '>', $dt);
+        $data['posts'] = $this->explorePostsGet();
+        $data['page'] = 2;
         return view('frontend.home.index')->with($data);
     }
 
@@ -402,9 +382,11 @@ class FrontendController extends Controller
                     $userDetalis->save();
                 }
             }
+            Session::forget('confirm_pro');
         }
-        Auth::logout();
-        return redirect('/login')->with('succMessage', 'Login using your new created account');
+//        Auth::logout();
+//        return redirect('/login')->with('succMessage', 'Login using your new created account');
+        return redirect()->route('new.user.choose.interests');
 
     }
 
@@ -453,8 +435,41 @@ class FrontendController extends Controller
         }
     }
 
-    public
-    function newLaunch()
+    public function newUserChooseCategoriesForm()
+    {
+        $data = array();
+        $data['interests'] = Category::all();
+        return view('frontend.auth.new_user_choose_categories')->with($data);
+    }
+
+    public function registerProUser()
+    {
+        Session::put('confirm_pro', 1);
+        return redirect(route('register'));
+    }
+
+    public function userRegister()
+    {
+        Session::forget('confirm_pro');
+        return redirect(route('register'));
+    }
+
+    public function newUserChooseCategories(Request $request)
+    {
+        $request->validate([
+            'interests' => 'required'
+        ]);
+        foreach ($request->interests as $interest) {
+            $category = new UserInterest();
+            $category->user_id = Auth::id();
+            $category->category_id = $interest;
+            $category->save();
+        }
+        Auth::logout();
+        return redirect('/login')->with('succMessage', 'Login using your account');
+    }
+
+    public function newLaunch()
     {
 //        dd(Auth::user()->followers);
         $data = array();
@@ -462,8 +477,7 @@ class FrontendController extends Controller
         return view('frontend.home.new_post')->with($data);
     }
 
-    public
-    function editLaunch($id)
+    public function editLaunch($id)
     {
         $post = Post::find($id);
         if ($post->user_id == Auth::id()) {
@@ -478,8 +492,7 @@ class FrontendController extends Controller
     }
 
 
-    public
-    function updateLaunch(Request $request, $id)
+    public function updateLaunch(Request $request, $id)
     {
 //        dd($request->all());
         $request->validate([
@@ -547,6 +560,7 @@ class FrontendController extends Controller
             'category_id' => 'required',
             'expire_date' => 'required',
             'image' => 'required',
+            'link' => 'required',
         ]);
 
         $post = new Post();
@@ -585,6 +599,7 @@ class FrontendController extends Controller
         $post->category_id = $request->category_id;
         $post->expire_date = Carbon::parse($request->expire_date)->toDateTimeString();
         $post->user_id = Auth::id();
+        $post->link = $request->link;
         if ($post->save()) {
             foreach (Auth::user()->followers as $follower) {
                 $notification = new Notification();
@@ -1049,6 +1064,59 @@ class FrontendController extends Controller
         return view('frontend.home.index')->with($data);
     }
 
+    public function filterPosts(Request $request)
+    {
+        $request->validate([
+            'time' => 'required',
+            'location' => 'required',
+        ]);
+        $time = $request->time;
+        $location = $request->location;
+        $data = array();
+        $data['time'] = $time;
+        $data['location'] = $location;
+        $data['page'] = $request->page;
+        if ($request->page == 2) {
+            $posts = $this->explorePostsGet();
+        } elseif ($request->page == 1) {
+            $posts = $this->homePosts();
+        }
+
+        if ($time != 0) {
+            $today = Carbon::today();
+            if ($time == 1) {
+                $startDate = $today->startOfDay()->toDateTimeString();
+                $endDate = $today->endOfDay()->toDateTimeString();
+            } elseif ($time == 2) {
+                $startDate = $today->startOfWeek()->toDateTimeString();
+                $endDate = $today->endOfWeek()->toDateTimeString();
+            } elseif ($time == 3) {
+                $startDate = $today->startOfMonth()->toDateTimeString();
+                $endDate = $today->endOfMonth()->toDateTimeString();
+            } elseif ($time == 4) {
+                $startDate = $today->startOfYear()->toDateTimeString();
+                $endDate = $today->endOfYear()->toDateTimeString();
+            }
+            $q = $posts->where('created_at', '>', $startDate)->where('created_at', '<', $endDate);
+        } else {
+            $q = $posts;
+        }
+
+        if ($location != 0) {
+            if (Auth::user()->location) {
+                $filterPosts = $q->filter(function ($item) {
+                    return strtoupper($item->user->location) == strtoupper(Auth::user()->location);
+                });
+            } else {
+                return back()->with('errMessage', "Please add your location first");
+            }
+        } else {
+            $filterPosts = $q;
+        }
+        $data['posts'] = $filterPosts;
+        return view('frontend.home.index')->with($data);
+    }
+
     public function datalist(Request $request)
     {
         $data = array();
@@ -1188,7 +1256,8 @@ class FrontendController extends Controller
         }
     }
 
-    public function loadComments(Request $request)
+    public
+    function loadComments(Request $request)
     {
         $data = array();
         $comments = Comment::where('post_id', $request->post_id)->orderBy('id', 'desc')->skip($request->skip)->take(10)->get()->reverse();
@@ -1199,7 +1268,8 @@ class FrontendController extends Controller
         }
     }
 
-    public function followPost(Request $request)
+    public
+    function followPost(Request $request)
     {
         $post_id = $request->user_id;
         $post = Post::find($post_id);
@@ -1319,8 +1389,6 @@ class FrontendController extends Controller
             }
             return Response::json($data);
         }
-
-
     }
 
     public function saveCustomNotification(Request $request)
@@ -1340,5 +1408,47 @@ class FrontendController extends Controller
             $data['status'] = 1;
             return Response::json($data);
         }
+    }
+
+    public function homePosts()
+    {
+        $dt = Carbon::now()->toDateTimeString();
+        $post1 = Post::where('status', 1)
+            ->where('expire_date', '>', $dt)
+            ->where(function ($q) {
+                $q->whereHas('user.followers', function ($query) {
+                    $query->where('followed_by', Auth::id());
+                })
+                    ->orWhereHas('user.posts.follows', function ($z) {
+                        $z->where('user_id', Auth::id());
+                    });
+            })->with('user', 'comments.user:id,name', 'likes.user:id,name')
+            ->orderBy('expire_date', 'asc')
+            ->get();
+        if ($post1->count() < 10) {
+            $postIds = $post1->pluck('id');
+            $take = 10 - $post1->count();
+            $post2 = Post::where('status', 1)
+                ->where('expire_date', '>', $dt)
+                ->whereNotIn('id', $postIds)
+                ->with('user', 'comments.user:id,name', 'likes.user:id,name')
+                ->orderBy('expire_date', 'asc')
+                ->take($take)
+                ->get();
+            $posts = $post1->merge($post2);
+        } else {
+            $posts = $post1;
+        }
+        return $posts;
+    }
+
+    public function explorePostsGet()
+    {
+        return $this->explorePosts()->get();
+    }
+
+    public function explorePosts()
+    {
+        return Post::where('status', 1)->where('expire_date', '>', Carbon::now()->toDateTimeString())->orderBy('id', 'desc')->with('user', 'comments.user:id,name', 'likes.user:id,name');
     }
 }

@@ -72,6 +72,11 @@
                                                 <input type="email" class="form-control" value="username" disabled="">
                                             </div>--}}
                                             <div class="form-group">
+                                                <label>Website Url</label>
+                                                <input type="text" name="web_url" class="form-control"
+                                                       value="{{old('web_url')?old('web_url'):Auth::user()->userDetails->web_url}}">
+                                            </div>
+                                            <div class="form-group">
                                                 <label>Email</label>
                                                 <input type="email" name="email" class="form-control"
                                                        value="{{old('email')?old('email'):Auth::user()->email}}"
@@ -103,7 +108,7 @@
                                         </form>
                                     </div>
                                 </div>
-                                
+
                                 {{--<div id="notificationSettings" class="tab-item card card-default">
                                     <div class="card-header m-b-10">
                                         <div class="card-title">

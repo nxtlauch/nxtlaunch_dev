@@ -22,5 +22,5 @@
         </span>
     @endif
 @else
-    <strong>No like yet</strong>
+    <strong>No event like yet</strong>
 @endif

@@ -714,29 +714,10 @@
 
 .plx__post .plx__time-countdown {
     position: relative;
-    padding-left: 32px;
-}
-
-.plx__post.alt .plx__time-countdown {
-    padding-left: 26px;
 }
 
 .plx__post.alt .plx__time-countdown {
     margin-top: 5px;
-}
-
-.plx__post .plx__time-countdown::before {
-    content: '';
-    position: absolute;
-    top: -1px;
-    left: 0;
-    height: 22px;
-    width: 22px;
-    opacity: .8;
-    background-position: left center;
-    background-repeat: no-repeat;
-    background-size: contain;
-    background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADIAAAAyCAYAAAAeP4ixAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAMWSURBVGhD7ZpJqI1RHMCfeSyxwcKGMmdKkSk2FoaSUthYyJBSYqOIRCGFsCAUCykWJFlICVnIFDbmkmlBKDJPv9/37qmv232v9713z72f5/7qtzjnvfud87//c74zvFfX2umBf3LoMcxEqwvkQ1KqPgvx/w6kDb7DXzgee1bRXrgPDWQ7ZmYH+uG8+BWHYWY64Aa8j2bnPfpAs2Q5lh/Rdr4Xym/xMk7BshDmzbOkFI+ZaDtnk1IEaoFkpBZIUykVSHvsXwb7YKAqgfRG61rqKQxULJCXSakeX9FfMN2p5rgXA7PRutNJKQKu9i5KP9EAAlewuGNZXYCBZWidq3k0HqCNjElK9azAdKey6n6uOwb2o/Wrk1IkwrYl/W11RudNunNZXIeBrmhgv3GgFbEYjDbyDUdZUWAcfsZSHW3M89gOA3vQ+ktJKTI70cae4AArCsxH51C6o415A32BBByi4UsaYUVsHErX0M68wVkYmIDPsbjTxR5BnyMOp5AJA1mJFcPJeQZDx46iZwfxZ1sw7GLTXsepGJiED9GfmYlFWHEc22swzA3XFxezgMNmOZ7DA5jehpuFXeiRwM/ew7FYVQbhVQzfusMmZKcU6Sz8QLPXEXNBW1yLIZgXOBGL2YYhC76y0+tRLhiNd9AO2lGHjcOnmJF4C/09J7brUTesOg6JzegQsXOPcDI2htubjehR1s88xWlYNYbiXQxZ2I2lstAQZuc2huy4caz4XJmObiWamoWGKM7ORWzsRVFWhmPYuh/HLFloCCe9r2+feQHdaUfFE2GY1IewnA32w9fos1dZEZM5aEMOp3JkopgZ6PNfoV9aNMK2xA1eLELGDSoaIfV9k1Ic1qNtbEpKEeiEviY/JaV4hJt3N6JRKHWLEoPaBV1TqQWSkVogTeWfDqQLekSdh56nbcALB8ux3Iq2c7NQnotDsNl4h/UYfWgePIzN2tt5SeYDvPk4UUVPon9HtC8ulplwFffU53Y9DxcDS9BADialDISJ3Wr+88E7q6U50LNPiwLJm5kD8bXr7WDeXIytmbq6v2yEZJKvY95CAAAAAElFTkSuQmCC');
 }
 
 .plx__post.alt .plx__time-countdown::before {
@@ -744,12 +725,6 @@
     left: 0;
     height: 17px;
     width: 17px;
-}
-
-@media screen and (min-width: 1400px) {
-    .plx__post .plx__time-countdown::before {
-        top: 6px;
-    }
 }
 
 .plx__post .plx__time-countdown .plx__countdown {
@@ -1485,6 +1460,13 @@
     display: inline-block;
     vertical-align: middle;
     margin-right: 15px;
+}
+
+.short-items {
+    display: none;
+}
+.short-items.active {
+    display: block;
 }
 
 .plx__tabs {

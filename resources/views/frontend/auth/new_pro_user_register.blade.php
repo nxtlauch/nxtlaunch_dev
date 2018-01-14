@@ -70,18 +70,24 @@
             <h4 class="semi-bold text-center">Pro User Registration</h4>
             <hr>
             <!-- START Login Form -->
-            <form id="form-login" class="p-t-15" method="post" role="form" action="{{route('new.pro.user.registration')}}">
+            <form id="form-login" class="p-t-15" method="post" role="form"
+                  action="{{route('new.pro.user.registration')}}">
                 {{csrf_field()}}
-                <div class="form-group">
-                    <label>Are you interested to resister as pro user?</label>
-                    <div class="radio m-t-0 radio-primary">
-                        <input class="proUserCheckYes" type="radio" checked="checked" value="yes" name="proUserCheck"
-                               id="yes">
-                        <label for="yes">Yes</label>
-                        <input class="proUserCheckNo" type="radio" value="no" name="proUserCheck" id="no">
-                        <label for="no">No</label>
+                @if(Session::has('confirm_pro'))
+                    <input name="proUserCheck" type="hidden" value="yes">
+                @else
+                    <div class="form-group">
+                        <label>Are you interested to resister as pro user?</label>
+                        <div class="radio m-t-0 radio-primary">
+                            <input class="proUserCheckYes" type="radio" checked="checked" value="yes"
+                                   name="proUserCheck"
+                                   id="yes">
+                            <label for="yes">Yes</label>
+                            <input class="proUserCheckNo" type="radio" value="no" name="proUserCheck" id="no">
+                            <label for="no">No</label>
+                        </div>
                     </div>
-                </div>
+                @endif
                 <div id="proUserRegisterForm">
 
                     <div class="form-group{{ $errors->has('category_name') ? ' has-error' : '' }}">
