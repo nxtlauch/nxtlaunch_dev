@@ -122,7 +122,7 @@
                 <button class="btn btn-block btn-primary btn-cons m-t-10 m-b-15" type="submit">Login</button>
                 <div class="text-center"><strong>OR</strong></div>
                 <a href="{{route('frontend.home')}}" class="btn btn-block btn-default m-t-10 m-b-30">Explore</a>
-                <p>By loging in, you agree to our TERMS and Privacy Policy</p>
+                <p>By logging in, you agree to our TERMS and Privacy Policy</p>
                 <p>
                     <a href="{{route('confirm.pro.user')}}"><strong>Get a Pro account </strong></a><small>for business, celebrity and band</small>
                 </p>

@@ -43,9 +43,27 @@
         var input, filter, ul, li, a, i;
         input = document.getElementById('myInput');
         var res = input.value.charAt(0);
-        if(res=='#'){
+        if (res == '#') {
+            $("#myTag").addClass('hidden');
             $("#myUL").addClass('hidden');
-        }else {
+            if (input.value.length >= 2) {
+                $("#myTag").removeClass('hidden');
+                filter = input.value.toUpperCase();
+                ul = document.getElementById("myTag");
+                li = ul.getElementsByTagName('li');
+
+                // Loop through all list items, and hide those who don't match the search query
+                for (i = 0; i < li.length; i++) {
+                    a = li[i].getElementsByTagName("a")[0];
+                    if (a.innerHTML.toUpperCase().indexOf(filter) > -1) {
+                        li[i].style.display = "";
+                    } else {
+                        li[i].style.display = "none";
+                    }
+                }
+            }
+        } else {
+            $("#myTag").addClass('hidden');
             $("#myUL").removeClass('hidden');
             filter = input.value.toUpperCase();
             ul = document.getElementById("myUL");
@@ -100,7 +118,9 @@
             dataType: 'json',
             success: function (data) {
                 $("#myUL").empty();
-                $("#myUL").html(data);
+                $("#myUL").html(data.searchSuggestion);
+                $("#myTag").empty();
+                $("#myTag").html(data.tagSuggestion);
 
             },
             error: function (data) {
@@ -229,64 +249,64 @@
     /*Comment */
     $(document).on("submit", "form#customNotificationForm", function (e) {
         e.preventDefault();
-        var url="{{route('frontend.save.custom.notification')}}";
+        var url = "{{route('frontend.save.custom.notification')}}";
         var formData = new FormData($("#customNotificationForm")[0]);
         $.ajax({
             type: "POST",
             url: url,
             enctype: 'multipart/form-data',
             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-            data:formData ,
-            processData : false,
-            contentType : false,
+            data: formData,
+            processData: false,
+            contentType: false,
             cache: false,
-            success: function(data) {
+            success: function (data) {
                 $("#customNotificationModal").modal('hide');
             }
         });
 
 
-       /* var formObj = $(this);
-        var comment = formObj.find('.textareaComment').val();
-        var formURL = formObj.attr("action");
-        var post_id = $(this).data('id');
-        $.ajaxSetup({
-            headers: {
-                'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
-            }
-        });
-        $.ajax({
-            type: 'post',
-            url: formURL,
-            data: {
-                '_token': $('input[name=_token]').val(),
-                'comment': comment
-            },
-            dataType: 'json',
-            success: function (data) {
-                $("#post_id_" + post_id).find('.Plx__comment__count').html(data.content);
-                $('#commentFor-' + post_id).append(data.comment);
-                formObj.find('.textareaComment').val('');
+        /* var formObj = $(this);
+         var comment = formObj.find('.textareaComment').val();
+         var formURL = formObj.attr("action");
+         var post_id = $(this).data('id');
+         $.ajaxSetup({
+             headers: {
+                 'X-CSRF-TOKEN': $('meta[name="_token"]').attr('content')
+             }
+         });
+         $.ajax({
+             type: 'post',
+             url: formURL,
+             data: {
+                 '_token': $('input[name=_token]').val(),
+                 'comment': comment
+             },
+             dataType: 'json',
+             success: function (data) {
+                 $("#post_id_" + post_id).find('.Plx__comment__count').html(data.content);
+                 $('#commentFor-' + post_id).append(data.comment);
+                 formObj.find('.textareaComment').val('');
 
-                var showingCommentCount = $("#post_id_" + post_id).find('.showingCommentCount'),
-                    showingCommentCountValue = $(showingCommentCount).val();
-                var currentShowing = $('#post_id_' + post_id).find('.load-more-comment').data('count');
-                if (parseInt(showingCommentCountValue) < 2) {
-                    $(showingCommentCount).val(parseInt(showingCommentCountValue) + 1);
-                }
+                 var showingCommentCount = $("#post_id_" + post_id).find('.showingCommentCount'),
+                     showingCommentCountValue = $(showingCommentCount).val();
+                 var currentShowing = $('#post_id_' + post_id).find('.load-more-comment').data('count');
+                 if (parseInt(showingCommentCountValue) < 2) {
+                     $(showingCommentCount).val(parseInt(showingCommentCountValue) + 1);
+                 }
 
 
-                if ($('ul#commentFor-' + post_id + ' li').length > 2) {
-                    $('#commentFor-' + post_id + " li").first().remove();
-                    $("#post_id_" + post_id).find('.load-more-comment').removeClass('hidden');
-                }
-                formObj.find('.submit-btn').prop('disabled', true);
+                 if ($('ul#commentFor-' + post_id + ' li').length > 2) {
+                     $('#commentFor-' + post_id + " li").first().remove();
+                     $("#post_id_" + post_id).find('.load-more-comment').removeClass('hidden');
+                 }
+                 formObj.find('.submit-btn').prop('disabled', true);
 
-            },
-            error: function (data) {
-                console.log('Error:', data);
-            }
-        });*/
+             },
+             error: function (data) {
+                 console.log('Error:', data);
+             }
+         });*/
 
     });
     /*Comment */
@@ -547,6 +567,22 @@
         $("#myInput").val(input);
         $("#plx__mainSearch").submit();
     });
+    $(document).ready(function () {
+        'use strict';
+        hashTag();
+    });
+
+    function hashTag() {
+        'use strict';
+        var siteURL = '{{url('/search?q=%23')}}',
+            entries = $('.post-title');
+        if (entries.length > 0) {
+            entries.each(function () {
+                var contents = $(this).text().replace(/#(\S+)/g, '<a href="' + siteURL + '$1" title="Find more events tagged with #$1">#$1</a>');
+                $(this).html(contents);
+            });
+        }
+    };
 
     /*$(document).ready(function () {
         // Read the cookie and if it's defined scroll to id

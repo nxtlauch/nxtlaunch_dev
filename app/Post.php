@@ -13,27 +13,33 @@ class Post extends Model
         'post_details',
         'expire_date',
     ];
+
 //    protected $hidden=['follows'];
     public function user()
     {
         return $this->belongsTo('App\User');
     }
+
     public function comments()
     {
         return $this->hasMany('App\Comment');
     }
+
     public function likes()
     {
         return $this->hasMany('App\Like');
     }
+
     public function shares()
     {
         return $this->hasMany('App\Share');
     }
+
     public function follows()
     {
         return $this->hasMany('App\FollowPost');
     }
+
     /*public function follows()
     {
         return $this->hasMany('App\Follow');
@@ -42,16 +48,29 @@ class Post extends Model
     {
         return $this->hasMany('App\CommentReply');
     }
-    public function postReports(){
+
+    public function postReports()
+    {
         return $this->hasMany('App\PostReport');
     }
-    public function tags(){
+
+    public function tags()
+    {
         return $this->hasMany('App\Tag');
     }
-    public function postNotificationStatus(){
+
+    public function postNotificationStatus()
+    {
         return $this->hasOne('App\PostNotificationStatus');
     }
-    public function customPostNotification(){
+
+    public function customPostNotification()
+    {
         return $this->hasMany('App\CustomPostNotification');
+    }
+
+    public function postCategories()
+    {
+        return $this->hasMany('App\PostCategory');
     }
 }

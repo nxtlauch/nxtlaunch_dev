@@ -9,6 +9,6 @@
 @endforelse
 @forelse($posts as $post)
     <li><a class="post" href="{{route('frontend.post.details',$post->id)}}">{{$post->post_details}}</a></li>
-{{--    <li><a class="post" href="{{route('frontend.home')."#post_id_$post->id"}}">{{$post->post_details}}</a></li>--}}
+    {{--    <li><a class="post" href="{{route('frontend.home')."#post_id_$post->id"}}">{{$post->post_details}}</a></li>--}}
 @empty
 @endforelse

@@ -1,3 +1,6 @@
+<?php
+$notifications = \App\Notification::where('noti_to', Auth::id())->orderBy('created_at', 'desc')->get();
+?>
 <div class="header custom-bg p-r-0 bg-primary">
     <div class="header-inner header-md-height container plx__padding">
         <div class="d-flex align-items-center">
@@ -13,17 +16,15 @@
                      height="30">
             </a>
 
-        @php
-            $notifications= \App\Notification::where('noti_to', Auth::id())->orderBy('created_at','desc')->get();
-        @endphp
 
-        <!-- START NOTIFICATION LIST -->
+            <!-- START NOTIFICATION LIST -->
             <ul class="notification-list no-margin b-grey b-l b-r no-style p-l-30 p-r-20">
                 <li class="p-r-10 inline">
                     <div class="dropdown">
                         <a href="javascript:;" id="notification-center" class="header-icon"
                            data-toggle="dropdown">
-                            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAUCAYAAACEYr13AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAABENpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMDY3IDc5LjE1Nzc0NywgMjAxNS8wMy8zMC0yMzo0MDo0MiAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wUmlnaHRzPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvcmlnaHRzLyIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIgeG1wUmlnaHRzOk1hcmtlZD0iVHJ1ZSIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDoyRDRCNzY5NkYwNEExMUU3QjQyQUI1N0RGODAzOEU2OCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDoyRDRCNzY5NUYwNEExMUU3QjQyQUI1N0RGODAzOEU2OCIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ0MgMjAxNSAoV2luZG93cykiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpCRjU3MjI3N0YwNDkxMUU3ODkyN0YyQzI3RDhENzUyQiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpCRjU3MjI3OEYwNDkxMUU3ODkyN0YyQzI3RDhENzUyQiIvPiA8ZGM6cmlnaHRzPiA8cmRmOkFsdD4gPHJkZjpsaSB4bWw6bGFuZz0ieC1kZWZhdWx0Ij5DQzAgUHVibGljIERvbWFpbiBEZWRpY2F0aW9uIGh0dHA6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL3B1YmxpY2RvbWFpbi96ZXJvLzEuMC88L3JkZjpsaT4gPC9yZGY6QWx0PiA8L2RjOnJpZ2h0cz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz7rX28XAAABo0lEQVR42ozUSyhEURzH8TszaDQLFvJ+NSkpVvJKFliQhYVSZGFDwsLGBkXETtkhykZZsJEpamZKspIsZoGVx0RIeZY8out7+F/dxr3Dvz7T3Dtnfud/zpk7Dl3XNYvyYAFJOIYDuQhhCufGwBjNuuIRwD5cuIYbvdhFO/xqoMOmA1V5GMEtPuTeNIqwiFb4ogVkoxpqwJ1024UVXGAOdSoglTdXNiE9KJQvv8rMExhGCao0AkKYR47qxsQRcT2GVVRhDV5Mqg8OcIQwBhEbEdKLSrleQhdqkf+1fF62kIEN/bsOZZALuXJvXAISkG7uTM2wzVqGUIBZ0/rXcYkn9NnttEoZwCLK8KL/Lh+aIvbjh9FWSNYa1O1LBTVaBSjNsok7eIsS8o4AKuA0ByjdeNb/V2qSPRQ7Tdsxg3Jsan9XrPxCPeYO3OhAFlqwbDN7ULp1GsdopBZjGffol0c3A14k4Aan8ng/m4/R0IYhPMpMF+i0Oz6DsQeZSEaK/BeoSsMoEqPuhiTVwI8HizUP/qeDepTiDWcI4wSPaECcXQOfAgwA44VltlR0kAsAAAAASUVORK5CYII=" alt="">
+                            <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAUCAYAAACEYr13AAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAABENpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMDY3IDc5LjE1Nzc0NywgMjAxNS8wMy8zMC0yMzo0MDo0MiAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wUmlnaHRzPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvcmlnaHRzLyIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtbG5zOmRjPSJodHRwOi8vcHVybC5vcmcvZGMvZWxlbWVudHMvMS4xLyIgeG1wUmlnaHRzOk1hcmtlZD0iVHJ1ZSIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDoyRDRCNzY5NkYwNEExMUU3QjQyQUI1N0RGODAzOEU2OCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDoyRDRCNzY5NUYwNEExMUU3QjQyQUI1N0RGODAzOEU2OCIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ0MgMjAxNSAoV2luZG93cykiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDpCRjU3MjI3N0YwNDkxMUU3ODkyN0YyQzI3RDhENzUyQiIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDpCRjU3MjI3OEYwNDkxMUU3ODkyN0YyQzI3RDhENzUyQiIvPiA8ZGM6cmlnaHRzPiA8cmRmOkFsdD4gPHJkZjpsaSB4bWw6bGFuZz0ieC1kZWZhdWx0Ij5DQzAgUHVibGljIERvbWFpbiBEZWRpY2F0aW9uIGh0dHA6Ly9jcmVhdGl2ZWNvbW1vbnMub3JnL3B1YmxpY2RvbWFpbi96ZXJvLzEuMC88L3JkZjpsaT4gPC9yZGY6QWx0PiA8L2RjOnJpZ2h0cz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz7rX28XAAABo0lEQVR42ozUSyhEURzH8TszaDQLFvJ+NSkpVvJKFliQhYVSZGFDwsLGBkXETtkhykZZsJEpamZKspIsZoGVx0RIeZY8out7+F/dxr3Dvz7T3Dtnfud/zpk7Dl3XNYvyYAFJOIYDuQhhCufGwBjNuuIRwD5cuIYbvdhFO/xqoMOmA1V5GMEtPuTeNIqwiFb4ogVkoxpqwJ1024UVXGAOdSoglTdXNiE9KJQvv8rMExhGCao0AkKYR47qxsQRcT2GVVRhDV5Mqg8OcIQwBhEbEdKLSrleQhdqkf+1fF62kIEN/bsOZZALuXJvXAISkG7uTM2wzVqGUIBZ0/rXcYkn9NnttEoZwCLK8KL/Lh+aIvbjh9FWSNYa1O1LBTVaBSjNsok7eIsS8o4AKuA0ByjdeNb/V2qSPRQ7Tdsxg3Jsan9XrPxCPeYO3OhAFlqwbDN7ULp1GsdopBZjGffol0c3A14k4Aan8ng/m4/R0IYhPMpMF+i0Oz6DsQeZSEaK/BeoSsMoEqPuhiTVwI8HizUP/qeDepTiDWcI4wSPaECcXQOfAgwA44VltlR0kAsAAAAASUVORK5CYII="
+                                 alt="">
                             @if($notifications->where('status',1)->count()>0)
                                 <span class="bubble">{{$notifications->where('status',1)->count()}}</span>
                             @endif
@@ -35,7 +36,9 @@
                             <div class="notification-panel">
                                 <!-- START Notification Body-->
                                 <div class="notification-body scrollable">
+
                                     @forelse($notifications as $notification)
+
                                         @if($notification->noti_for==2 && $notification->noti_activity==6)
                                             @php
                                                 $now=Carbon\Carbon::now();
@@ -124,14 +127,10 @@
 
                     <div class="search-result-mini">
                         <ul id="myUL" class="search-list scrollable">
-                            {{--@forelse($all_users as $user)
-                                <li><a class="user" href="{{route('frontend.user.profile',$user->id)}}">{{$user->name}}</a></li>
-                            @empty
-                            @endforelse
-                            @forelse($search_suggestion as $post)
-                                <li><a class="post" href="{{route('frontend.post.details',$post->id)}}">{{$post->post_details}}</a></li>
-                            @empty
-                            @endforelse--}}
+
+                        </ul>
+                        <ul id="myTag" class="search-list scrollable">
+
                         </ul>
                         <ul class="search-list alt scrollable">
                             @php
@@ -143,14 +142,6 @@
                             @empty
                                 <li><a href="javascript://">No Recent Search available</a></li>
                             @endforelse
-                            {{--<li class=""><a class="user" href="">John Doe</a></li>--}}
-                            {{--<li class=""><a class="user" href="">John Doe</a></li>--}}
-                            {{--<li class=""><a class="post" href="">Consectetur adipisicing elit. Iusto maxime molestiae--}}
-                            {{--perspiciatis.</a></li>--}}
-                            {{--<li class=""><a class="post" href="">Consectetur adipisicing elit. Iusto maxime molestiae--}}
-                            {{--perspiciatis.</a></li>--}}
-                            {{--<li class=""><a class="post" href="">Consectetur adipisicing elit. Iusto maxime molestiae--}}
-                            {{--perspiciatis.</a></li>--}}
                         </ul>
                         <div class="read-more">
                             <button type="submit" class="more-btn">See all result for <strong
@@ -171,15 +162,16 @@
                         src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUBAMAAAB/pwA+AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAtUExURf///////0dwTP////////////////////////////////////////////////zKVJ0AAAAPdFJOU/nfAAoqoYI5GGqwWc1AxF/GqhEAAACnSURBVAgdY1CCAOWbuQwQlnoAAzeEqbGAgYEXwnRkYGBgBjNVBHgYGB6BmY0MRRcYJoGYyg8YlBQYjBiUlI21GBgyEjiVGJQcOBOAmhgWKTFoCESDWFxGSgyqPAUgZpASUHSLAJDFBtTNoKQLEtwEZpo/YGAQB7KAoo0+DDyuYKZ65JEF4YJg5i6niR4buMDMx9pJSgnBYOaJO01KniCWEsOrEDANJADToyZjd5vZCQAAAABJRU5ErkJggg=="></a>--}}
 
             @if(Auth::user()->role_id==4)
-            <a href="{{Auth::user()->role_id==4?route('frontend.newlaunch'):'javascript://'}}"
-               @if(Auth::user()->role_id!=4)data-toggle="modal" data-target="#proUser" @endif
-               title="Launch An Event"  class="header-icon btn-link m-l-10 p-r-15 sm-no-margin d-inline-block"><img
-                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAAUCAYAAABWMrcvAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA25pVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMDY3IDc5LjE1Nzc0NywgMjAxNS8wMy8zMC0yMzo0MDo0MiAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1QjI5NEFGM0YwNDkxMUU3OEI2ODg5NDcxRkQ3MUM5QiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo0NjU5NjhEM0YwNEExMUU3QkI4OEIyNzcyQzU0ODU0OCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo0NjU5NjhEMkYwNEExMUU3QkI4OEIyNzcyQzU0ODU0OCIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ0MgMjAxNSAoV2luZG93cykiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo1YTFlZjA5Mi00YWE1LTY1NDgtOGIxMC03YTc0NGU5Y2Q0NTAiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6NUIyOTRBRjNGMDQ5MTFFNzhCNjg4OTQ3MUZENzFDOUIiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz77+R4VAAABHUlEQVR42mL4//8/AxZsB8QXgNgWmzw2DapA/O0/BHyF8glq2vofFWwlpMniP3ZggayOiQEVRDNgByji6JrscWiyw6VJDIglcWiSgspjaAJJCEHZL4G4Goj/QflCUHkMTTxQ/m8g3gvEbUB8FEkdDzZNHFC6G4iToOwgIN4EZTNj0/QTSnsBcTqUnQvEhlD2H7hKpPDnBeJP0Hi5A8SGQPwdyv8ElceI3Bgg/g1VBKJ/IUUuiB+Lrin2P3EgDqZJGimBEgIg58qCAqIAiDmhcXIX5E20iAXx70DlQSFcCNLkhhSSk4H4IpqmS0A8CSmkXUDO+wG1Oh3qv2I0J5VAxVOh/B8MUEYaWhaJBuKZ0BBFFgdrhDEYSMApAAEGALQbAGqyEck6AAAAAElFTkSuQmCC"></a>
+                <a href="{{Auth::user()->role_id==4?route('frontend.newlaunch'):'javascript://'}}"
+                   @if(Auth::user()->role_id!=4)data-toggle="modal" data-target="#proUser" @endif
+                   title="Launch An Event" class="header-icon btn-link m-l-10 p-r-15 sm-no-margin d-inline-block"><img
+                            src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA0AAAAUCAYAAABWMrcvAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA25pVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMDY3IDc5LjE1Nzc0NywgMjAxNS8wMy8zMC0yMzo0MDo0MiAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wTU09Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9tbS8iIHhtbG5zOnN0UmVmPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvc1R5cGUvUmVzb3VyY2VSZWYjIiB4bWxuczp4bXA9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC8iIHhtcE1NOk9yaWdpbmFsRG9jdW1lbnRJRD0ieG1wLmRpZDo1QjI5NEFGM0YwNDkxMUU3OEI2ODg5NDcxRkQ3MUM5QiIgeG1wTU06RG9jdW1lbnRJRD0ieG1wLmRpZDo0NjU5NjhEM0YwNEExMUU3QkI4OEIyNzcyQzU0ODU0OCIgeG1wTU06SW5zdGFuY2VJRD0ieG1wLmlpZDo0NjU5NjhEMkYwNEExMUU3QkI4OEIyNzcyQzU0ODU0OCIgeG1wOkNyZWF0b3JUb29sPSJBZG9iZSBQaG90b3Nob3AgQ0MgMjAxNSAoV2luZG93cykiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo1YTFlZjA5Mi00YWE1LTY1NDgtOGIxMC03YTc0NGU5Y2Q0NTAiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6NUIyOTRBRjNGMDQ5MTFFNzhCNjg4OTQ3MUZENzFDOUIiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz77+R4VAAABHUlEQVR42mL4//8/AxZsB8QXgNgWmzw2DapA/O0/BHyF8glq2vofFWwlpMniP3ZggayOiQEVRDNgByji6JrscWiyw6VJDIglcWiSgspjaAJJCEHZL4G4Goj/QflCUHkMTTxQ/m8g3gvEbUB8FEkdDzZNHFC6G4iToOwgIN4EZTNj0/QTSnsBcTqUnQvEhlD2H7hKpPDnBeJP0Hi5A8SGQPwdyv8ElceI3Bgg/g1VBKJ/IUUuiB+Lrin2P3EgDqZJGimBEgIg58qCAqIAiDmhcXIX5E20iAXx70DlQSFcCNLkhhSSk4H4IpqmS0A8CSmkXUDO+wG1Oh3qv2I0J5VAxVOh/B8MUEYaWhaJBuKZ0BBFFgdrhDEYSMApAAEGALQbAGqyEck6AAAAAElFTkSuQmCC"></a>
             @endif
             <a href="{{route('frontend.home.explore')}}"
                class="header-icon btn-link m-l-10 p-r-15 sm-no-margin d-inline-block"
                title="Explore">
-                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAFqSURBVDhPvZQ9S8NgFIVDhVIt+DGIq6ODXbu0OLgLDorYsT+gIC7+AXHxrwgO6iYubm4OSgfxo4JLQUFQp8TnxNOaVgtNgx54+t733JuTFJI3+DdFUZSDahiGRVtd4Y1DRTBTsP27GMgzWIcmdcT6BoewoT5rGe7Uk1TLiy9OCrMIW9DyrIbP4Ag+4ACrwHrvXku41g2+nxRDj99WMym8Pfcn2c5rzv4Dy4Sg7oRW4jCJTU1mv/DjwI6wqvYVojD9q0yBObxb9x6F6xv1PDZ8oIS35nZSq25/KU2ghH/iEc2oHoMFt1M/od7BOXgyqreh5pHUgQ1YhGVTgncYLRB7B/+KdUpQX3t29ED3ToVqKXNgv4YKRC/09mHWo9kD9UP/FXYpZ+BHIL02DP5S2J/DCqXer3XqS/vPcKFaotYBoQOl94jD2ATpGJZsd8W1OhuTwU2oU+Y90isa0wyUvB0o5vQtl7Xa+msFwSeK6Yg8Ru6J7AAAAABJRU5ErkJggg==" alt="">
+                <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAFqSURBVDhPvZQ9S8NgFIVDhVIt+DGIq6ODXbu0OLgLDorYsT+gIC7+AXHxrwgO6iYubm4OSgfxo4JLQUFQp8TnxNOaVgtNgx54+t733JuTFJI3+DdFUZSDahiGRVtd4Y1DRTBTsP27GMgzWIcmdcT6BoewoT5rGe7Uk1TLiy9OCrMIW9DyrIbP4Ag+4ACrwHrvXku41g2+nxRDj99WMym8Pfcn2c5rzv4Dy4Sg7oRW4jCJTU1mv/DjwI6wqvYVojD9q0yBObxb9x6F6xv1PDZ8oIS35nZSq25/KU2ghH/iEc2oHoMFt1M/od7BOXgyqreh5pHUgQ1YhGVTgncYLRB7B/+KdUpQX3t29ED3ToVqKXNgv4YKRC/09mHWo9kD9UP/FXYpZ+BHIL02DP5S2J/DCqXer3XqS/vPcKFaotYBoQOl94jD2ATpGJZsd8W1OhuTwU2oU+Y90isa0wyUvB0o5vQtl7Xa+msFwSeK6Yg8Ru6J7AAAAABJRU5ErkJggg=="
+                     alt="">
             </a>
             {{--<a  href="{{route('frontend.home')}}" class="header-icon btn-link m-l-10 p-r-15 sm-no-margin d-inline-block"><img
                         src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUBAMAAAB/pwA+AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAtUExURf///////0dwTP////////////////////////////////////////////////zKVJ0AAAAPdFJOU/nfAAoqoYI5GGqwWc1AxF/GqhEAAACnSURBVAgdY1CCAOWbuQwQlnoAAzeEqbGAgYEXwnRkYGBgBjNVBHgYGB6BmY0MRRcYJoGYyg8YlBQYjBiUlI21GBgyEjiVGJQcOBOAmhgWKTFoCESDWFxGSgyqPAUgZpASUHSLAJDFBtTNoKQLEtwEZpo/YGAQB7KAoo0+DDyuYKZ65JEF4YJg5i6niR4buMDMx9pJSgnBYOaJO01KniCWEsOrEDANJADToyZjd5vZCQAAAABJRU5ErkJggg=="></a>
@@ -195,8 +187,11 @@
             <a href="{{route('frontend.my.follow')}}"
                class="header-icon btn-link m-l-10 p-r-15 sm-no-margin d-inline-block"
                title="My Followings"><img height="17"
-                                     src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMDY3IDc5LjE1Nzc0NywgMjAxNS8wMy8zMC0yMzo0MDo0MiAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTUgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOkYzRTk2Rjg4RjA0OTExRTc5NkQ0RTU0NDFCMzU0QUU3IiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOkYzRTk2Rjg5RjA0OTExRTc5NkQ0RTU0NDFCMzU0QUU3Ij4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6RjNFOTZGODZGMDQ5MTFFNzk2RDRFNTQ0MUIzNTRBRTciIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6RjNFOTZGODdGMDQ5MTFFNzk2RDRFNTQ0MUIzNTRBRTciLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz4aT2IEAAABTElEQVR42mL8//8/AwVAH4gdgNgciJWA+AMDyEAysDsQ7/6PCe6zkOGqBUAcj0PuBCkGcgDxYSA2waPmNCnePIXktUVAvBOLl1WINWwrkqZiJHFkQ4+DxJiI8OoMIPZC4l9EYj9GYpeDSQIuK8birYdAHAXERUD8Byq2DKYHn2Ge/4kD54GYEaYPOZYbgdgWiD8D8W8gDiYiOE5CEzYid0BNzvtPOtiEzWcgQpEMw6biCioQwQXEGkDsAQ1cQqAQX0SiC8zFY9A7IPYhlGZhkaIBpSXwRMBRIN5CKJZACZsbiJcDMTMQ+wPxUzxqCQKQC5uBmA2Ir0LFZIB4DRB/ghYIkVBxWaKKEKC/XwNxL1I4GAKxFpStgxSG3cTkewao4ptAPA+IT0JLFWOoAhUg/gXE1cSWSiDiGDQGQYZ2AjEbkgJuIFYlpTQHCDAAy/lFXcSN/N0AAAAASUVORK5CYII=">
+                                          src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUCAYAAACNiR0NAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMDY3IDc5LjE1Nzc0NywgMjAxNS8wMy8zMC0yMzo0MDo0MiAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTUgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOkYzRTk2Rjg4RjA0OTExRTc5NkQ0RTU0NDFCMzU0QUU3IiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOkYzRTk2Rjg5RjA0OTExRTc5NkQ0RTU0NDFCMzU0QUU3Ij4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6RjNFOTZGODZGMDQ5MTFFNzk2RDRFNTQ0MUIzNTRBRTciIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6RjNFOTZGODdGMDQ5MTFFNzk2RDRFNTQ0MUIzNTRBRTciLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz4aT2IEAAABTElEQVR42mL8//8/AwVAH4gdgNgciJWA+AMDyEAysDsQ7/6PCe6zkOGqBUAcj0PuBCkGcgDxYSA2waPmNCnePIXktUVAvBOLl1WINWwrkqZiJHFkQ4+DxJiI8OoMIPZC4l9EYj9GYpeDSQIuK8birYdAHAXERUD8Byq2DKYHn2Ge/4kD54GYEaYPOZYbgdgWiD8D8W8gDiYiOE5CEzYid0BNzvtPOtiEzWcgQpEMw6biCioQwQXEGkDsAQ1cQqAQX0SiC8zFY9A7IPYhlGZhkaIBpSXwRMBRIN5CKJZACZsbiJcDMTMQ+wPxUzxqCQKQC5uBmA2Ir0LFZIB4DRB/ghYIkVBxWaKKEKC/XwNxL1I4GAKxFpStgxSG3cTkewao4ptAPA+IT0JLFWOoAhUg/gXE1cSWSiDiGDQGQYZ2AjEbkgJuIFYlpTQHCDAAy/lFXcSN/N0AAAAASUVORK5CYII=">
             </a>
+            @if(Auth::user()->role_id!=4)
+                <a href="{{route('pro.user.registration')}}" class="btn btn-xs btn-warning">Get Pro</a> &nbsp; &nbsp;
+            @endif
             {{--<a href="{{route('frontend.my.follow')}}"
                class="header-icon btn-link m-l-10 p-r-15 sm-no-margin d-inline-block"><i
                         class="fa fa-plus"></i></a>--}}

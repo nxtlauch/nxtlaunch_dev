@@ -34,10 +34,8 @@
 
 <!-- END PAGE CONTAINER -->
 {{--Quick Sidebar--}}
-@include('frontend.includes.sidebar.quick_sidebar')
+{{--@include('frontend.includes.sidebar.quick_sidebar')--}}
 
-{{--Search Overlay--}}
-{{--@include('frontend.includes.sidebar.search_overlay')--}}
 
 {{--Pro User Warning--}}
 @include('frontend.includes.modal.proUserWarning')

@@ -117,7 +117,24 @@
                                                                         </div>
                                                                     </div>
                                                                     <div class="clearfix"></div>
-                                                                    @if(@$post->post->user_id != Auth::id())
+                                                                    @if($post->user_id == Auth::id())
+
+                                                                        <div class="pull-right">
+                                                                            <div class="options m-t-5">
+                                                                                <a href="javascript://"
+                                                                                   class="options-dot"></a>
+                                                                                <ul class="options-list">
+                                                                                    <li>
+                                                                                        <a href="{{route('frontend.editlaunch',$post->id)}}">Edit</a>
+                                                                                    </li>
+                                                                                    {{--<li>
+                                                                                        <a href="{{route('frontend.deletelaunch',$post->id)}}">Delete</a>
+                                                                                    </li>--}}
+                                                                                </ul>
+                                                                            </div>
+                                                                        </div>
+
+                                                                    @else
                                                                         <a href="javascript://"
                                                                            data-href="{{route('frontend.follow.post')}}"
                                                                            data-id="{{@$post->id}}"
@@ -370,7 +387,7 @@
                                                                         </div>
                                                                     </div>
                                                                     <div class="clearfix"></div>
-                                                                    @if(@$post->post->user_id != Auth::id())
+                                                                    @if(@$post->user_id != Auth::id())
                                                                         <a href="javascript://"
                                                                            data-href="{{route('frontend.follow.post')}}"
                                                                            data-id="{{@$post->id}}"

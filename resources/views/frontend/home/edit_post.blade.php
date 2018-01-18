@@ -28,7 +28,8 @@
                                             <h4 class="plx__post-author-name">Launch Event</h4>
                                         </div>
                                     </div>
-                                    <form class="plx__post-info" method="post" action="{{route('frontend.editlaunch',$post->id)}}"
+                                    <form class="plx__post-info" method="post"
+                                          action="{{route('frontend.editlaunch',$post->id)}}"
                                           enctype="multipart/form-data">
                                         {{csrf_field()}}
                                         <div class="form-group{{ $errors->has('post_details') ? ' has-error' : '' }}">
@@ -46,32 +47,113 @@
                                         </div>
                                         <div class="form-group{{ $errors->has('expire_date') ? ' has-error' : '' }}">
                                             <label for="">Launch Date</label>
-                                            <div class='input-group date'>
-                                                <input type='text' class="form-control" name="expire_date"
-                                                       value="{{old('expire_date')?old('expire_date'):$post->expire_date}}"
-                                                       id='datetimepicker'/>
-                                                <span class="input-group-addon">
-                                                    <span class="fa fa-calendar"></span>
-                                                </span>
 
+                                            <input type='text' class="form-control" name="expire_date"
+                                                   value="{{old('expire_date')?old('expire_date'):$post->expire_date}}"
+                                                   id='datetimepicker' readonly/>
 
-                                            </div>
                                             @if ($errors->has('expire_date'))
                                                 <span class="help-block">
-                                        <strong>{{ $errors->first('expire_date') }}</strong>
+                                                    <strong>{{ $errors->first('expire_date') }}</strong>
+                                                </span>
+                                            @endif
+                                        </div>
+
+                                        <div class="form-group{{ $errors->has('link') ? ' has-error' : '' }}">
+                                            <label for="">Link
+                                            </label>
+                                            <input class="form-control" type="text" name="link"
+                                                   value="{{old('link')?old('link'):$post->link}}">
+                                            @if ($errors->has('link'))
+                                                <span class="help-block">
+                                        <strong>{{ $errors->first('link') }}</strong>
                                     </span>
                                             @endif
                                         </div>
 
                                         <div class="form-group{{ $errors->has('category_id') ? ' has-error' : '' }}">
                                             <label for="">Category</label>
-                                            <select name="category_id" id="" class="form-control">
+                                            <div class="tags">
+                                                @php($current=$post->postCategories->pluck('category_id'))
+                                                @php($category_id=(old('category_id')?old('category_id'):$post->category_id))
+
+                                                @if($categories->where('type',1)->count()>0)
+                                                    <div class="inner-block">
+
+                                                        <h4 class="block-title-alt">Popular in Tech</h4>
+
+                                                        <div class="tags">
+                                                            @foreach($categories->where('type',1) as $interest)
+                                                                <label class="tab-pill" for="interest{{$interest->id}}">
+                                                                    <input id="interest{{$interest->id}}"
+                                                                           type="checkbox"
+                                                                           value="{{$interest->id}}"
+                                                                           {{$current->contains($interest->id)?'checked':''}}
+                                                                           name="category_id[]">
+                                                                    <span>{{$interest->name}}</span>
+                                                                </label>
+                                                            @endforeach
+
+                                                        </div>
+
+                                                    </div>
+                                                @endif
+
+                                                @if($categories->where('type',2)->count()>0)
+                                                    <div class="inner-block">
+                                                        <h4 class="block-title-alt">Popular in Music</h4>
+                                                        <div class="tags">
+                                                            @foreach($categories->where('type',2) as $interest)
+                                                                <label class="tab-pill" for="interest{{$interest->id}}">
+                                                                    <input id="interest{{$interest->id}}"
+                                                                           type="checkbox"
+                                                                           value="{{$interest->id}}"
+                                                                           {{$current->contains($interest->id)?'checked':''}}
+                                                                           name="category_id[]">
+                                                                    <span>{{$interest->name}}</span>
+                                                                </label>
+                                                            @endforeach
+                                                        </div>
+                                                    </div>
+                                                @endif
+
+                                                @if($categories->where('type',3)->count()>0)
+                                                    <div class="inner-block">
+                                                        <h4 class="block-title-alt">Popular in Sports and Fitness</h4>
+                                                        <div class="tags">
+                                                            @foreach($categories->where('type',3) as $interest)
+                                                                <label class="tab-pill" for="interest{{$interest->id}}">
+                                                                    <input id="interest{{$interest->id}}"
+                                                                           type="checkbox"
+                                                                           value="{{$interest->id}}"
+                                                                           {{$current->contains($interest->id)?'checked':''}}
+                                                                           name="category_id[]">
+                                                                    <span>{{$interest->name}}</span>
+                                                                </label>
+                                                            @endforeach
+                                                        </div>
+                                                    </div>
+                                                @endif
+
+                                                {{--@foreach($categories as $category)
+                                                    <label class="tab-pill" for="interest{{$category->id}}">
+                                                        <input id="interest{{$category->id}}"
+                                                               {{$current->contains($category->id)?'checked':''}}
+                                                               type="checkbox"
+                                                               value="{{$category->id}}"
+                                                               name="category_id[]">
+                                                        <span>{{$category->name}}</span>
+                                                    </label>
+                                                @endforeach--}}
+                                            </div>
+
+                                            {{--<select name="category_id" id="" class="form-control">
                                                 <option value="">Select Category</option>
                                                 @php($category_id=(old('category_id')?old('category_id'):$post->category_id))
                                                 @foreach($categories as $category)
                                                     <option value="{{$category->id}}" {{($category_id==$category->id)?'selected':''}}>{{$category->name}}</option>
                                                 @endforeach
-                                            </select>
+                                            </select>--}}
                                             @if ($errors->has('category_id'))
                                                 <span class="help-block">
                                         <strong>{{ $errors->first('category_id') }}</strong>
@@ -79,7 +161,7 @@
                                             @endif
                                         </div>
 
-                                        <div class="form-group m-b-20{{ $errors->has('image') ? ' has-error' : '' }}">
+                                        {{--<div class="form-group m-b-20{{ $errors->has('image') ? ' has-error' : '' }}">
                                             <label for="">Upload Photo</label>
                                             <input type="file" accept="image/*" name="image" class="form-control">
                                             @if ($errors->has('image'))
@@ -87,14 +169,15 @@
                                         <strong>{{ $errors->first('image') }}</strong>
                                     </span>
                                             @endif
-                                        </div>
-                                        {{--<div class="form-group m-b-20{{ $errors->has('image') ? ' has-error' : '' }}">
+                                        </div>--}}
+                                        <div class="form-group m-b-20{{ $errors->has('image') ? ' has-error' : '' }}">
                                             <label for="">Upload Photo</label>
                                             <div class="slim"
                                                  data-ratio="3:2"
                                                  data-label="Drop Event photo here"
-                                                 data-size="600,400"
+                                                 data-min-size="600,400"
                                                  data-max-file-size="2">
+                                                <img src="{{asset('content-dir/posts/images/'.$post->image)}}" alt=""/>
                                                 <input type="file" name="image"/>
                                             </div>
                                             @if ($errors->has('image'))
@@ -102,7 +185,7 @@
                                         <strong>{{ $errors->first('image') }}</strong>
                                     </span>
                                             @endif
-                                        </div>--}}
+                                        </div>
 
 
                                         <button class="btn btn-block btn-primary">Update Event</button>
@@ -148,7 +231,10 @@
                 }
             }
 
-            $('#datetimepicker').datetimepicker();
+            $('#datetimepicker').datetimepicker({
+                minDate: 0,
+                yearStart: (new Date()).getFullYear(),
+            });
         }(jQuery))
     </script>
 

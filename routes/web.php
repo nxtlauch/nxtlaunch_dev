@@ -49,8 +49,8 @@ Route::group(['middleware' => ['auth', 'only_user']], function () {
     Route::post('/pro-user-registration', 'frontend\FrontendController@proUserRegistration');
     /*end pro user registration*/
     /*new user choose categories*/
-    Route::get('/new-user-choose-interests', 'frontend\FrontendController@newUserChooseCategoriesForm')->name('new.user.choose.interests');
-    Route::post('/new-user-choose-interests', 'frontend\FrontendController@newUserChooseCategories');
+    Route::get('/registration-step-2', 'frontend\FrontendController@newUserChooseCategoriesForm')->name('new.user.choose.interests');
+    Route::post('/registration-step-2', 'frontend\FrontendController@newUserChooseCategories');
     /*End new user choose categories*/
     /*home page*/
     Route::get('/', 'frontend\FrontendController@home')->name('frontend.home');

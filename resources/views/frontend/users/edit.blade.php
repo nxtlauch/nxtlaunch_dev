@@ -74,7 +74,7 @@
                                             <div class="form-group">
                                                 <label>Website Url</label>
                                                 <input type="text" name="web_url" class="form-control"
-                                                       value="{{old('web_url')?old('web_url'):Auth::user()->userDetails->web_url}}">
+                                                       value="{{old('web_url')?old('web_url'):@Auth::user()->userDetails->web_url}}">
                                             </div>
                                             <div class="form-group">
                                                 <label>Email</label>

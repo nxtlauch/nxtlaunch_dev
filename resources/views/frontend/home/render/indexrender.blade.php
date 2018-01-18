@@ -21,6 +21,7 @@
             @endif
 
             <p class="post-title">{{$post->post_details}}</p>
+            <p class=""><a target="_blank" href="{{$post->link}}">{{$post->link}}</a></p>
         </div>
 
         <div class="ratio-4-3 plx__post-thumb"
@@ -74,11 +75,18 @@
                     <div class="options">
                         <a href="javascript://" class="options-dot"></a>
                         <ul class="options-list">
-                            @if(!$post->postReports->contains('user_id',Auth::id()))
-                                <li><a href="javascript://" class="plx__report12" data-post="{{$post->id}}">Report</a>
+                            @if($post->user_id==Auth::id())
+                                <li>
+                                    <a href="{{route('frontend.editlaunch',$post->id)}}">Edit</a>
                                 </li>
                             @else
-                                <li><a href="javascript://" data-post="{{$post->id}}">Reported</a></li>
+                                @if(!$post->postReports->contains('user_id',Auth::id()))
+                                    <li><a href="javascript://" class="plx__report12"
+                                           data-post="{{$post->id}}">Report</a>
+                                    </li>
+                                @else
+                                    <li><a href="javascript://" data-post="{{$post->id}}">Reported</a></li>
+                                @endif
                             @endif
                             {{--<li><a href="#">Copy Link</a></li>--}}
                         </ul>
@@ -139,5 +147,5 @@
         </div>
     </div>
 @empty
-    <h3 class="text-center">No Event Found in your area.</h3>
+    <h3 class="text-center">We couldn't find events with your criteria</h3>
 @endforelse

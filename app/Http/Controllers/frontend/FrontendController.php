@@ -13,6 +13,7 @@ use App\Like;
 use App\Message;
 use App\Notification;
 use App\Post;
+use App\PostCategory;
 use App\PostNotificationStatus;
 use App\PostReport;
 use App\RecentSearch;
@@ -40,9 +41,15 @@ class FrontendController extends Controller
 {
     public function __construct()
     {
-        view()->share('search_suggestion', $this->popular_post());
-        view()->share('all_users', $this->allUsers());
-        view()->share('all_conversation', $this->allConversation());
+//        view()->share('search_suggestion', $this->popular_post());
+//        view()->share('tag_suggestion', $this->tagSuggestion());
+//        view()->share('all_users', $this->allUsers());
+//        view()->share('all_conversation', $this->allConversation());
+    }
+
+    public function tagSuggestion(){
+        $tags = Tag::all()->pluck('tag')->unique();
+        return $tags;
     }
 
     public function recentSearches()
@@ -334,7 +341,7 @@ class FrontendController extends Controller
     public function explore()
     {
         $data = array();
-        $data['posts'] = Post::orderBy('id', 'desc')->with('user:id,name', 'comments.user:id,name', 'likes.user:id,name')->get()->where('expire_date', '>', Carbon::now()->toDateTimeString());
+        $data['posts'] = Post::orderBy('id', 'desc')->where('status', 1)->with('user:id,name', 'comments.user:id,name', 'likes.user:id,name')->get()->where('expire_date', '>', Carbon::now()->toDateTimeString());
 
         return view('frontend.publicaccess.explore')->with($data);
     }
@@ -438,7 +445,8 @@ class FrontendController extends Controller
     public function newUserChooseCategoriesForm()
     {
         $data = array();
-        $data['interests'] = Category::all();
+        $data['interests'] = Category::where('status',1)->get();
+        $data['categories'] = UserCategory::all();
         return view('frontend.auth.new_user_choose_categories')->with($data);
     }
 
@@ -459,14 +467,37 @@ class FrontendController extends Controller
         $request->validate([
             'interests' => 'required'
         ]);
+        if ($request->proUserCheck == "yes") {
+            $request->validate([
+                'proUserCheck' => 'required',
+                'category_name' => 'required',
+                'business_description' => 'required',
+            ]);
+            if (Auth::user()->role_id == 4) {
+                return redirect()->route('frontend.home')->with('errMessage', 'You Are Already Pro User');
+            } else {
+                $user = User::findOrFail(Auth::id());
+                $user->role_id = 4;
+                if ($user->save()) {
+                    $userDetalis = UserDetail::where('user_id', Auth::id())->first();
+                    if (!$userDetalis) {
+                        $userDetalis = new UserDetail();
+                        $userDetalis->user_id = Auth::id();
+                    }
+                    $userDetalis->category_name = $request->category_name;
+                    $userDetalis->business_description = $request->business_description;
+                    $userDetalis->save();
+                }
+            }
+            Session::forget('confirm_pro');
+        }
         foreach ($request->interests as $interest) {
             $category = new UserInterest();
             $category->user_id = Auth::id();
             $category->category_id = $interest;
             $category->save();
         }
-        Auth::logout();
-        return redirect('/login')->with('succMessage', 'Login using your account');
+        return redirect('/');
     }
 
     public function newLaunch()
@@ -494,39 +525,40 @@ class FrontendController extends Controller
 
     public function updateLaunch(Request $request, $id)
     {
-//        dd($request->all());
         $request->validate([
             'post_details' => 'required|max:255',
             'category_id' => 'required',
             'expire_date' => 'required',
 //            'image' => 'required',
+            'link' => 'required|url',
         ]);
 
         $post = Post::find($id);
+
         if ($post->user_id == Auth::id()) {
-            /*if ($request->image) {
-            // Pass Slim's getImages the name of your file input, and since we only care about one image, postfix it with the first array key
-            $image = Slim::getImages('image')[0];
+            if ($request->image) {
+                // Pass Slim's getImages the name of your file input, and since we only care about one image, postfix it with the first array key
+                $image = Slim::getImages('image')[0];
 
-            // Grab the ouput data (data modified after Slim has done its thing)
-            if (isset($image['output']['data'])) {
-                // Original file name
-                $name = $image['output']['name'];
+                // Grab the ouput data (data modified after Slim has done its thing)
+                if (isset($image['output']['data'])) {
+                    // Original file name
+                    $name = $image['output']['name'];
 
-                // Base64 of the image
-                $data = $image['output']['data'];
+                    // Base64 of the image
+                    $data = $image['output']['data'];
 
-                // Server path
-                $path = base_path('content-dir/posts/images');
+                    // Server path
+                    $path = base_path('content-dir/posts/images');
 
-                // Save the file to the server
-                $file = Slim::saveFile($data, $name, $path);
-                $post->image = $file['name'];
+                    // Save the file to the server
+                    $file = Slim::saveFile($data, $name, $path);
+                    $post->image = $file['name'];
+                }
             }
-        }*/
 
 
-            if ($request->hasFile('image')) {
+            /*if ($request->hasFile('image')) {
                 $file = $request->file('image');
                 $filenam = time() . $file->getClientOriginalName();
                 $filename = str_replace(' ', '', $filenam);
@@ -534,13 +566,26 @@ class FrontendController extends Controller
                 $img = Image::make($file);
                 $img->save($destinationPath . '/' . $filename);
                 $post->image = $filename;
-            }
+            }*/
 
 //        $post->post_title = $request->post_title;
             $post->post_details = $request->post_details;
-            $post->category_id = $request->category_id;
+            $post->link = $request->link;
+//            $post->category_id = $request->category_id;
             $post->expire_date = Carbon::parse($request->expire_date)->toDateTimeString();
             if ($post->save()) {
+                $categories = $request->category_id;
+                $postCategories = $post->postCategories->pluck('category_id');
+                $needDelete = $postCategories->diff($categories);
+                $deleteCategories = PostCategory::whereIn('category_id', $needDelete)->delete();
+                foreach ($categories as $category) {
+                    if (!$postCategories->contains($category)) {
+                        $newCategory = new PostCategory();
+                        $newCategory->category_id = $category;
+                        $newCategory->post_id = $post->id;
+                        $newCategory->save();
+                    }
+                }
                 return redirect()->route('frontend.my.profile')->with('succMessage', 'Post Updated Successfully');
             } else {
                 return back()->with('errMessage', "Post Can't Update");
@@ -560,18 +605,19 @@ class FrontendController extends Controller
             'category_id' => 'required',
             'expire_date' => 'required',
             'image' => 'required',
-            'link' => 'required',
+            'link' => 'required|url',
         ]);
 
         $post = new Post();
-        /*if ($request->image) {
+        if ($request->image) {
             // Pass Slim's getImages the name of your file input, and since we only care about one image, postfix it with the first array key
             $image = Slim::getImages('image')[0];
 
             // Grab the ouput data (data modified after Slim has done its thing)
             if (isset($image['output']['data'])) {
                 // Original file name
-                $name = $image['output']['name'];
+                $filenam =$image['output']['name'];
+                $name = str_replace(' ', '', $filenam);
 
                 // Base64 of the image
                 $data = $image['output']['data'];
@@ -583,8 +629,8 @@ class FrontendController extends Controller
                 $file = Slim::saveFile($data, $name, $path);
                 $post->image = $file['name'];
             }
-        }*/
-        if ($request->hasFile('image')) {
+        }
+        /*if ($request->hasFile('image')) {
             $file = $request->file('image');
             $filenam = time() . $file->getClientOriginalName();
             $filename = str_replace(' ', '', $filenam);
@@ -592,15 +638,21 @@ class FrontendController extends Controller
             $img = Image::make($file);
             $img->save($destinationPath . '/' . $filename);
             $post->image = $filename;
-        }
+        }*/
 
 //        $post->post_title = $request->post_title;
         $post->post_details = $request->post_details;
-        $post->category_id = $request->category_id;
+//        $post->category_id = $request->category_id;
         $post->expire_date = Carbon::parse($request->expire_date)->toDateTimeString();
         $post->user_id = Auth::id();
         $post->link = $request->link;
         if ($post->save()) {
+            foreach ($request->category_id as $category_id) {
+                $post_categories = new PostCategory();
+                $post_categories->post_id = $post->id;
+                $post_categories->category_id = $category_id;
+                $post_categories->save();
+            }
             foreach (Auth::user()->followers as $follower) {
                 $notification = new Notification();
                 $notification->user_id = Auth::id();
@@ -1097,7 +1149,7 @@ class FrontendController extends Controller
                 $startDate = $today->startOfYear()->toDateTimeString();
                 $endDate = $today->endOfYear()->toDateTimeString();
             }
-            $q = $posts->where('created_at', '>', $startDate)->where('created_at', '<', $endDate);
+            $q = $posts->where('expire_date', '>', $startDate)->where('expire_date', '<', $endDate);
         } else {
             $q = $posts;
         }
@@ -1108,10 +1160,20 @@ class FrontendController extends Controller
                     return strtoupper($item->user->location) == strtoupper(Auth::user()->location);
                 });
             } else {
+                if ($request->ajax()) {
+                    $data['content'] = 'Please add your location in your profile';
+                    $data['status'] = 0;
+                    return Response::json($data);
+                }
                 return back()->with('errMessage', "Please add your location first");
             }
         } else {
             $filterPosts = $q;
+        }
+        if ($request->ajax()) {
+            $data['content'] = View::make('frontend.home.render.indexrender', array('posts' => $filterPosts))->render();
+            $data['status'] = 1;
+            return Response::json($data);
         }
         $data['posts'] = $filterPosts;
         return view('frontend.home.index')->with($data);
@@ -1123,7 +1185,11 @@ class FrontendController extends Controller
         $data['search_sugstns'] = RecentSearch::where('user_id', Auth::id())->orderBy('created_at', 'desc')->take(5)->get();
         $data['users'] = User::where('status', 1)->whereIn('role_id', [3, 4])->get();
         $data['posts'] = Post::where('status', 1)->get();
-        return Response::json(View::make('frontend.includes.header.searchlist')->with($data)->render());
+        $data['tags'] = $this->tagSuggestion();
+        $response=array();
+        $response['searchSuggestion']=View::make('frontend.includes.header.searchlist')->with($data)->render();
+        $response['tagSuggestion']=View::make('frontend.includes.header.taglist')->with($data)->render();
+        return Response::json($response);
     }
 
 //    public function test()

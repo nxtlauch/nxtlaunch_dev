@@ -58,12 +58,14 @@
 
         <div class="d-flex align-items-center">
             <!-- START User Info-->
-            <a href="javascript://"
-               class="header-icon btn-link m-l-10 p-r-15 sm-no-margin d-inline-block redirectlogin"><img
-                        src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUBAMAAAB/pwA+AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAtUExURf///////0dwTP////////////////////////////////////////////////zKVJ0AAAAPdFJOU/nfAAoqoYI5GGqwWc1AxF/GqhEAAACnSURBVAgdY1CCAOWbuQwQlnoAAzeEqbGAgYEXwnRkYGBgBjNVBHgYGB6BmY0MRRcYJoGYyg8YlBQYjBiUlI21GBgyEjiVGJQcOBOAmhgWKTFoCESDWFxGSgyqPAUgZpASUHSLAJDFBtTNoKQLEtwEZpo/YGAQB7KAoo0+DDyuYKZ65JEF4YJg5i6niR4buMDMx9pJSgnBYOaJO01KniCWEsOrEDANJADToyZjd5vZCQAAAABJRU5ErkJggg=="></a>
-            <a href="javascript://"
-               class="header-icon pg pg-alt_menu btn-link m-l-10 p-r-15 sm-no-margin d-inline-block redirectlogin"
-               title="Launch An Event"></a>
+            <a href="{{route('login')}}" class="header-icon">Sing Up</a> &nbsp;&nbsp; | &nbsp;&nbsp;
+            <a href="{{route('register')}}" class="header-icon">Sing In</a> &nbsp;&nbsp;
+            {{--<a href="javascript://"--}}
+               {{--class="header-icon btn-link m-l-10 p-r-15 sm-no-margin d-inline-block redirectlogin"><img--}}
+                        {{--src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUBAMAAAB/pwA+AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAtUExURf///////0dwTP////////////////////////////////////////////////zKVJ0AAAAPdFJOU/nfAAoqoYI5GGqwWc1AxF/GqhEAAACnSURBVAgdY1CCAOWbuQwQlnoAAzeEqbGAgYEXwnRkYGBgBjNVBHgYGB6BmY0MRRcYJoGYyg8YlBQYjBiUlI21GBgyEjiVGJQcOBOAmhgWKTFoCESDWFxGSgyqPAUgZpASUHSLAJDFBtTNoKQLEtwEZpo/YGAQB7KAoo0+DDyuYKZ65JEF4YJg5i6niR4buMDMx9pJSgnBYOaJO01KniCWEsOrEDANJADToyZjd5vZCQAAAABJRU5ErkJggg=="></a>--}}
+            {{--<a href="javascript://"--}}
+               {{--class="header-icon pg pg-alt_menu btn-link m-l-10 p-r-15 sm-no-margin d-inline-block redirectlogin"--}}
+               {{--title="Launch An Event"></a>--}}
 
         </div>
     </div>
@@ -107,6 +109,17 @@
 <!-- END CORE TEMPLATE JS -->
 
 <script>
+    $(document).ready(function () {
+        'use strict';
+        var siteURL = '{{url('/search?q=%23')}}',
+            entries = $('.post-title');
+        if (entries.length > 0) {
+            entries.each(function () {
+                var contents = $(this).text().replace(/#(\S+)/g, '<a href="' + siteURL + '$1" title="Find more events tagged with #$1">#$1</a>');
+                $(this).html(contents);
+            });
+        }
+    });
     (function ($) {
         "use strict";
 

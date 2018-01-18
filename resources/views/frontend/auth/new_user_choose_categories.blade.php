@@ -4,6 +4,7 @@
     <meta http-equiv="content-type" content="text/html;charset=UTF-8"/>
     <meta charset="utf-8"/>
     <title>NxtLaunch</title>
+    <meta name="robots" content="noindex"/>
     <meta name="viewport"
           content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no"/>
     {{--<link rel="apple-touch-icon" href="pages/ico/60.png">--}}
@@ -56,55 +57,147 @@
     </style>
 </head>
 <body class="fixed-header ">
-<div class="login-wrapper ">
-    <!-- START Login Background Pic Wrapper-->
-    <div class="bg-pic">
-        <!-- START Background Pic-->
-        <img src="{{asset('public/frontend-assets')}}/assets/img/bg_home.png"
-             data-src="{{asset('public/frontend-assets')}}/assets/img/bg_home.png"
-             data-src-retina="{{asset('public/frontend-assets')}}/assets/img/demo//assets/img/bg_home.png" alt=""
-             class="lazy">
-        <!-- END Background Pic-->
-        <!-- START Background Caption-->
-        <div class="bg-caption pull-bottom sm-pull-bottom text-white p-l-20 m-b-20">
-            <h2 class="semi-bold text-white">
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Atque libero maxime non porro, quia
-                voluptates!</h2>
-            <p class="small">
+<div class="auth-wrap">
+    <div class="container">
+        <div class="auth-block">
+            <div class="block-header">
+                <img src="{{asset('public/frontend-assets')}}/assets/img/nxt_logo.png" alt="logo"
+                     data-src="{{asset('public/frontend-assets')}}/assets/img/nxt_logo.png"
+                     data-src-retina="{{asset('public/frontend-assets')}}/assets/img/nxt_logo_2x.png" height="60">
+            </div>
+
+            <div class="block-content">
+                <form id="form-login"
+                      method="post"
+                      role="form"
+                      action="{{route('new.user.choose.interests')}}">
+                    {{csrf_field()}}
+                    <h4 class="block-title">Interests</h4>
+                    @if($interests->where('type',1)->count()>0)
+                        <div class="inner-block">
+
+                            <h4 class="block-title-alt">Popular in Tech</h4>
+                            <div class="tags">
+                                @foreach($interests->where('type',1) as $interest)
+                                    <label class="tab-pill" for="interest{{$interest->id}}">
+                                        <input id="interest{{$interest->id}}" type="checkbox" value="{{$interest->id}}"
+                                               name="interests[]">
+                                        <span>{{$interest->name}}</span>
+                                    </label>
+                                @endforeach
+
+                            </div>
+
+                        </div>
+                    @endif
+
+                    @if($interests->where('type',2)->count()>0)
+                        <div class="inner-block">
+                            <h4 class="block-title-alt">Popular in Music</h4>
+                            <div class="tags">
+                                @foreach($interests->where('type',2) as $interest)
+                                    <label class="tab-pill" for="interest{{$interest->id}}">
+                                        <input id="interest{{$interest->id}}" type="checkbox" value="{{$interest->id}}"
+                                               name="interests[]">
+                                        <span>{{$interest->name}}</span>
+                                    </label>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+
+                    @if($interests->where('type',3)->count()>0)
+                        <div class="inner-block">
+                            <h4 class="block-title-alt">Popular in Sports and Fitness</h4>
+                            <div class="tags">
+                                @foreach($interests->where('type',3) as $interest)
+                                    <label class="tab-pill" for="interest{{$interest->id}}">
+                                        <input id="interest{{$interest->id}}" type="checkbox" value="{{$interest->id}}"
+                                               name="interests[]">
+                                        <span>{{$interest->name}}</span>
+                                    </label>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
+                    @if ($errors->has('interests'))
+                        <span class="help-block">
+                                        <strong class="text-danger">{{ $errors->first('interests') }}</strong>
+                                    </span>
+                    @endif
+
+                    <hr>
+
+                    <div class="inner-block">
+                        <h4 class="block-title">Pro User</h4>
+                        @if(Session::has('confirm_pro'))
+                            <input name="proUserCheck" type="hidden" value="yes">
+                        @else
+                            <div class="form-group">
+                                <label>Are you interested to resister as pro user?</label>
+                                <div class="radio m-t-0 radio-primary">
+                                    <input class="proUserCheckYes" type="radio" checked="checked" value="yes"
+                                           name="proUserCheck"
+                                           id="yes">
+                                    <label for="yes">Yes</label>
+                                    <input class="proUserCheckNo" type="radio" value="no" name="proUserCheck" id="no">
+                                    <label for="no">No</label>
+                                </div>
+                            </div>
+                        @endif
+                        <div id="proUserRegisterForm">
+
+                            <div class="form-group{{ $errors->has('category_name') ? ' has-error' : '' }}">
+                                <label>What type of business you serve?</label>
+                                <ul class="business-type-list">
+                                    @foreach($categories as $key => $category)
+                                        <li>
+                                            <label for="userCategory{{$category->id}}" class="business-type"
+                                                   data-toggle="tooltip"
+                                                   title="{{$category->name}}">
+                                                <input type="radio" id="userCategory{{$category->id}}"
+                                                       name="category_name"
+                                                       value="{{$category->name}}" {{$key == 0?'checked':''}}>
+                                                <span class="box-icon local-business">
+                                    <img src="{{$category->categoryImage->image}}">
+                                </span>
+                                            </label>
+                                        </li>
+                                    @endforeach
+                                </ul>
+                                @if ($errors->has('category_name'))
+                                    <span class="help-block">
+                                        <strong>{{ $errors->first('category_name') }}</strong>
+                                    </span>
+                                @endif
+                            </div>
+
+                            <!-- START Form Control-->
+                            <div class="form-group m-b-20{{ $errors->has('category_name') ? ' has-error' : '' }}">
+                                <label for="">Tell something about your business...</label>
+                                <textarea name="business_description" id="businessNote" rows="4" class="form-control"
+                                          style="height: 100px"></textarea>
+                                @if ($errors->has('business_description'))
+                                    <span class="help-block">
+                                        <strong>{{ $errors->first('business_description') }}</strong>
+                                    </span>
+                                @endif
+                            </div>
+
+                        </div>
+                    </div>
+                    <!-- END Form Control-->
+                    <button class="btn btn-info btn-cons m-t-10 m-b-15" type="submit">Continue</button>
+                </form>
+            </div>
+
+            <div class="block-footer text-center m-t-30">
                 © <?= date('Y') ?> NxtLaunch.
-            </p>
-        </div>
-        <!-- END Background Caption-->
-    </div>
-    <!-- END Login Background Pic Wrapper-->
-
-    <!-- START Login Right Container-->
-    <div class="login-container bg-white">
-        <div class="p-l-30 p-r-30 p-t-30 m-t-30 sm-p-l-15 sm-p-r-15 sm-p-t-40">
-            <h4 class="semi-bold text-center">Choose category</h4>
-            <hr>
-            <!-- START Login Form -->
-            <form id="form-login" class="p-t-15" method="post" role="form"
-                  action="{{route('new.user.choose.interests')}}">
-                {{csrf_field()}}
-                <div class="form-group">
-                    <label>Choose your interests categories</label>
-                    <select name="interests[]" id="" class="full-width" multiple required>
-                        @foreach($interests as $interest)
-                            <option value="{{$interest->id}}">{{$interest->name}}</option>
-                        @endforeach
-                    </select>
-                </div>
-
-
-                <!-- END Form Control-->
-                <button class="btn btn-block btn-primary btn-cons m-t-10 m-b-15" type="submit">Submit</button>
-            </form>
-            <!--END Login Form-->
+            </div>
         </div>
     </div>
-    <!-- END Login Right Container-->
 </div>
+
 <!-- BEGIN VENDOR JS -->
 <script src="{{asset('public/frontend-assets')}}/assets/plugins/pace/pace.min.js" type="text/javascript"></script>
 <script src="{{asset('public/frontend-assets')}}/assets/plugins/jquery/jquery-1.11.1.min.js"
@@ -135,11 +228,33 @@
 
 <script>
     $(document).ready(function () {
+        var proRegisterCheckboxYes = $('.proUserCheckYes');
+        var proRegisterCheckboxNo = $('.proUserCheckNo');
+        checkProRegister(proRegisterCheckboxYes, proRegisterCheckboxNo);
+
+        $('input[name="proUserCheck"]').change(function () {
+            checkProRegister(proRegisterCheckboxYes, proRegisterCheckboxNo);
+        });
+
+        $('#form-login').validate();
+
+        function checkProRegister(yes, no) {
+            console.log($(yes).prop('checked'));
+            console.log($(no).prop('checked'));
+            if ($(yes).prop('checked') === true) {
+                $('#proUserRegisterForm').show();
+                $("#businessNote").prop('required', true);
+
+            } else if ($(no).prop('checked') === true) {
+                $('#proUserRegisterForm').hide();
+                $("#businessNote").prop('required', false);
+            }
+        }
+
         $(".full-width[multiple]").select2({
             placeholder: '--Select--'
         });
     });
-    $('#form-login').validate();
 </script>
 </body>
 </html>
