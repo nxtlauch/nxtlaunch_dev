@@ -33,11 +33,11 @@
                                                     $diffInDays=$expired_date->diffInDays($now);
                                                     $diffInHuman=$expired_date->diffForHumans($now);
                                                 @endphp
-                                                @if($notification->post->expire_date < \Carbon\Carbon::now()->toDateTimeString())
+                                                {{--@if($notification->post->expire_date < \Carbon\Carbon::now()->toDateTimeString())
                                                     @continue
                                                 @elseif($diffInDays>7)
                                                     @continue
-                                                @endif
+                                                @endif--}}
                                             @endif
                                             <div class="notification-item {{$notification->status==1?' unread':''}} noti_id-{{$notification->id}} clearfix">
                                                 <div class="heading">
@@ -60,8 +60,8 @@
                                                             <span><strong>{{$notification->user->name}}</strong> Launched a new Event<strong> {{$notification->post->post_details}}</strong></span>
                                                         @elseif($notification->noti_for==2 && $notification->noti_activity==6)
                                                             <i class="fa fa-comments-o m-r-10"></i>
-                                                            <span><strong>{{$notification->user->name}}</strong> will launch his event<strong> after {{$diffInDays}}
-                                                                    days</strong></span>
+                                                            <span><strong>{{$notification->user->name}}</strong> {{$expired_date>$now?' will launch':' launched'}}
+                                                                his event<strong>  {{$diffInHuman}}</strong></span>
                                                         @elseif($notification->noti_for==3 && $notification->noti_activity==3)
                                                             <i class="fa fa-user-circle-o m-r-10"></i>
                                                             <span><strong>{{$notification->user->name}}</strong> Followed you</span>

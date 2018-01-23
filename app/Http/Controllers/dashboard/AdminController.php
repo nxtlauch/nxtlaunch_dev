@@ -21,8 +21,8 @@ class AdminController extends Controller
     public function dashboard()
     {
         $data = array();
-        $data['users'] = User::where('status', 1)->whereIn('role_id', [3, 4])->orderBy('id', 'desc')->get();
-        $data['posts'] = Post::where('status', 1)->orderBy('id', 'desc')->with('user:id,name')->get();
+        $data['users'] = User::where('status', 1)->whereIn('role_id', [3, 4])->orderBy('id', 'desc')->paginate(10);
+        $data['posts'] = Post::where('status', 1)->orderBy('id', 'desc')->with('user:id,name')->paginate(10);
         return view('dashboard.dashboard')->with($data);
     }
 

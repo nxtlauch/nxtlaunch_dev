@@ -40,15 +40,17 @@
 {{--Header--}}
 <div class="header custom-bg p-r-0 bg-primary">
     <div class="header-inner header-md-height container plx__padding">
-        <a href="#" class="btn-link toggle-sidebar hidden-lg-up pg pg-menu text-white"
-           data-toggle="horizontal-menu"></a>
 
         <div class="">
             <a href="{{route('frontend.home')}}" class="brand inline no-border hidden-xs-down">
-                <img src="{{asset('public/frontend-assets/assets/img/logo_white.png')}}" alt="logo"
+                <img class="for-desktop" src="{{asset('public/frontend-assets/assets/img/nxt_logo.png')}}" alt="logo"
+                     data-src="{{asset('public/frontend-assets/assets/img/nxt_logo.png')}}"
+                     data-src-retina="{{asset('public/frontend-assets/assets/img/nxt_logo_2x.png')}}" width="78"
+                     height="22">
+                {{--<img src="{{asset('public/frontend-assets/assets/img/logo_white.png')}}" alt="logo"
                      data-src="{{asset('public/frontend-assets/assets/img/logo_white.png')}}"
                      data-src-retina="{{asset('public/frontend-assets/assets/img/logo_white_2x.png')}}" width="78"
-                     height="22">
+                     height="22">--}}
             </a>
 
 
@@ -58,8 +60,8 @@
 
         <div class="d-flex align-items-center">
             <!-- START User Info-->
-            <a href="{{route('login')}}" class="header-icon">Sing Up</a> &nbsp;&nbsp; | &nbsp;&nbsp;
-            <a href="{{route('register')}}" class="header-icon">Sing In</a> &nbsp;&nbsp;
+            <a href="{{route('register')}}" class="header-icon">Sign Up</a> &nbsp;&nbsp; | &nbsp;&nbsp;
+            <a href="{{route('login')}}" class="header-icon">Sign In</a> &nbsp;&nbsp;
             {{--<a href="javascript://"--}}
                {{--class="header-icon btn-link m-l-10 p-r-15 sm-no-margin d-inline-block redirectlogin"><img--}}
                         {{--src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAUBAMAAAB/pwA+AAAABGdBTUEAALGPC/xhBQAAAAFzUkdCAK7OHOkAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAtUExURf///////0dwTP////////////////////////////////////////////////zKVJ0AAAAPdFJOU/nfAAoqoYI5GGqwWc1AxF/GqhEAAACnSURBVAgdY1CCAOWbuQwQlnoAAzeEqbGAgYEXwnRkYGBgBjNVBHgYGB6BmY0MRRcYJoGYyg8YlBQYjBiUlI21GBgyEjiVGJQcOBOAmhgWKTFoCESDWFxGSgyqPAUgZpASUHSLAJDFBtTNoKQLEtwEZpo/YGAQB7KAoo0+DDyuYKZ65JEF4YJg5i6niR4buMDMx9pJSgnBYOaJO01KniCWEsOrEDANJADToyZjd5vZCQAAAABJRU5ErkJggg=="></a>--}}

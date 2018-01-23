@@ -11,8 +11,8 @@
 |
 */
 
-Route::get('/test', 'frontend\FrontendController@test');
-//Route::get('/test1', 'frontend\FrontendController@test1');
+//Route::get('/test', 'frontend\FrontendController@test');
+Route::get('/test1', 'frontend\FrontendController@test1');
 
 /*Front-end*/
 /*Authentication*/

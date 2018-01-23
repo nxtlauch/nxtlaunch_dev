@@ -47,7 +47,8 @@ class FrontendController extends Controller
 //        view()->share('all_conversation', $this->allConversation());
     }
 
-    public function tagSuggestion(){
+    public function tagSuggestion()
+    {
         $tags = Tag::all()->pluck('tag')->unique();
         return $tags;
     }
@@ -445,7 +446,7 @@ class FrontendController extends Controller
     public function newUserChooseCategoriesForm()
     {
         $data = array();
-        $data['interests'] = Category::where('status',1)->get();
+        $data['interests'] = Category::where('status', 1)->get();
         $data['categories'] = UserCategory::all();
         return view('frontend.auth.new_user_choose_categories')->with($data);
     }
@@ -616,7 +617,7 @@ class FrontendController extends Controller
             // Grab the ouput data (data modified after Slim has done its thing)
             if (isset($image['output']['data'])) {
                 // Original file name
-                $filenam =$image['output']['name'];
+                $filenam = $image['output']['name'];
                 $name = str_replace(' ', '', $filenam);
 
                 // Base64 of the image
@@ -1186,9 +1187,9 @@ class FrontendController extends Controller
         $data['users'] = User::where('status', 1)->whereIn('role_id', [3, 4])->get();
         $data['posts'] = Post::where('status', 1)->get();
         $data['tags'] = $this->tagSuggestion();
-        $response=array();
-        $response['searchSuggestion']=View::make('frontend.includes.header.searchlist')->with($data)->render();
-        $response['tagSuggestion']=View::make('frontend.includes.header.taglist')->with($data)->render();
+        $response = array();
+        $response['searchSuggestion'] = View::make('frontend.includes.header.searchlist')->with($data)->render();
+        $response['tagSuggestion'] = View::make('frontend.includes.header.taglist')->with($data)->render();
         return Response::json($response);
     }
 
@@ -1300,26 +1301,23 @@ class FrontendController extends Controller
 
     public function test1()
     {
-        $now = Carbon::now();
-        $posts = Post::where('status', 1)->where('expire_date', '>', $now->toDateTimeString())->get();
-        foreach ($posts as $post) {
-            $expired_date = new \Carbon\Carbon($post->expire_date);
-            $diffInDays = $expired_date->diffInDays($now);
-            if ($diffInDays >= 7) {
-                foreach ($post->follows as $follow) {
-                    $notification = Notification::where('noti_to', $follow->user_id)->where('noti_activity', 6)->where('noti_for', 2)->where('purpose_id', $post->id)->first();
-                    if (!$notification) {
-                        $followNotification = new Notification();
-                        $followNotification->user_id = $post->user->id;
-                        $followNotification->noti_for = 2;
-                        $followNotification->noti_activity = 6;
-                        $followNotification->purpose_id = $post->id;
-                        $followNotification->noti_to = $follow->user_id;
-                        $followNotification->save();
-                    }
-                }
-            }
-        }
+        $datetime=Carbon::now('Asia/Dhaka');
+        $datetime->setTimezone('UTC');
+        dd($datetime);
+//        $ip = $_SERVER['REMOTE_ADDR'];
+//
+//        $ch = curl_init();
+//
+//        curl_setopt($ch, CURLOPT_URL, "https://timezoneapi.io/api/ip/?{$ip}");
+//
+//        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+//
+//        $server_output = curl_exec($ch);
+//        $details = json_decode($server_output);
+//
+//
+//        curl_close($ch);
+//        dd($details);
     }
 
     public

@@ -79,6 +79,9 @@
                                 </tbody>
                             </table>
                         </div>
+                        <nav aria-label="...">
+                            {{ $users->links() }}
+                        </nav>
                     </div>
                     <div class="card card-transparent">
                         <div class="card-header ">

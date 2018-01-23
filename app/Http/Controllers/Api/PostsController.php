@@ -7,6 +7,7 @@ use App\Http\Resources\PostResource;
 use App\Like;
 use App\Notification;
 use App\Post;
+use App\PostCategory;
 use App\RecentSearch;
 use App\Tag;
 use App\Traits\ApiStatusTrait;
@@ -140,6 +141,7 @@ class PostsController extends Controller
             'expire_date' => 'required',
             'image' => 'required|max:20000',
             'category_id' => 'required',
+            'link' => 'required|url',
         ]);
         if ($validator->fails()) {
             $response['message'] = $validator->errors()->first();
@@ -158,10 +160,17 @@ class PostsController extends Controller
 
 //        $post->post_title = $request->post_title;
         $post->post_details = $request->post_details;
-        $post->category_id = $request->category_id;
+//        $post->category_id = $request->category_id;
         $post->expire_date = Carbon::create($request->expire_date);
         $post->user_id = Auth::id();
+        $post->link = $request->link;
         if ($post->save()) {
+            foreach ($request->category_id as $category_id) {
+                $post_categories = new PostCategory();
+                $post_categories->post_id = $post->id;
+                $post_categories->category_id = $category_id;
+                $post_categories->save();
+            }
             /*notification and tag save*/
             foreach (Auth::user()->followers as $follower) {
                 $notification = new Notification();
@@ -235,37 +244,52 @@ class PostsController extends Controller
     public function update(Request $request, $id)
     {
         $validator = Validator::make($request->all(), [
-//            'post_title' => 'required',
             'post_details' => 'required|max:255',
+            'category_id' => 'required',
             'expire_date' => 'required',
-            'category_id' => 'required'
+            'link' => 'required|url',
         ]);
         if ($validator->fails()) {
             $response['message'] = $validator->errors()->first();
             return $this->failureApiResponse($response);
         }
-
         $post = Post::find($id);
-        if ($request->hasFile('image')) {
-            $file = $request->file('image');
-            $filename = time() . $file->getClientOriginalName();
-            $destinationPath = base_path('content-dir/posts/images');
-            $img = Image::make($file);
-            $img->save($destinationPath . '/' . $filename);
-            $post->image = $filename;
-        }
 
-//        $post->post_title = $request->post_title;
-        $post->post_details = $request->post_details;
-        $post->category_id = $request->category_id;
-        $post->expire_date = Carbon::create($request->expire_date);
-        $post->user_id = Auth::id();
-        if ($post->save()) {
-            $response['post_id'] = $post->id;
-            $response['message'] = "Post Updated Successfully";
-            return $this->successApiResponse($response);
+        if ($post->user_id == Auth::id()) {
+            if ($request->hasFile('image')) {
+                $file = $request->file('image');
+                $filenam = time() . $file->getClientOriginalName();
+                $filename = str_replace(' ', '', $filenam);
+                $destinationPath = base_path('content-dir/posts/images');
+                $img = Image::make($file);
+                $img->save($destinationPath . '/' . $filename);
+                $post->image = $filename;
+            }
+            $post->post_details = $request->post_details;
+            $post->link = $request->link;
+            $post->expire_date = Carbon::parse($request->expire_date)->toDateTimeString();
+            if ($post->save()) {
+                $categories = $request->category_id;
+                $postCategories = $post->postCategories->pluck('category_id');
+                $needDelete = $postCategories->diff($categories);
+                $deleteCategories = PostCategory::whereIn('category_id', $needDelete)->delete();
+                foreach ($categories as $category) {
+                    if (!$postCategories->contains($category)) {
+                        $newCategory = new PostCategory();
+                        $newCategory->category_id = $category;
+                        $newCategory->post_id = $post->id;
+                        $newCategory->save();
+                    }
+                }
+                $response['post_id'] = $post->id;
+                $response['message'] = "Post Updated Successfully";
+                return $this->successApiResponse($response);
+            } else {
+                $response['message'] = "Post Doesn't Updated";
+                return $this->failureApiResponse($response);
+            }
         } else {
-            $response['message'] = "Post Doesn't Updated";
+            $response['message'] = "You are not post owner";
             return $this->failureApiResponse($response);
         }
     }

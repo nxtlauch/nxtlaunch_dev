@@ -42,6 +42,7 @@ class NotificationCommand extends Command
 
     public function handle()
     {
+        Log::info('Inserting Notification: ' . time());
         $now = Carbon::now();
         $posts = Post::where('status', 1)
             ->whereHas('follows')

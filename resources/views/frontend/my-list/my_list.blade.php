@@ -58,7 +58,7 @@
                                                                      style="background-image: url('{{@$post->post->user->userDetails->profile_picture?asset('content-dir/profile_picture/'.@$post->post->user->userDetails->profile_picture):asset('public/frontend-assets/assets/img/profiles/avatar.jpg')}}')"></div>
                                                                 <div class="plx__meta-text">
                                                                     <h4 class="plx__post-author-name">
-                                                                        <strong>{{@$post->post->user->name}}</strong> &nbsp;
+                                                                        <strong><a href="{{route('frontend.user.profile',@$post->post->user_id)}}" style="color: black">{{@$post->post->user->name}}</a></strong> &nbsp;
                                                                         @if(@$post->post->user_id != Auth::id())
                                                                             <a href="javascript://"
                                                                                data-href="{{route('frontend.follow.post')}}"
@@ -126,7 +126,7 @@
                                                                      style="background-image: url('{{@$post->post->user->userDetails->profile_picture?asset('content-dir/profile_picture/'.@$post->post->user->userDetails->profile_picture):asset('public/frontend-assets/assets/img/profiles/avatar.jpg')}}')"></div>
                                                                 <div class="plx__meta-text">
                                                                     <h4 class="plx__post-author-name">
-                                                                        <strong>{{@$post->post->user->name}}</strong> &nbsp;
+                                                                        <strong><a href="{{route('frontend.user.profile',@$post->post->user_id)}}" style="color: black">{{@$post->post->user->name}}</a></strong> &nbsp;
                                                                         @if(@$post->post->user_id != Auth::id())
                                                                             <a href="javascript://"
                                                                                data-href="{{route('frontend.follow.post')}}"

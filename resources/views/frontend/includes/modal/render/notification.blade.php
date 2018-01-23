@@ -2,16 +2,16 @@
 <div class="modal-body">
     <div class="radio radio-success inline m-t-0">
         <input id="sevenDays" name="reminder_before" type="radio" value="1" {{(@$cstm_notification->reminder_before==1 || !$cstm_notification)?'checked':''}}>
-        <label for="sevenDays">7 days</label>
+        <label for="sevenDays">7 Days</label>
         <br>
         <input id="oneDay" name="reminder_before" type="radio" value="2" {{(@$cstm_notification->reminder_before==2)?'checked':''}}>
-        <label for="oneDay">1 day</label>
+        <label for="oneDay">1 Day</label>
         <br>
         <input id="oneHour" name="reminder_before" type="radio" value="3" {{(@$cstm_notification->reminder_before==3)?'checked':''}}>
         <label for="oneHour">1 Hour</label>
         <br>
         <input id="twentyMins" name="reminder_before" type="radio" value="4" {{(@$cstm_notification->reminder_before==4)?'checked':''}}>
-        <label for="twentyMins">20 min</label>
+        <label for="twentyMins">@Launch Time</label>
     </div>
 
     {{--<div class="form-group">

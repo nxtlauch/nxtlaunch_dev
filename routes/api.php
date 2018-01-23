@@ -29,6 +29,7 @@ Route::prefix('v1')->group(function () {
         Route::post('explore', 'Api\PostsController@explore');
         Route::post('posts', 'Api\PostsController@index');
         Route::post('post', 'Api\PostsController@store');
+        Route::post('post-update/{id}', 'Api\PostsController@update');
         Route::post('post/{id}', 'Api\PostsController@show');
 //        Route::resource('post', 'Api\PostsController')->only('index', 'store', 'show', 'update', 'destroy');
         Route::post('my-list', 'Api\PostsController@my_list');
@@ -70,6 +71,7 @@ Route::prefix('v1')->group(function () {
 //        Route::resource('user-details', 'Api\UserDetailController')->only('store', 'show');
         Route::post('pro-user-registration', 'Api\UserDetailController@proUserRegistration');
         Route::post('pro-user-categories', 'Api\UserCategoryController@index');
+        Route::post('get-user-interest', 'Api\UserDetailController@saveUserInterest');
         /*End User Details Routes*/
 
         /*Share Routes*/

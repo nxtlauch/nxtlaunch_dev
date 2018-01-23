@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Traits\ApiStatusTrait;
 use App\UserDetail;
+use App\UserInterest;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -200,5 +201,24 @@ class UserDetailController extends Controller
             $response['message'] = "Pro user can't Registered ";
             return $this->failureApiResponse($response);
         }
+    }
+
+    public function saveUserInterest(Request $request){
+        $validator = Validator::make($request->all(), [
+            'interests' => 'required'
+        ]);
+        if ($validator->fails()) {
+            $response['message'] = $validator->errors()->first();
+            return $this->failureApiResponse($response);
+        }
+        foreach ($request->interests as $interest) {
+            $category = new UserInterest();
+            $category->user_id = Auth::id();
+            $category->category_id = $interest;
+            $category->save();
+        }
+        $response['message'] = "User interest saved successfully";
+        return $this->successApiResponse($response);
+
     }
 }

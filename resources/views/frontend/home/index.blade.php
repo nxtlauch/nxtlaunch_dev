@@ -22,7 +22,7 @@
                                     {{csrf_field()}}
                                     <input type="hidden" name="page" value="{{@$page}}">
                                     <div class="form-group form-group-sm m-b-15 m-r-15">
-                                        <label for=""><i class="fa fa-sort-amount-asc"></i>&nbsp; Filter by:</label>
+                                        <label for=""><i class="fa fa-sort-amount-asc"></i>&nbsp; </label>
                                         &nbsp;&nbsp;&nbsp;
                                         <select name="time" id="" class="filterInput plx__form-control">
                                             <option value="0" selected>Anytime</option>
